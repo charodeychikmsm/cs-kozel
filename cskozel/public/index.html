@@ -953,7 +953,7 @@ document.addEventListener('pointerlockchange', () => {
 });
 document.addEventListener('mousemove', e => {
   if (!pointerLocked) return;
-  myYaw += e.movementX * 0.0025;
+  myYaw -= e.movementX * 0.0025;
   while (myYaw > Math.PI) myYaw -= 2*Math.PI;
   while (myYaw < -Math.PI) myYaw += 2*Math.PI;
 });
