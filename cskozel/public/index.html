@@ -6,8 +6,8 @@
 <title>CS:KOZEL</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Trebuchet MS',Arial,sans-serif;user-select:none}
-html,body{width:100%;height:100%;overflow:hidden;background:#0b0d10;color:#e6e6e6}
-canvas{position:absolute;inset:0;display:block;cursor:crosshair}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;color:#e6e6e6}
+canvas{position:absolute;inset:0;display:block;cursor:none;image-rendering:pixelated}
 .screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:5}
 .hidden{display:none!important}
 #screen-menu{background:radial-gradient(circle at 50% 25%,#2e2418,#0b0d10 70%)}
@@ -19,7 +19,7 @@ input{background:#14171c;border:1px solid #3a3f47;color:#eee;padding:11px;border
 input:focus{border-color:#3ee0d0}
 button{background:linear-gradient(#3ee0d0,#17b6ac);border:none;color:#06211f;font-weight:800;padding:12px;border-radius:8px;cursor:pointer;letter-spacing:1.5px;font-size:13px;transition:.15s;box-shadow:0 0 12px rgba(62,224,208,.25)}
 button:hover{filter:brightness(1.15);box-shadow:0 0 22px rgba(62,224,208,.55)}
-button:disabled{opacity:.4;cursor:not-allowed;filter:none}
+button:disabled{opacity:.4;cursor:not-allowed}
 button.ghost{background:transparent;border:1px solid #4a5058;color:#cfd4da;box-shadow:none}
 button.ghost:hover{background:#22262c;box-shadow:none}
 .row{display:flex;gap:8px}
@@ -27,7 +27,7 @@ button.ghost:hover{background:#22262c;box-shadow:none}
 .lobby-list{max-height:170px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
 .lobby-item{display:flex;justify-content:space-between;align-items:center;background:#191d22;border:1px solid #2b3037;border-radius:8px;padding:9px 12px;font-size:13px;cursor:pointer}
 .lobby-item:hover{border-color:#3ee0d0}
-.coins{position:absolute;top:22px;right:28px;font-size:20px;color:#ffd76a;font-weight:800;letter-spacing:1px}
+.coins{position:absolute;top:22px;right:28px;font-size:20px;color:#ffd76a;font-weight:800;letter-spacing:1px;z-index:8}
 h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:center}
 .hint{font-size:12px;color:#7d848d;text-align:center}
 #screen-lobby{background:radial-gradient(circle at 50% 30%,#241d14,#0b0d10 70%)}
@@ -38,38 +38,39 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .teamBox.a.sel{border-color:#5aa9ff;box-shadow:0 0 22px rgba(90,169,255,.35)}
 .teamBox.b.sel{border-color:#ffb347;box-shadow:0 0 22px rgba(255,179,71,.35)}
 .pl{font-size:13px;padding:6px 8px;border-radius:6px;background:#191d22;margin-bottom:4px;display:flex;justify-content:space-between}
+.pl.bot{color:#b8a3e8}
 .code{font-size:34px;letter-spacing:10px;color:#fff;font-weight:900;text-shadow:0 0 20px rgba(62,224,208,.6)}
-#screen-game{pointer-events:none;justify-content:flex-start}
-#hudTop{position:absolute;top:14px;left:50%;transform:translateX(-50%);display:flex;gap:22px;align-items:center;background:rgba(10,12,15,.75);padding:8px 22px;border-radius:10px;border:1px solid #2c3138}
+#screen-game{pointer-events:none;justify-content:flex-start;background:transparent}
+#hudTop{position:absolute;top:14px;left:50%;transform:translateX(-50%);display:flex;gap:22px;align-items:center;background:rgba(10,12,15,.78);padding:8px 22px;border-radius:10px;border:1px solid #2c3138;pointer-events:none}
 .scoreA{color:#5aa9ff;font-size:24px;font-weight:900}
 .scoreB{color:#ffb347;font-size:24px;font-weight:900}
 #phaseInfo{font-size:13px;color:#9aa1aa;letter-spacing:2px;min-width:150px;text-align:center}
-#hudBottom{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:14px;background:rgba(10,12,15,.78);padding:10px 20px;border-radius:10px;border:1px solid #2c3138}
-.stat{display:flex;flex-direction:column;align-items:center;min-width:76px}
-.stat b{font-size:20px;color:#fff}
+#hudBottom{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:14px;background:rgba(10,12,15,.8);padding:10px 20px;border-radius:10px;border:1px solid #2c3138;pointer-events:none}
+.stat{display:flex;flex-direction:column;align-items:center;min-width:70px}
+.stat b{font-size:18px;color:#fff}
 .stat span{font-size:10px;color:#7d848d;letter-spacing:2px}
-#killfeed{position:absolute;top:14px;right:16px;display:flex;flex-direction:column;gap:5px;align-items:flex-end}
+#killfeed{position:absolute;top:14px;right:16px;display:flex;flex-direction:column;gap:5px;align-items:flex-end;pointer-events:none}
 .kf{background:rgba(10,12,15,.85);border:1px solid #2c3138;border-radius:6px;padding:5px 10px;font-size:12px;animation:fade 5s forwards}
 @keyframes fade{0%{opacity:1}80%{opacity:1}100%{opacity:0}}
-#centerMsg{position:absolute;top:34%;left:50%;transform:translateX(-50%);font-size:40px;font-weight:900;letter-spacing:6px;text-shadow:0 0 30px rgba(0,0,0,.9);text-align:center;color:#fff}
-#buyHint{position:absolute;bottom:96px;left:50%;transform:translateX(-50%);font-size:13px;color:#3ee0d0;letter-spacing:2px}
-#buyMenu{position:absolute;inset:0;background:rgba(6,8,10,.86);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;pointer-events:auto;z-index:20}
-.buyGrid{display:grid;grid-template-columns:repeat(3,220px);gap:12px}
-.buyItem{background:#161a1f;border:1px solid #333941;border-radius:10px;padding:14px;cursor:pointer;transition:.15s}
+#centerMsg{position:absolute;top:34%;left:50%;transform:translateX(-50%);font-size:40px;font-weight:900;letter-spacing:6px;text-shadow:0 0 30px rgba(0,0,0,.9);text-align:center;color:#fff;pointer-events:none}
+#buyHint{position:absolute;bottom:96px;left:50%;transform:translateX(-50%);font-size:12px;color:#3ee0d0;letter-spacing:1px;pointer-events:none;text-align:center}
+#buyMenu{position:absolute;inset:0;background:rgba(6,8,10,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;pointer-events:auto;z-index:20}
+.buyRow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:900px}
+.buyItem{background:#161a1f;border:1px solid #333941;border-radius:10px;padding:12px;cursor:pointer;transition:.15s;min-width:150px;text-align:center}
 .buyItem:hover{border-color:#3ee0d0;background:#1e242b}
 .buyItem.dis{opacity:.35;cursor:not-allowed}
-.buyItem .bn{font-size:16px;font-weight:800;color:#fff}
-.buyItem .bp{font-size:14px;color:#ffd76a;margin-top:4px}
-.buyItem .bs{font-size:11px;color:#7d848d;margin-top:6px}
+.buyItem.sel{border-color:#5aff8a;background:rgba(90,255,138,.1)}
+.buyItem .bn{font-size:14px;font-weight:800;color:#fff}
+.buyItem .bp{font-size:13px;color:#ffd76a;margin-top:4px}
+.buyCat{font-size:12px;color:#7d848d;letter-spacing:3px;margin-top:8px}
 #screen-shop,#screen-inv{background:radial-gradient(circle at 50% 30%,#241d14,#0b0d10 70%);z-index:30}
-.casesWrap{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;padding:10px;max-width:1100px}
-.caseCard{background:linear-gradient(160deg,#2a2118,#14171c);border:1px solid #4a3a22;border-radius:14px;padding:18px 14px;width:210px;text-align:center;cursor:pointer;transition:.2s}
+.casesWrap{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;padding:10px;max-width:1200px}
+.caseCard{background:linear-gradient(160deg,#2a2118,#14171c);border:1px solid #4a3a22;border-radius:14px;padding:18px 14px;width:200px;text-align:center;cursor:pointer;transition:.2s}
 .caseCard:hover{transform:translateY(-4px)}
-.caseCard .caseIcon{font-size:48px;margin-bottom:6px;filter:drop-shadow(0 0 10px rgba(255,255,255,.2))}
-.caseCard .caseName{font-size:14px;font-weight:800;color:#ffd76a;letter-spacing:1.5px;min-height:36px;display:flex;align-items:center;justify-content:center}
+.caseCard .caseIcon{font-size:44px;margin-bottom:6px}
+.caseCard .caseName{font-size:13px;font-weight:800;color:#ffd76a;letter-spacing:1.5px;min-height:34px;display:flex;align-items:center;justify-content:center}
 .caseCard .casePrice{margin-top:10px;font-size:15px;color:#ffb347;font-weight:800}
-.caseCard .caseSub{font-size:10px;color:#7d848d;margin-top:6px;letter-spacing:1px}
-/* Редкости кейсов */
+.caseCard .caseSub{font-size:10px;color:#7d848d;margin-top:6px}
 .caseCard.basic{border-color:#6d6d6d}
 .caseCard.basic:hover{box-shadow:0 0 24px rgba(180,180,180,.35);border-color:#b0b0b0}
 .caseCard.sand{border-color:#8b6a3a}
@@ -81,7 +82,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .caseCard.operation .caseName{color:#ff7bff}
 .caseCard.operation .casePrice{color:#ff7bff}
 .caseCard.operation:hover{box-shadow:0 0 34px rgba(211,44,230,.6);border-color:#ff7bff}
-.invGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;width:min(880px,92vw);max-height:58vh;overflow-y:auto;padding:4px}
+.invGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;width:min(900px,94vw);max-height:58vh;overflow-y:auto;padding:4px}
 .invItem{background:#161a1f;border:1px solid #333941;border-radius:10px;padding:12px;text-align:center;transition:.15s;position:relative}
 .invItem:hover{border-color:#3ee0d0}
 .invItem.eq{border-color:#5aff8a;box-shadow:0 0 16px rgba(90,255,138,.3)}
@@ -89,9 +90,12 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .swatch{width:100%;height:44px;border-radius:8px;margin-bottom:8px;border:1px solid rgba(255,255,255,.15)}
 .iname{font-size:12px;color:#dfe4ea;line-height:1.3}
 .irar{font-size:10px;letter-spacing:2px;margin-top:5px;font-weight:800}
-.rc{color:#b0c3d9}.rr{color:#4b69ff}.re{color:#8847ff}.rl{color:#d32ce6}
-.r-common{border-color:#4a5560}.r-rare{border-color:#4b69ff}.r-epic{border-color:#8847ff}.r-legendary{border-color:#d32ce6;box-shadow:0 0 18px rgba(211,44,230,.4)}
-.sellBtn{position:absolute;top:6px;right:6px;background:rgba(255,215,80,.15);border:1px solid #ffd76a;color:#ffd76a;font-size:10px;padding:3px 8px;border-radius:5px;font-weight:800;letter-spacing:1px;cursor:pointer;z-index:2}
+.rc{color:#b0c3d9}.rr{color:#4b69ff}.re{color:#8847ff}.rl{color:#d32ce6}.rch{color:#3ee0d0}
+.r-common{border-color:#4a5560}.r-rare{border-color:#4b69ff}.r-epic{border-color:#8847ff}
+.r-legendary{border-color:#d32ce6;box-shadow:0 0 18px rgba(211,44,230,.4)}
+.r-chroma{border-color:#3ee0d0;box-shadow:0 0 24px rgba(62,224,208,.6);animation:chromaGlow 2s infinite}
+@keyframes chromaGlow{0%,100%{box-shadow:0 0 24px rgba(62,224,208,.6)}50%{box-shadow:0 0 32px rgba(255,100,220,.7)}}
+.sellBtn{position:absolute;top:6px;right:6px;background:rgba(255,215,80,.15);border:1px solid #ffd76a;color:#ffd76a;font-size:10px;padding:3px 8px;border-radius:5px;font-weight:800;cursor:pointer;z-index:2}
 .sellBtn:hover{background:rgba(255,215,80,.4);color:#fff}
 #screen-case{background:rgba(5,6,8,.96);z-index:40}
 .reelWrap{width:100vw;height:170px;overflow:hidden;position:relative;border-top:2px solid #333;border-bottom:2px solid #333;background:#0e1114}
@@ -102,6 +106,8 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .pointer{position:absolute;left:50%;top:0;bottom:0;width:3px;background:#3ee0d0;transform:translateX(-50%);box-shadow:0 0 16px #3ee0d0;z-index:5}
 .resultBox{text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
 .resultBox .swatch{width:150px;height:80px}
+#lockHint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.7);color:#3ee0d0;font-size:20px;letter-spacing:3px;font-weight:800;text-shadow:0 0 20px rgba(62,224,208,.8);z-index:15;pointer-events:auto;cursor:pointer;flex-direction:column;gap:8px}
+#lockHint .k{font-size:12px;color:#7d848d;letter-spacing:1px}
 </style>
 </head>
 <body>
@@ -126,7 +132,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
     <button id="btnInventory" class="ghost">ИНВЕНТАРЬ</button>
     <button id="btnShop" class="ghost">МАГАЗИН</button>
   </div>
-  <div class="hint">Матч до 10 побед • 2–10 игроков • карта Sandboom</div>
+  <div class="hint">Матч до 10 побед • Против одного — бот</div>
 </div>
 
 <div id="screen-lobby" class="screen hidden">
@@ -142,6 +148,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
     <button id="btnTeamB" class="ghost">В КОМАНДУ B</button>
     <button id="btnLeave" class="ghost">ВЫЙТИ</button>
   </div>
+  <div class="hint">🤖 Если ты один — против тебя играет BOT Vasya</div>
 </div>
 
 <div id="screen-game" class="screen hidden">
@@ -157,9 +164,14 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
     <div class="stat"><b id="hudAr">0</b><span>БРОНЯ</span></div>
     <div class="stat"><b id="hudMoney">2700</b><span>ДЕНЬГИ</span></div>
     <div class="stat"><b id="hudWeapon">ПИСТОЛЕТ</b><span>ОРУЖИЕ</span></div>
+    <div class="stat"><b id="hudSlot">2</b><span>СЛОТ</span></div>
   </div>
-  <div id="buyHint">B — магазин</div>
+  <div id="buyHint">WASD — ход • Мышь — обзор • ЛКМ — стрельба • ПКМ — прицел • B — магазин • Space — прыжок • Ctrl — присесть • 1/2/3 — оружие</div>
   <div id="buyMenu" class="hidden"></div>
+  <div id="lockHint" class="hidden">
+    <div>КЛИКНИ, ЧТОБЫ ИГРАТЬ</div>
+    <div class="k">Нажми ESC, чтобы выйти</div>
+  </div>
 </div>
 
 <div id="screen-shop" class="screen hidden">
@@ -171,7 +183,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 
 <div id="screen-inv" class="screen hidden">
   <h2>ИНВЕНТАРЬ</h2>
-  <div class="hint">Клик по предмету — надеть/снять • 💰 — продать</div>
+  <div class="hint">Клик — надеть/снять • 💰 — продать</div>
   <div class="invGrid" id="invGrid"></div>
   <button class="ghost" id="btnInvBack">НАЗАД</button>
 </div>
@@ -183,33 +195,53 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 </div>
 
 <script>
+/* =====================================================
+   CS:KOZEL — First Person Shooter Edition
+   ===================================================== */
 const $ = id => document.getElementById(id);
 const cv = $('cv'), ctx = cv.getContext('2d');
+ctx.imageSmoothingEnabled = false;
 
-/* ---------- Настройки ---------- */
-const ZOOM = 1.25;
-const SELL_PRICE = {common:15, rare:35, epic:80, legendary:200};
+/* ---------- Настройки рендера ---------- */
+const RENDER_W = 480;
+const RENDER_H = 270;
+const FOV_BASE = Math.PI / 3;      // 60°
+const FOV_AWP = Math.PI / 10;      // 18° — зум
+const MAX_DIST = 2200;
 
+const off = document.createElement('canvas');
+off.width = RENDER_W;
+off.height = RENDER_H;
+const octx = off.getContext('2d');
+octx.imageSmoothingEnabled = false;
+const zBuffer = new Float32Array(RENDER_W);
+
+/* ---------- Оружие ---------- */
 const WEAPONS = {
-  pistol:  {name:'Пистолет',     price:0,    desc:'Бесплатный'},
-  p250:    {name:'P250',         price:350,  desc:'Дёшево и сердито'},
-  deagle:  {name:'Desert Eagle', price:777,  desc:'Мощный пистолет'},
-  shotgun: {name:'Дробовик',     price:1050, desc:'6 дробин, близко'},
-  ak:      {name:'AK-47',        price:2700, desc:'Автомат, 34 урона'},
-  awp:     {name:'AWP',          price:4500, desc:'Ваншот в корпус'},
-  armor:   {name:'Броня',        price:950,  desc:'+100 брони'},
+  knife:   {name:'Нож',          price:0,    desc:'Слот 3 • ближний бой', slot:3, rate:400, melee:true},
+  pistol:  {name:'Пистолет',     price:0,    desc:'Слот 2 • бесплатно',   slot:2},
+  usp:     {name:'USP-S',        price:200,  desc:'Слот 2 • точный',      slot:2},
+  p250:    {name:'P250',         price:350,  desc:'Слот 2 • дёшево',      slot:2},
+  deagle:  {name:'Desert Eagle', price:777,  desc:'Слот 2 • мощный',      slot:2},
+  shotgun: {name:'Дробовик',     price:1050, desc:'Слот 1 • 6 дробин',    slot:1},
+  galil:   {name:'Galil AR',     price:2000, desc:'Слот 1 • дешёвый авто',slot:1},
+  ak:      {name:'AK-47',        price:2700, desc:'Слот 1 • 34 урона',    slot:1},
+  m4a4:    {name:'M4A4',         price:3100, desc:'Слот 1 • точный авто', slot:1},
+  awp:     {name:'AWP',          price:4750, desc:'Слот 1 • ваншот',      slot:1, scope:true},
+  armor:   {name:'Броня',        price:950,  desc:'+100 брони',           type:'armor'},
 };
-const BUY_ORDER = ['ak','awp','shotgun','deagle','p250','armor'];
+const BUY_PRIMARY = ['shotgun','galil','ak','m4a4','awp'];
+const BUY_SECONDARY = ['usp','p250','deagle'];
 
 /* ---------- Скины ---------- */
 const SKINS = [
-  // обычные
+  // Обычные
   {id:'ak_sand',   name:'AK-47 | Пыль',        type:'weapon', weapon:'ak',      color:'#c8b48a', rarity:'common'},
   {id:'p250_sand', name:'P250 | Песок',        type:'weapon', weapon:'p250',    color:'#d9c07a', rarity:'common'},
   {id:'dg_clay',   name:'Deagle | Глина',      type:'weapon', weapon:'deagle',  color:'#a0522d', rarity:'common'},
   {id:'ch_inf',    name:'Персонаж | Пехота',   type:'char',   color:'#7a8b5a',  rarity:'common'},
   {id:'ch_des',    name:'Персонаж | Пустыня',  type:'char',   color:'#c2a878',  rarity:'common'},
-  // редкие
+  // Редкие
   {id:'ak_brick',  name:'AK-47 | Кирпич',      type:'weapon', weapon:'ak',      color:'#b5533c', rarity:'rare'},
   {id:'sg_brick',  name:'Дробовик | Кирпич',   type:'weapon', weapon:'shotgun', color:'#8b4a3a', rarity:'rare'},
   {id:'awp_clay',  name:'AWP | Глина',         type:'weapon', weapon:'awp',     color:'#9c6b4f', rarity:'rare'},
@@ -219,7 +251,10 @@ const SKINS = [
   {id:'sg_asiimov',name:'Дробовик | Азимов',   type:'weapon', weapon:'shotgun', color:'#ff5500', rarity:'rare'},
   {id:'p250_asiimov',name:'P250 | Азимов',     type:'weapon', weapon:'p250',    color:'#ff8800', rarity:'rare'},
   {id:'ch_spec',   name:'Персонаж | Спецназ',  type:'char',   color:'#2c3e50',  rarity:'rare'},
-  // эпические
+  {id:'usp_guard', name:'USP | Гвардия',       type:'weapon', weapon:'usp',     color:'#3b5b8a', rarity:'rare'},
+  {id:'m4_brick',  name:'M4A4 | Кирпич',       type:'weapon', weapon:'m4a4',    color:'#a5614d', rarity:'rare'},
+  {id:'gl_dust',   name:'Galil | Пыль',        type:'weapon', weapon:'galil',   color:'#bfa072', rarity:'rare'},
+  // Эпические
   {id:'awp_neon',  name:'AWP | Неон',          type:'weapon', weapon:'awp',     color:'#39ff14', rarity:'epic'},
   {id:'ak_azure',  name:'AK-47 | Лазурь',      type:'weapon', weapon:'ak',      color:'#1e90ff', rarity:'epic'},
   {id:'ch_neon',   name:'Персонаж | Неон',     type:'char',   color:'#39ff14',  rarity:'epic'},
@@ -228,41 +263,34 @@ const SKINS = [
   {id:'ch_phoenix',name:'Персонаж | Феникс',   type:'char',   color:'#ff6600',  rarity:'epic'},
   {id:'ch_anarch', name:'Персонаж | Анархист', type:'char',   color:'#c0392b',  rarity:'epic'},
   {id:'ch_toxic',  name:'Персонаж | Токсик',   type:'char',   color:'#7fff00',  rarity:'epic'},
-  // легендарные
+  {id:'m4_asiimov',name:'M4A4 | Азимов',       type:'weapon', weapon:'m4a4',    color:'#ff7700', rarity:'epic'},
+  {id:'gl_neon',   name:'Galil | Неон',        type:'weapon', weapon:'galil',   color:'#00ff99', rarity:'epic'},
+  {id:'usp_orion', name:'USP | Орион',         type:'weapon', weapon:'usp',     color:'#5a4a3a', rarity:'epic'},
+  // Легендарные
   {id:'awp_dragon',name:'AWP | Дракон',        type:'weapon', weapon:'awp',     color:'#ff2d2d', rarity:'legendary'},
   {id:'ch_gold',   name:'Персонаж | Золото',   type:'char',   color:'#ffd700',  rarity:'legendary'},
   {id:'awp_asiimov',name:'AWP | Азимов',       type:'weapon', weapon:'awp',     color:'#ff8c00', rarity:'legendary'},
   {id:'awp_hyper', name:'AWP | Гипербист',     type:'weapon', weapon:'awp',     color:'#d920ff', rarity:'legendary'},
   {id:'ch_ghost',  name:'Персонаж | Призрак',  type:'char',   color:'#e0e0e0',  rarity:'legendary'},
   {id:'ak_hyper',  name:'AK-47 | Гипербист',   type:'weapon', weapon:'ak',      color:'#ff00ff', rarity:'legendary'},
+  {id:'m4_hyper',  name:'M4A4 | Гипербист',    type:'weapon', weapon:'m4a4',    color:'#ff00aa', rarity:'legendary'},
+  // Хроматические
+  {id:'awp_dragonlore',name:'AWP | Dragon Lore',   type:'weapon', weapon:'awp', color:'#c9a227', rarity:'chroma'},
+  {id:'ak_case_hard',  name:'AK-47 | Case Hardened',type:'weapon',weapon:'ak',  color:'#4169e1', rarity:'chroma'},
+  {id:'dg_vertugun',   name:'Deagle | Вертугун',   type:'weapon', weapon:'deagle', color:'#8e44ad', rarity:'chroma'},
+  {id:'m4_howl',       name:'M4A4 | Howl',         type:'weapon', weapon:'m4a4', color:'#d35400', rarity:'chroma'},
 ];
 
-/* ---------- Кейсы ---------- */
 const CASES = {
-  um8a: {
-    name:'УМ 8А КЛАССА', icon:'📕', cls:'basic', price:25,
-    sub:'Почти всё обычное',
-    odds:{common:0.88, rare:0.11, epic:0.01, legendary:0}
-  },
-  sand: {
-    name:'SAND CASE', icon:'📦', cls:'sand', price:50,
-    sub:'Базовые скины',
-    odds:{common:0.60, rare:0.25, epic:0.12, legendary:0.03}
-  },
-  premium: {
-    name:'PREMIUM CASE', icon:'💎', cls:'premium', price:200,
-    sub:'Больше редких скинов',
-    odds:{common:0.15, rare:0.40, epic:0.32, legendary:0.13}
-  },
-  operation: {
-    name:'КЕЙС ОПЕРАЦИИ', icon:'🎖️', cls:'operation', price:400,
-    sub:'Эпик + легендарки (CS:GO)',
-    odds:{common:0, rare:0.20, epic:0.50, legendary:0.30}
-  }
+  um8a:     { name:'УМ 8А КЛАССА', icon:'📕', cls:'basic',     price:25,  sub:'Почти всё обычное', odds:{common:0.88, rare:0.11, epic:0.01, legendary:0, chroma:0} },
+  sand:     { name:'SAND CASE',    icon:'📦', cls:'sand',      price:50,  sub:'Базовые скины',     odds:{common:0.60, rare:0.25, epic:0.12, legendary:0.03, chroma:0} },
+  premium:  { name:'PREMIUM CASE', icon:'💎', cls:'premium',   price:200, sub:'Больше редких',     odds:{common:0.15, rare:0.40, epic:0.32, legendary:0.13, chroma:0} },
+  operation:{ name:'КЕЙС ОПЕРАЦИИ',icon:'🎖️', cls:'operation', price:400, sub:'Эпик + хрома',      odds:{common:0, rare:0.20, epic:0.45, legendary:0.25, chroma:0.10} }
 };
 
-const RARITY_RU  = {common:'ОБЫЧНЫЙ',rare:'РЕДКИЙ',epic:'ЭПИЧЕСКИЙ',legendary:'ЛЕГЕНДАРНЫЙ'};
-const RARITY_CLS = {common:'rc',rare:'rr',epic:'re',legendary:'rl'};
+const SELL_PRICE = {common:15, rare:35, epic:80, legendary:200, chroma:800};
+const RARITY_RU  = {common:'ОБЫЧНЫЙ',rare:'РЕДКИЙ',epic:'ЭПИЧЕСКИЙ',legendary:'ЛЕГЕНДАРНЫЙ',chroma:'ХРОМАТИЧЕСКИЙ'};
+const RARITY_CLS = {common:'rc',rare:'rr',epic:'re',legendary:'rl',chroma:'rch'};
 
 /* ---------- Хранилище ---------- */
 let coins = +(localStorage.getItem('kozel_coins') || 500);
@@ -280,18 +308,123 @@ function addItem(skin){
 }
 const skinById = id => SKINS.find(s => s.id === id);
 
-/* ---------- Сеть ---------- */
+/* ============================================================
+   АУДИО
+   ============================================================ */
+let audioCtx = null;
+function initAudio(){
+  if (audioCtx) return;
+  try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){}
+}
+document.addEventListener('click', initAudio);
+document.addEventListener('keydown', initAudio, { once:true });
+
+function noiseBurst(dur, freq, vol, pan, type, q){
+  if (!audioCtx || vol <= 0.005) return;
+  type = type || 'lowpass';
+  q = q || 1;
+  const sr = audioCtx.sampleRate;
+  const len = Math.max(1, Math.floor(sr * dur));
+  const buf = audioCtx.createBuffer(1, len, sr);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < len; i++){
+    const env = Math.pow(1 - i/len, 1.6);
+    d[i] = (Math.random()*2-1) * env;
+  }
+  const src = audioCtx.createBufferSource();
+  src.buffer = buf;
+  const flt = audioCtx.createBiquadFilter();
+  flt.type = type;
+  flt.frequency.value = freq;
+  flt.Q.value = q;
+  const g = audioCtx.createGain();
+  g.gain.value = Math.min(1, vol);
+  const p = audioCtx.createStereoPanner();
+  p.pan.value = Math.max(-1, Math.min(1, pan));
+  src.connect(flt); flt.connect(g); g.connect(p); p.connect(audioCtx.destination);
+  src.start();
+}
+function tone(freq, dur, vol, pan, type, freqEnd){
+  if (!audioCtx || vol <= 0.005) return;
+  type = type || 'sine';
+  const o = audioCtx.createOscillator();
+  o.type = type;
+  const t0 = audioCtx.currentTime;
+  o.frequency.setValueAtTime(freq, t0);
+  if (freqEnd) o.frequency.exponentialRampToValueAtTime(Math.max(20, freqEnd), t0 + dur);
+  const g = audioCtx.createGain();
+  g.gain.setValueAtTime(vol, t0);
+  g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+  const p = audioCtx.createStereoPanner();
+  p.pan.value = Math.max(-1, Math.min(1, pan));
+  o.connect(g); g.connect(p); p.connect(audioCtx.destination);
+  o.start(t0); o.stop(t0 + dur);
+}
+function sfxShot(w, pan, vol){
+  if (vol <= 0.02) return;
+  if (w === 'awp'){
+    noiseBurst(0.32, 320, vol*0.95, pan, 'lowpass');
+    tone(90, 0.14, vol*0.6, pan, 'square', 40);
+  } else if (w === 'shotgun'){
+    noiseBurst(0.24, 700, vol*0.85, pan, 'lowpass');
+    tone(120, 0.1, vol*0.4, pan, 'square', 50);
+  } else if (w === 'ak' || w === 'm4a4' || w === 'galil'){
+    noiseBurst(0.14, 2200, vol*0.75, pan, 'bandpass', 1.2);
+    tone(140, 0.06, vol*0.3, pan, 'square', 60);
+  } else if (w === 'deagle'){
+    noiseBurst(0.22, 1100, vol*0.85, pan, 'lowpass');
+    tone(110, 0.09, vol*0.5, pan, 'square', 50);
+  } else if (w === 'knife'){
+    noiseBurst(0.08, 5000, vol*0.5, pan, 'highpass');
+  } else if (w === 'usp' || w === 'p250'){
+    noiseBurst(0.12, 2400, vol*0.65, pan, 'bandpass', 1.5);
+  } else {
+    noiseBurst(0.11, 1900, vol*0.6, pan, 'bandpass', 1.3);
+  }
+}
+function sfxStep(pan, vol){
+  noiseBurst(0.09, 380, vol*0.7, pan, 'lowpass', 1.6);
+  tone(70, 0.05, vol*0.25, pan, 'sine', 50);
+}
+function sfxHit(pan, vol){ noiseBurst(0.08, 3500, vol*0.7, pan, 'highpass'); }
+function sfxKill(pan, vol){ tone(880, 0.12, vol, pan, 'triangle', 440); tone(1320, 0.15, vol*0.6, pan, 'sine', 660); }
+function sfxRoundEnd(win){
+  if (win){ tone(660, 0.15, 0.5, 0, 'sine'); tone(990, 0.18, 0.5, 0, 'sine'); tone(1320, 0.25, 0.5, 0, 'sine'); }
+  else { tone(440, 0.2, 0.5, 0, 'sine'); tone(330, 0.25, 0.5, 0, 'sine'); tone(220, 0.3, 0.5, 0, 'sine'); }
+}
+function panFromAngle(rel){ return Math.sin(rel); }
+
+/* ============================================================
+   СОСТОЯНИЕ И СЕТЬ
+   ============================================================ */
 let ws = null, myId = null, myTeam = null, lobbyCode = null;
 let gameState = null, MAP = null, MW = 40, MH = 30, TILE = 48;
 const pMap = new Map();
-let effects = [];
+const effects = [];
 const keys = {};
-let mouseX = 0, mouseY = 0, mouseDown = false;
+let mouseDown = false, rightDown = false;
 let lastSend = 0, lastAutoOpenRound = -1, buyMenuOpen = false;
+let pointerLocked = false;
+
+/* FPS-переменные */
+let myX = 0, myY = 0, myYaw = 0, myZ = 0, myVz = 0, myCrouch = false;
+let myInit = false;
+let stepAccum = 0;
+let myHealthLast = 100, myAliveLast = false;
+let lastRoundEndCheck = 0;
+let scopeActive = false;
+
+/* Отслеживание шагов других игроков */
+const stepTracker = new Map();
 
 const show = id => {
   ['screen-menu','screen-lobby','screen-game','screen-shop','screen-inv','screen-case']
     .forEach(s => $(s).classList.toggle('hidden', s !== id));
+  if (id === 'screen-game'){
+    $('lockHint').classList.remove('hidden');
+  } else {
+    if (document.pointerLockElement === cv) document.exitPointerLock();
+  }
 };
 function updateCoinUI(){
   $('coinCount').textContent = coins;
@@ -311,7 +444,7 @@ function handleMsg(m){
   switch(m.t){
     case 'init':
       MAP = m.grid; MW = m.mw; MH = m.mh; TILE = m.tile;
-      myId = m.id; buildMapCanvas(); break;
+      myId = m.id; break;
     case 'joined':
       myId = m.id; lobbyCode = m.code;
       $('lobbyCode').textContent = m.code;
@@ -324,39 +457,80 @@ function handleMsg(m){
 
 function onState(s){
   gameState = s;
-  const meInState = s.players.find(p => p.id === myId);
-  if (meInState) myTeam = meInState.tm;
+  const me = s.players.find(p => p.id === myId);
+  if (me) myTeam = me.tm;
 
+  if (!myInit && me){
+    myX = me.x; myY = me.y; myYaw = me.a || 0;
+    myInit = true;
+  }
+
+  /* Обработка событий */
   for (const ev of (s.ev || [])){
-    if (ev.type === 'shot')
+    if (ev.type === 'shot'){
       effects.push({k:'shot', x:ev.x, y:ev.y, ang:ev.ang, len:ev.len, c:ev.color, t:performance.now()});
-    else if (ev.type === 'hit')
+      const isMine = ev.byId === myId;
+      if (isMine) sfxShot(ev.weapon, 0, 0.75);
+      else {
+        const dx = ev.x - myX, dy = ev.y - myY;
+        const dist = Math.hypot(dx, dy);
+        if (dist < 1500){
+          const vol = Math.max(0, 1 - dist/1500) * 0.95;
+          let rel = Math.atan2(dy, dx) - myYaw;
+          while (rel > Math.PI) rel -= 2*Math.PI;
+          while (rel < -Math.PI) rel += 2*Math.PI;
+          sfxShot(ev.weapon, panFromAngle(rel), vol);
+        }
+      }
+    }
+    else if (ev.type === 'hit'){
       effects.push({k:'hit', x:ev.x, y:ev.y, t:performance.now()});
+      const dx = ev.x - myX, dy = ev.y - myY;
+      const dist = Math.hypot(dx, dy);
+      if (dist < 1500){
+        const vol = Math.max(0, 1 - dist/1500);
+        let rel = Math.atan2(dy, dx) - myYaw;
+        while (rel > Math.PI) rel -= 2*Math.PI;
+        while (rel < -Math.PI) rel += 2*Math.PI;
+        sfxHit(panFromAngle(rel), vol);
+      }
+    }
     else if (ev.type === 'kill'){
       addKillFeed(ev);
-      if (ev.killerId === myId){ coins += 1; saveLS(); updateCoinUI(); }
+      if (ev.killerId === myId){ coins += 1; saveLS(); updateCoinUI(); sfxKill(0, 0.85); }
     }
     else if (ev.type === 'roundend'){
-      if (ev.winner === myTeam){ coins += 5; saveLS(); updateCoinUI(); }
+      if (ev.winner === myTeam){ coins += 5; saveLS(); updateCoinUI(); sfxRoundEnd(true); }
+      else sfxRoundEnd(false);
     }
   }
 
+  /* Обновление игроков */
   for (const p of s.players){
     let e = pMap.get(p.id);
-    if (!e){ e = {x:p.x, y:p.y, a:p.a}; pMap.set(p.id, e); }
+    if (!e){ e = {x:p.x, y:p.y, a:p.a, tx:p.x, ty:p.y, ta:p.a, px:p.x, py:p.y}; pMap.set(p.id, e); }
     e.tx = p.x; e.ty = p.y; e.ta = p.a; e.d = p;
+    e.oldX = e.x; e.oldY = e.y;
   }
   for (const id of [...pMap.keys()])
-    if (!s.players.some(p => p.id === id)) pMap.delete(id);
+    if (!s.players.some(p => p.id === id)){ pMap.delete(id); stepTracker.delete(id); }
 
+  /* HUD */
   $('scoreA').textContent = s.score.A;
   $('scoreB').textContent = s.score.B;
-  const me = s.players.find(p => p.id === myId);
   if (me){
     $('hudHp').textContent     = me.hp;
     $('hudAr').textContent     = me.ar;
     $('hudMoney').textContent  = me.money;
     $('hudWeapon').textContent = (WEAPONS[me.w] || WEAPONS.pistol).name.toUpperCase();
+    $('hudSlot').textContent   = me.cs || 2;
+    if (me.hp < myHealthLast - 0.1){
+      // я получил урон
+      tone(180, 0.15, 0.4, 0, 'sine', 90);
+    }
+    if (me.al && !myAliveLast) myAliveLast = true;
+    if (!me.al && myAliveLast){ sfxRoundEnd(false); myAliveLast = false; }
+    myHealthLast = me.hp;
   }
 
   const phaseTxt = {waiting:'ОЖИДАНИЕ', buy:'ЗАКУПКА ' + s.timer, live:'РАУНД ' + s.round + ' • ' + s.timer, end:'КОНЕЦ РАУНДА'}[s.phase] || '';
@@ -366,12 +540,12 @@ function onState(s){
     const win = s.winner === myTeam;
     $('centerMsg').textContent = win ? 'РАУНД ВЫИГРАН!' : (s.winner === 'draw' ? 'НИЧЬЯ' : 'РАУНД ПРОИГРАН');
     $('centerMsg').style.color = win ? '#7cff8a' : '#ff6b6b';
+  } else if (s.matchOver){
+    const win = (s.score[myTeam] >= 10);
+    $('centerMsg').textContent = win ? 'ПОБЕДА В МАТЧЕ!' : 'ПОРАЖЕНИЕ';
+    $('centerMsg').style.color = win ? '#7cff8a' : '#ff6b6b';
   } else {
     $('centerMsg').textContent = '';
-  }
-  if (s.matchOver){
-    $('centerMsg').textContent = (s.score[myTeam] >= 10) ? 'ПОБЕДА В МАТЧЕ!' : 'ПОРАЖЕНИЕ';
-    $('centerMsg').style.color = (s.score[myTeam] >= 10) ? '#7cff8a' : '#ff6b6b';
   }
 
   if (s.phase === 'waiting'){
@@ -400,7 +574,9 @@ function addKillFeed(ev){
 }
 const esc = s => String(s).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
 
-/* ---------- Меню ---------- */
+/* ============================================================
+   МЕНЮ
+   ============================================================ */
 function renderLobbyList(list){
   const el = $('lobbyList'); el.innerHTML = '';
   if (!list.length){ el.innerHTML = '<div class="hint">Нет активных лобби</div>'; return; }
@@ -415,17 +591,17 @@ function renderLobbyList(list){
 function renderLobbyScreen(s){
   const a = s.players.filter(p => p.tm === 'A');
   const b = s.players.filter(p => p.tm === 'B');
-  $('listA').innerHTML = a.map(p => `<div class="pl"><span>${esc(p.n)}</span><span>${p.k}/${p.d}</span></div>`).join('') || '<div class="hint">пусто</div>';
-  $('listB').innerHTML = b.map(p => `<div class="pl"><span>${esc(p.n)}</span><span>${p.k}/${p.d}</span></div>`).join('') || '<div class="hint">пусто</div>';
+  $('listA').innerHTML = a.map(p => `<div class="pl ${p.bot?'bot':''}"><span>${esc(p.n)}${p.bot?' 🤖':''}</span><span>${p.k}/${p.d}</span></div>`).join('') || '<div class="hint">пусто</div>';
+  $('listB').innerHTML = b.map(p => `<div class="pl ${p.bot?'bot':''}"><span>${esc(p.n)}${p.bot?' 🤖':''}</span><span>${p.k}/${p.d}</span></div>`).join('') || '<div class="hint">пусто</div>';
   $('teamBoxA').classList.toggle('sel', myTeam === 'A');
   $('teamBoxB').classList.toggle('sel', myTeam === 'B');
-  $('lobbyHint').textContent = (a.length >= 1 && b.length >= 1)
+  const realPlayers = s.players.filter(p => !p.bot).length;
+  $('lobbyHint').textContent = realPlayers >= 2
     ? 'Игра начнётся автоматически...'
-    : 'Нужно минимум 2 игрока (по одному в каждой команде)';
+    : '🤖 Против тебя играет бот. Позови друга — бот уйдёт!';
 }
 
 $('nickInput').value = localStorage.getItem('kozel_nick') || '';
-
 $('btnCreate').onclick = () => {
   const nick = $('nickInput').value.trim() || 'Игрок';
   localStorage.setItem('kozel_nick', nick);
@@ -443,15 +619,16 @@ $('btnLeave').onclick   = () => { if (ws) ws.close(); ws = null; location.reload
 $('btnTeamA').onclick   = () => { send({t:'team', team:'A'}); pushCosmetics(); };
 $('btnTeamB').onclick   = () => { send({t:'team', team:'B'}); pushCosmetics(); };
 
-/* ---------- Магазин ---------- */
+/* ============================================================
+   МАГАЗИН
+   ============================================================ */
 $('btnShop').onclick      = () => { updateCoinUI(); renderShop(); show('screen-shop'); };
 $('btnInventory').onclick = () => { renderInv();    show('screen-inv');  };
 $('btnShopBack').onclick  = () => show('screen-menu');
 $('btnInvBack').onclick   = () => show('screen-menu');
 
 function renderShop(){
-  const wrap = $('casesWrap');
-  wrap.innerHTML = '';
+  const wrap = $('casesWrap'); wrap.innerHTML = '';
   const order = ['um8a','sand','premium','operation'];
   for (const id of order){
     const c = CASES[id];
@@ -466,12 +643,10 @@ function renderShop(){
     wrap.appendChild(d);
   }
 }
-
 function renderInv(){
-  const g = $('invGrid');
-  g.innerHTML = '';
+  const g = $('invGrid'); g.innerHTML = '';
   if (!inv.length){
-    g.innerHTML = '<div class="hint" style="grid-column:1/-1">Инвентарь пуст. Открой кейс в магазине!</div>';
+    g.innerHTML = '<div class="hint" style="grid-column:1/-1">Инвентарь пуст. Открой кейс!</div>';
     return;
   }
   for (const entry of inv){
@@ -520,7 +695,9 @@ function pushCosmetics(){
   send({t:'cosmetic', charColor: ch ? ch.color : null, weaponColors});
 }
 
-/* ---------- Открытие кейса ---------- */
+/* ============================================================
+   КЕЙСЫ
+   ============================================================ */
 $('btnCaseOk').onclick = () => { $('screen-case').classList.add('hidden'); show('screen-shop'); };
 
 function rollItem(caseId){
@@ -533,12 +710,9 @@ function rollItem(caseId){
     if (r < acc){ rarity = rar; break; }
   }
   const pool = SKINS.filter(s => s.rarity === rarity);
-  if (!pool.length){ // fallback
-    return SKINS[Math.floor(Math.random() * SKINS.length)];
-  }
+  if (!pool.length) return SKINS[Math.floor(Math.random() * SKINS.length)];
   return pool[Math.floor(Math.random() * pool.length)];
 }
-
 function openCase(caseId){
   const cfg = CASES[caseId];
   if (!cfg) return;
@@ -547,8 +721,7 @@ function openCase(caseId){
 
   const item = rollItem(caseId);
   const N = 52, WIN = 46, ITEM_W = 130;
-  const reel = $('reel');
-  reel.innerHTML = '';
+  const reel = $('reel'); reel.innerHTML = '';
   for (let i = 0; i < N; i++){
     const it = (i === WIN) ? item : SKINS[Math.floor(Math.random() * SKINS.length)];
     const d = document.createElement('div');
@@ -580,7 +753,9 @@ function openCase(caseId){
   }, 5200);
 }
 
-/* ---------- Закупка ---------- */
+/* ============================================================
+   МЕНЮ ЗАКУПКИ
+   ============================================================ */
 function openBuyMenu(){
   if (!gameState) return;
   const me = gameState.players.find(p => p.id === myId);
@@ -588,29 +763,54 @@ function openBuyMenu(){
   buyMenuOpen = true;
   const bm = $('buyMenu');
   bm.classList.remove('hidden');
-  let html = '<h2>ЗАКУПКА</h2><div class="hint">Можно купить только 1 предмет за раунд</div><div class="buyGrid">';
-  for (const id of BUY_ORDER){
+  if (document.pointerLockElement === cv) document.exitPointerLock();
+
+  let html = '<h2>ЗАКУПКА</h2><div class="hint">Можно купить 1 оружие + броню</div>';
+
+  html += '<div class="buyCat">ОСНОВНОЕ (СЛОТ 1)</div><div class="buyRow">';
+  for (const id of BUY_PRIMARY){
     const w = WEAPONS[id];
     const can = !me.bought && me.money >= w.price;
-    html += `<div class="buyItem ${can ? '' : 'dis'}" data-w="${id}">
-      <div class="bn">${w.name}</div>
-      <div class="bp">${w.price} $</div>
-      <div class="bs">${w.desc}</div>
+    const sel = me.s1 === id;
+    html += `<div class="buyItem ${can || sel ? '' : 'dis'} ${sel ? 'sel' : ''}" data-w="${id}">
+      <div class="bn">${w.name}</div><div class="bp">${w.price} $</div><div class="hint" style="margin-top:4px">${w.desc}</div>
     </div>`;
   }
-  html += '</div><div class="hint">B или ESC — закрыть</div>';
+  html += '</div>';
+
+  html += '<div class="buyCat">ПИСТОЛЕТЫ (СЛОТ 2)</div><div class="buyRow">';
+  for (const id of BUY_SECONDARY){
+    const w = WEAPONS[id];
+    const can = !me.bought && me.money >= w.price;
+    const sel = me.s2 === id;
+    html += `<div class="buyItem ${can || sel ? '' : 'dis'} ${sel ? 'sel' : ''}" data-w="${id}">
+      <div class="bn">${w.name}</div><div class="bp">${w.price} $</div>
+    </div>`;
+  }
+  html += '</div>';
+
+  html += '<div class="buyCat">БРОНЯ</div><div class="buyRow">';
+  const armorCan = !me.boughtAr && me.money >= WEAPONS.armor.price;
+  const armorSel = me.boughtAr || me.ar >= 100;
+  html += `<div class="buyItem ${armorCan || armorSel ? '' : 'dis'} ${armorSel ? 'sel' : ''}" data-w="armor">
+    <div class="bn">Броня</div><div class="bp">${WEAPONS.armor.price} $</div>
+  </div>`;
+  html += '</div>';
+
+  html += '<div class="hint" style="margin-top:10px">Клик — купить • B / ESC — закрыть</div>';
   bm.innerHTML = html;
   bm.querySelectorAll('.buyItem').forEach(el => {
     el.onclick = () => {
       if (el.classList.contains('dis')) return;
       send({t:'buy', w: el.dataset.w});
-      closeBuyMenu();
+      setTimeout(() => { if (gameState) openBuyMenu(); }, 60);
     };
   });
 }
 function closeBuyMenu(){
   buyMenuOpen = false;
   $('buyMenu').classList.add('hidden');
+  if (!pointerLocked) $('lockHint').classList.remove('hidden');
 }
 window.addEventListener('keydown', e => {
   keys[e.key.toLowerCase()] = true;
@@ -618,15 +818,49 @@ window.addEventListener('keydown', e => {
     buyMenuOpen ? closeBuyMenu() : openBuyMenu();
   }
   if (e.key === 'Escape') closeBuyMenu();
+  if (e.key === ' ') e.preventDefault();
+  // Свап слотов
+  if (gameState && gameState.phase !== 'waiting'){
+    if (e.key === '1') send({t:'input', mx:0, my:0, a:myYaw, sh:0, sw:1});
+    if (e.key === '2') send({t:'input', mx:0, my:0, a:myYaw, sh:0, sw:2});
+    if (e.key === '3') send({t:'input', mx:0, my:0, a:myYaw, sh:0, sw:3});
+  }
 });
 window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
 
-/* ---------- Ввод ---------- */
-cv.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
-cv.addEventListener('mousedown', e => { if (e.button === 0) mouseDown = true; });
-window.addEventListener('mouseup', e => { if (e.button === 0) mouseDown = false; });
+/* ============================================================
+   УПРАВЛЕНИЕ МЫШЬЮ / POINTER LOCK
+   ============================================================ */
+cv.addEventListener('click', () => {
+  if (!gameState || $('screen-game').classList.contains('hidden')) return;
+  if (!buyMenuOpen && document.pointerLockElement !== cv){
+    cv.requestPointerLock();
+  }
+});
+$('lockHint').addEventListener('click', () => {
+  if (gameState && !buyMenuOpen) cv.requestPointerLock();
+});
+document.addEventListener('pointerlockchange', () => {
+  pointerLocked = (document.pointerLockElement === cv);
+  if (pointerLocked) $('lockHint').classList.add('hidden');
+  else if (gameState && !buyMenuOpen) $('lockHint').classList.remove('hidden');
+});
+document.addEventListener('mousemove', e => {
+  if (!pointerLocked) return;
+  myYaw += e.movementX * 0.0025;
+  while (myYaw > Math.PI) myYaw -= 2*Math.PI;
+  while (myYaw < -Math.PI) myYaw += 2*Math.PI;
+});
+cv.addEventListener('mousedown', e => {
+  if (e.button === 0) mouseDown = true;
+  if (e.button === 2) rightDown = true;
+});
+window.addEventListener('mouseup', e => {
+  if (e.button === 0) mouseDown = false;
+  if (e.button === 2) rightDown = false;
+});
 window.addEventListener('blur', () => {
-  mouseDown = false;
+  mouseDown = false; rightDown = false;
   for (const k in keys) keys[k] = false;
 });
 cv.addEventListener('contextmenu', e => e.preventDefault());
@@ -635,249 +869,508 @@ function resize(){ cv.width = window.innerWidth; cv.height = window.innerHeight;
 window.addEventListener('resize', resize);
 resize();
 
-/* ---------- Карта ---------- */
-let mapCanvas = null;
-function buildMapCanvas(){
-  mapCanvas = document.createElement('canvas');
-  mapCanvas.width  = MW * TILE;
-  mapCanvas.height = MH * TILE;
-  const g = mapCanvas.getContext('2d');
-  g.fillStyle = '#c9a86a';
-  g.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
-  for (let i = 0; i < 4200; i++){
-    const x = Math.random() * mapCanvas.width;
-    const y = Math.random() * mapCanvas.height;
-    g.fillStyle = Math.random() > 0.5 ? 'rgba(180,150,95,.35)' : 'rgba(225,205,160,.35)';
-    g.fillRect(x, y, 3, 3);
-  }
-  g.strokeStyle = 'rgba(140,115,70,.18)';
-  g.lineWidth = 1;
-  for (let x = 0; x <= MW; x++){ g.beginPath(); g.moveTo(x*TILE,0); g.lineTo(x*TILE,mapCanvas.height); g.stroke(); }
-  for (let y = 0; y <= MH; y++){ g.beginPath(); g.moveTo(0,y*TILE); g.lineTo(mapCanvas.width,y*TILE); g.stroke(); }
-  for (let ty = 0; ty < MH; ty++){
-    for (let tx = 0; tx < MW; tx++){
-      if (MAP[ty][tx] !== 1) continue;
-      const x = tx * TILE, y = ty * TILE;
-      g.fillStyle = '#8b4a3a';
-      g.fillRect(x, y, TILE, TILE);
-      g.strokeStyle = 'rgba(0,0,0,.28)';
-      g.lineWidth = 2;
-      const bh = TILE / 4;
-      for (let r = 0; r < 4; r++){
-        const by = y + r * bh;
-        g.beginPath(); g.moveTo(x, by); g.lineTo(x + TILE, by); g.stroke();
-        const off = (r % 2) * (TILE / 2);
-        g.beginPath(); g.moveTo(x + off, by); g.lineTo(x + off, by + bh); g.stroke();
-        g.beginPath(); g.moveTo(x + off + TILE/2, by); g.lineTo(x + off + TILE/2, by + bh); g.stroke();
-      }
-      g.fillStyle = 'rgba(255,255,255,.07)';
-      g.fillRect(x, y, TILE, 4);
-      g.fillStyle = 'rgba(0,0,0,.25)';
-      g.fillRect(x, y + TILE - 5, TILE, 5);
-    }
-  }
-  g.fillStyle = 'rgba(90,169,255,.10)';
-  g.fillRect(15*TILE, 24*TILE, 10*TILE, 5*TILE);
-  g.fillStyle = 'rgba(255,179,71,.10)';
-  g.fillRect(15*TILE, 1*TILE, 10*TILE, 5*TILE);
+/* ============================================================
+   РЕНДЕР — RAYCASTING
+   ============================================================ */
+function isWall(x,y){
+  const tx = Math.floor(x/TILE), ty = Math.floor(y/TILE);
+  if (tx<0||ty<0||tx>=MW||ty>=MH) return true;
+  return MAP[ty][tx] === 1;
 }
-
-/* ---------- Line of Sight ---------- */
 function hasLOS(x1, y1, x2, y2){
-  if (!MAP) return true;
   const dx = x2 - x1, dy = y2 - y1;
   const dist = Math.hypot(dx, dy);
   const steps = Math.ceil(dist / 16);
   for (let i = 1; i < steps; i++){
     const t = i / steps;
-    const px = x1 + dx * t;
-    const py = y1 + dy * t;
-    const tx = Math.floor(px / TILE), ty = Math.floor(py / TILE);
-    if (tx < 0 || ty < 0 || tx >= MW || ty >= MH) return false;
-    if (MAP[ty][tx] === 1) return false;
+    if (isWall(x1 + dx*t, y1 + dy*t)) return false;
   }
   return true;
 }
+function castRay(rayAng){
+  const dx = Math.cos(rayAng), dy = Math.sin(rayAng);
+  let dist = 0;
+  const step = 4;
+  while (dist < MAX_DIST){
+    const px = myX + dx*dist, py = myY + dy*dist;
+    if (isWall(px, py)) return dist;
+    dist += step;
+  }
+  return MAX_DIST;
+}
+function drawColumn(x, rayAng, dist){
+  const corrected = dist * Math.cos(rayAng - myYaw);
+  zBuffer[x] = corrected;
+  const wallH = Math.min(RENDER_H * 3, (TILE * 2 * RENDER_H) / (2 * corrected * Math.tan(FOV_BASE/2)));
+  const y0 = (RENDER_H - wallH) / 2 + myZ * 0.6;
+  const y1 = y0 + wallH;
 
-/* ---------- Отправка ввода ---------- */
-function sendInput(){
-  if (!ws || !gameState) return;
-  const me = pMap.get(myId);
-  if (!me) return;
-  const cx = cv.width / 2, cy = cv.height / 2;
-  const wx = me.x + (mouseX - cx) / ZOOM;
-  const wy = me.y + (mouseY - cy) / ZOOM;
-  const ang = Math.atan2(wy - me.y, wx - me.x);
-  me.a = ang;
-  send({
-    t:'input',
-    u: (keys['w'] || keys['ц']) ? 1 : 0,
-    d: (keys['s'] || keys['ы']) ? 1 : 0,
-    l: (keys['a'] || keys['ф']) ? 1 : 0,
-    r: (keys['d'] || keys['в']) ? 1 : 0,
-    a: ang,
-    sh: mouseDown ? 1 : 0
-  });
+  // Текстура кирпича
+  const hitX = myX + Math.cos(rayAng) * dist;
+  const hitY = myY + Math.sin(rayAng) * dist;
+  const fx = (Math.floor(hitX / 24) % 2 === 0);
+  const fy = (Math.floor(hitY / 12) % 2 === 0);
+  const brick = fx ^ fy;
+
+  // Освещение от расстояния
+  const shade = Math.max(0.15, 1 - corrected / 1400);
+  const baseR = brick ? 190 : 150;
+  const baseG = brick ? 95 : 70;
+  const baseB = brick ? 75 : 55;
+
+  // Рамка кирпича
+  const isEdge = (Math.floor(hitX) % 24 < 2) || (Math.floor(hitY) % 12 < 2);
+
+  const r = Math.round(baseR * shade * (isEdge ? 0.7 : 1));
+  const g = Math.round(baseG * shade * (isEdge ? 0.7 : 1));
+  const b = Math.round(baseB * shade * (isEdge ? 0.7 : 1));
+
+  octx.fillStyle = `rgb(${r},${g},${b})`;
+  octx.fillRect(x, Math.max(0, y0), 1, Math.min(RENDER_H, y1) - Math.max(0, y0));
 }
 
-/* ---------- Рендер ---------- */
-let lastFrame = performance.now();
-function render(){
-  requestAnimationFrame(render);
-  const now = performance.now();
-  lastFrame = now;
+function renderFPS(){
+  /* Небо и пол */
+  const grad = octx.createLinearGradient(0, 0, 0, RENDER_H);
+  grad.addColorStop(0, '#1a1a2e');
+  grad.addColorStop(0.5, '#8a7550');
+  grad.addColorStop(0.5, '#a08a55');
+  grad.addColorStop(1, '#7a6038');
+  octx.fillStyle = grad;
+  octx.fillRect(0, 0, RENDER_W, RENDER_H);
 
-  for (const [, e] of pMap){
-    const k = 0.35;
-    e.x += (e.tx - e.x) * k;
-    e.y += (e.ty - e.y) * k;
-    e.a  = e.ta;
-  }
-  if (now - lastSend > 33){ lastSend = now; sendInput(); }
-
-  ctx.setTransform(1,0,0,1,0,0);
-  ctx.clearRect(0, 0, cv.width, cv.height);
-
-  if (!gameState || !mapCanvas){
-    ctx.fillStyle = '#0b0d10';
-    ctx.fillRect(0, 0, cv.width, cv.height);
-    return;
+  /* Стены */
+  const fov = scopeActive ? FOV_AWP : FOV_BASE;
+  const rayStep = fov / RENDER_W;
+  for (let x = 0; x < RENDER_W; x++){
+    const rayAng = myYaw - fov/2 + x * rayStep;
+    const dist = castRay(rayAng);
+    drawColumn(x, rayAng, dist);
   }
 
-  const me = pMap.get(myId);
-  const camX = me ? me.x : MW * TILE / 2;
-  const camY = me ? me.y : MH * TILE / 2;
-
-  ctx.setTransform(ZOOM, 0, 0, ZOOM, cv.width/2 - camX*ZOOM, cv.height/2 - camY*ZOOM);
-  ctx.drawImage(mapCanvas, 0, 0);
-
-  effects = effects.filter(e => now - e.t < (e.k === 'shot' ? 90 : 200));
-  for (const e of effects){
-    const age = now - e.t;
-    if (e.k === 'shot'){
-      const alpha = 1 - age / 90;
-      ctx.globalAlpha = alpha;
-      ctx.strokeStyle = e.c || '#ffe08a';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(e.x, e.y);
-      ctx.lineTo(e.x + Math.cos(e.ang) * e.len, e.y + Math.sin(e.ang) * e.len);
-      ctx.stroke();
-      ctx.fillStyle = '#fff2b0';
-      ctx.beginPath();
-      ctx.arc(e.x + Math.cos(e.ang) * 20, e.y + Math.sin(e.ang) * 20, 6 * alpha, 0, 7);
-      ctx.fill();
-      ctx.globalAlpha = 1;
-    } else {
-      const alpha = 1 - age / 200;
-      ctx.fillStyle = `rgba(255,80,80,${alpha})`;
-      ctx.beginPath();
-      ctx.arc(e.x, e.y, 10 * (1 + age / 200), 0, 7);
-      ctx.fill();
-    }
-  }
-
+  /* Спрайты игроков */
+  const visible = [];
   for (const [id, e] of pMap){
+    if (id === myId) continue;
     const p = e.d;
     if (!p || !p.al) continue;
-    const isMe = id === myId;
-    if (!isMe && me && !hasLOS(me.x, me.y, e.x, e.y)) continue;
+    if (!hasLOS(myX, myY, e.x, e.y)) continue;
+    const dx = e.x - myX, dy = e.y - myY;
+    const dist = Math.hypot(dx, dy);
+    let rel = Math.atan2(dy, dx) - myYaw;
+    while (rel > Math.PI) rel -= 2*Math.PI;
+    while (rel < -Math.PI) rel += 2*Math.PI;
+    if (Math.abs(rel) > fov/2 + 0.15) continue;
+    visible.push({id, e, p, dist, rel});
+  }
+  visible.sort((a,b) => b.dist - a.dist);
 
+  for (const v of visible){
+    const {e, p, dist, rel} = v;
+    const proj = Math.tan(rel) / Math.tan(fov/2);
+    const screenX = RENDER_W/2 + proj * RENDER_W/2;
+
+    const sprH = (PLAYER_RADIUS * 2.2 * RENDER_H) / (2 * dist * Math.tan(fov/2));
+    const sprW = sprH * 0.62;
+    const y0 = (RENDER_H - sprH) / 2 + (myZ - (p.z || 0)) * 0.5;
+    const x0 = screenX - sprW / 2;
+
+    // Z-буфер — проверяем по центру спрайта
+    const colCenter = Math.max(0, Math.min(RENDER_W - 1, Math.floor(screenX)));
+    if (zBuffer[colCenter] < dist * 0.95) continue;
+
+    // Тень
+    octx.fillStyle = 'rgba(0,0,0,.35)';
+    octx.fillRect(x0 - 2, y0 + sprH * 0.85, sprW + 4, sprH * 0.15);
+
+    // Тело
     const teamColor = p.tm === 'A' ? '#5aa9ff' : '#ffb347';
     const bodyColor = p.c || teamColor;
 
-    ctx.fillStyle = 'rgba(0,0,0,.35)';
-    ctx.beginPath(); ctx.ellipse(e.x + 3, e.y + 4, 15, 15, 0, 0, 7); ctx.fill();
+    // Полоска подсветки за телом (для бота)
+    if (p.bot){
+      octx.fillStyle = 'rgba(180,130,255,.25)';
+      octx.fillRect(x0 - 3, y0 - 3, sprW + 6, sprH + 6);
+    }
 
-    ctx.beginPath();
-    ctx.arc(e.x, e.y, 14, 0, 7);
-    ctx.fillStyle = bodyColor;
-    ctx.fill();
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = teamColor;
-    ctx.stroke();
+    // Туловище
+    octx.fillStyle = bodyColor;
+    octx.fillRect(x0 + sprW * 0.15, y0 + sprH * 0.32, sprW * 0.7, sprH * 0.55);
+    // Голова
+    octx.fillStyle = bodyColor;
+    octx.beginPath();
+    octx.arc(screenX, y0 + sprH * 0.18, sprW * 0.22, 0, Math.PI * 2);
+    octx.fill();
+    // Обводка команды
+    octx.strokeStyle = teamColor;
+    octx.lineWidth = 1;
+    octx.strokeRect(x0 + sprW * 0.15, y0 + sprH * 0.32, sprW * 0.7, sprH * 0.55);
 
-    const wcolor = p.wc || '#dddddd';
-    ctx.strokeStyle = wcolor;
-    ctx.lineWidth = 5;
-    ctx.lineCap = 'round';
-    if (p.wc){ ctx.shadowColor = p.wc; ctx.shadowBlur = 8; }
-    ctx.beginPath();
-    ctx.moveTo(e.x + Math.cos(e.a) * 8,  e.y + Math.sin(e.a) * 8);
-    ctx.lineTo(e.x + Math.cos(e.a) * 26, e.y + Math.sin(e.a) * 26);
-    ctx.stroke();
-    ctx.shadowBlur = 0;
+    // Оружие (простая полоска)
+    const wcol = p.wc || '#cccccc';
+    octx.fillStyle = wcol;
+    octx.fillRect(screenX + sprW * 0.15, y0 + sprH * 0.45, sprW * 0.5, 3);
 
-    ctx.font = 'bold 12px Trebuchet MS';
-    ctx.textAlign = 'center';
-    ctx.fillStyle = isMe ? '#ffffff' : 'rgba(255,255,255,.85)';
-    ctx.fillText(p.n, e.x, e.y - 24);
+    // Ник
+    if (sprH > 20){
+      octx.font = 'bold 10px monospace';
+      octx.textAlign = 'center';
+      octx.fillStyle = 'rgba(255,255,255,.9)';
+      octx.fillText(p.n + (p.bot ? ' 🤖' : ''), screenX, y0 - 4);
+    }
 
-    const hpw = 30;
-    ctx.fillStyle = 'rgba(0,0,0,.6)';
-    ctx.fillRect(e.x - hpw/2, e.y - 20, hpw, 4);
-    ctx.fillStyle = p.hp > 60 ? '#5aff8a' : p.hp > 30 ? '#ffd76a' : '#ff5a5a';
-    ctx.fillRect(e.x - hpw/2, e.y - 20, hpw * (p.hp / 100), 4);
+    // HP-бар
+    const hpw = Math.max(14, sprW * 0.6);
+    octx.fillStyle = 'rgba(0,0,0,.7)';
+    octx.fillRect(screenX - hpw/2, y0 - 1, hpw, 3);
+    octx.fillStyle = p.hp > 60 ? '#5aff8a' : p.hp > 30 ? '#ffd76a' : '#ff5a5a';
+    octx.fillRect(screenX - hpw/2, y0 - 1, hpw * (p.hp / 100), 3);
   }
 
-  ctx.setTransform(1,0,0,1,0,0);
+  /* Эффекты выстрелов в мире — маленькие искры */
+  for (const eff of effects){
+    if (eff.k !== 'shot') continue;
+    const dx = eff.x - myX, dy = eff.y - myY;
+    const dist = Math.hypot(dx, dy);
+    if (dist > 1200) continue;
+    let rel = Math.atan2(dy, dx) - myYaw;
+    while (rel > Math.PI) rel -= 2*Math.PI;
+    while (rel < -Math.PI) rel += 2*Math.PI;
+    if (Math.abs(rel) > fov/2) continue;
+    const screenX = RENDER_W/2 + Math.tan(rel) / Math.tan(fov/2) * RENDER_W/2;
+    const y0 = RENDER_H/2;
+    if (screenX < 0 || screenX >= RENDER_W) continue;
+    if (zBuffer[Math.floor(screenX)] < dist) continue;
+    const age = performance.now() - eff.t;
+    const alpha = Math.max(0, 1 - age/120);
+    octx.fillStyle = `rgba(255,240,150,${alpha})`;
+    octx.beginPath();
+    octx.arc(screenX, y0, 3 + alpha*3, 0, Math.PI*2);
+    octx.fill();
+  }
 
-  // Прицел
-  const cx = cv.width / 2, cy = cv.height / 2;
-  ctx.strokeStyle = 'rgba(62,224,208,.9)';
-  ctx.lineWidth = 2;
-  const g = 4, l = 9;
-  ctx.beginPath();
-  ctx.moveTo(cx - g - l, cy); ctx.lineTo(cx - g, cy);
-  ctx.moveTo(cx + g, cy);     ctx.lineTo(cx + g + l, cy);
-  ctx.moveTo(cx, cy - g - l); ctx.lineTo(cx, cy - g);
-  ctx.moveTo(cx, cy + g);     ctx.lineTo(cx, cy + g + l);
-  ctx.stroke();
-
-  // Мини-карта
-  const mmW = 170, mmH = 128;
-  const mmX = cv.width - mmW - 14, mmY = cv.height - mmH - 110;
-  ctx.fillStyle = 'rgba(10,12,15,.8)';
-  ctx.fillRect(mmX, mmY, mmW, mmH);
-  ctx.strokeStyle = '#2c3138';
-  ctx.lineWidth = 1.5;
-  ctx.strokeRect(mmX, mmY, mmW, mmH);
+  /* Мини-карта */
+  const mmW = 90, mmH = 68;
+  const mmX = RENDER_W - mmW - 6, mmY = RENDER_H - mmH - 6;
+  octx.fillStyle = 'rgba(10,12,15,.75)';
+  octx.fillRect(mmX, mmY, mmW, mmH);
+  octx.strokeStyle = '#2c3138';
+  octx.lineWidth = 1;
+  octx.strokeRect(mmX, mmY, mmW, mmH);
   const sx = mmW / (MW * TILE), sy = mmH / (MH * TILE);
-  ctx.fillStyle = 'rgba(139,74,58,.9)';
+  octx.fillStyle = 'rgba(139,74,58,.9)';
   for (let ty = 0; ty < MH; ty++)
     for (let tx = 0; tx < MW; tx++)
       if (MAP[ty][tx] === 1)
-        ctx.fillRect(mmX + tx*TILE*sx, mmY + ty*TILE*sy, Math.ceil(TILE*sx), Math.ceil(TILE*sy));
+        octx.fillRect(mmX + tx*TILE*sx, mmY + ty*TILE*sy, Math.ceil(TILE*sx), Math.ceil(TILE*sy));
   for (const [id, e] of pMap){
     const p = e.d; if (!p || !p.al) continue;
     const isMe = id === myId;
-    if (!isMe && me && !hasLOS(me.x, me.y, e.x, e.y)) continue;
-    ctx.fillStyle = isMe ? '#3ee0d0' : (p.tm === 'A' ? '#5aa9ff' : '#ffb347');
-    ctx.beginPath();
-    ctx.arc(mmX + e.x*sx, mmY + e.y*sy, isMe ? 3.5 : 2.8, 0, 7);
-    ctx.fill();
+    if (!isMe && !hasLOS(myX, myY, e.x, e.y)) continue;
+    octx.fillStyle = isMe ? '#3ee0d0' : (p.tm === 'A' ? '#5aa9ff' : '#ffb347');
+    octx.beginPath();
+    octx.arc(mmX + e.x*sx, mmY + e.y*sy, isMe ? 2.5 : 2, 0, 7);
+    octx.fill();
   }
-  ctx.font = 'bold 9px Trebuchet MS';
-  ctx.fillStyle = '#7d848d';
-  ctx.textAlign = 'left';
-  ctx.fillText('SANDBOOM', mmX + 6, mmY + 12);
+  // мой сектор обзора
+  octx.fillStyle = 'rgba(62,224,208,.25)';
+  octx.beginPath();
+  octx.moveTo(mmX + myX*sx, mmY + myY*sy);
+  octx.arc(mmX + myX*sx, mmY + myY*sy, 14, myYaw - FOV_BASE/2, myYaw + FOV_BASE/2);
+  octx.closePath();
+  octx.fill();
+}
 
-  if (me && me.d && !me.d.al){
+/* ============================================================
+   ОРУЖИЕ ОТ ПЕРВОГО ЛИЦА (viewmodel)
+   ============================================================ */
+function drawViewModel(){
+  const myW = (pMap.get(myId)?.d.w) || 'pistol';
+  const wc = (pMap.get(myId)?.d.wc) || '#3a3a3a';
+  const cx = RENDER_W / 2, cy = RENDER_H;
+
+  if (scopeActive) return;  // при прицеле AWP ничего не рисуем
+
+  octx.save();
+  // Лёгкое покачивание
+  const t = performance.now() / 1000;
+  const bob = (keys['w'] || keys['a'] || keys['s'] || keys['d']) ? Math.sin(t * 10) * 1.2 : 0;
+  octx.translate(0, bob);
+
+  if (myW === 'knife'){
+    octx.fillStyle = '#888';
+    octx.beginPath();
+    octx.moveTo(cx + 22, cy - 4);
+    octx.lineTo(cx + 55, cy - 22);
+    octx.lineTo(cx + 58, cy - 18);
+    octx.lineTo(cx + 25, cy + 2);
+    octx.fill();
+    octx.fillStyle = '#3a2a1a';
+    octx.fillRect(cx + 10, cy - 2, 18, 12);
+  } else if (myW === 'awp' || myW === 'ak' || myW === 'm4a4' || myW === 'galil'){
+    // Длинное оружие
+    octx.fillStyle = wc;
+    octx.fillRect(cx - 8, cy - 24, 80, 14);
+    octx.fillStyle = '#222';
+    octx.fillRect(cx + 60, cy - 22, 30, 8);
+    octx.fillStyle = wc;
+    octx.fillRect(cx + 6, cy - 30, 22, 8);
+    octx.fillStyle = '#111';
+    octx.fillRect(cx + 22, cy - 16, 26, 16);  // магазин
+  } else if (myW === 'shotgun'){
+    octx.fillStyle = wc;
+    octx.fillRect(cx - 10, cy - 22, 100, 12);
+    octx.fillStyle = '#3a2a1a';
+    octx.fillRect(cx + 40, cy - 20, 40, 10);
+    octx.fillStyle = '#111';
+    octx.fillRect(cx - 5, cy - 28, 40, 8);
+  } else {
+    // Пистолеты
+    octx.fillStyle = wc;
+    octx.fillRect(cx + 15, cy - 28, 42, 12);
+    octx.fillRect(cx + 20, cy - 16, 20, 18);
+  }
+  octx.restore();
+}
+
+/* ============================================================
+   ЭКРАННЫЕ ОВЕРЛЕИ
+   ============================================================ */
+function drawScopeOverlay(){
+  if (!scopeActive) return;
+  ctx.save();
+  ctx.fillStyle = 'rgba(0,0,0,.98)';
+  const r = Math.min(cv.width, cv.height) * 0.38;
+  ctx.beginPath();
+  ctx.rect(0, 0, cv.width, cv.height);
+  ctx.arc(cv.width/2, cv.height/2, r, 0, Math.PI*2, true);
+  ctx.fill();
+
+  // Перекрестие
+  ctx.strokeStyle = 'rgba(0,0,0,.8)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(cv.width/2 - r, cv.height/2); ctx.lineTo(cv.width/2 + r, cv.height/2);
+  ctx.moveTo(cv.width/2, cv.height/2 - r); ctx.lineTo(cv.width/2, cv.height/2 + r);
+  ctx.stroke();
+
+  // Прицельные метки
+  ctx.fillStyle = 'rgba(255,255,255,.8)';
+  for (let i = -5; i <= 5; i++){
+    if (i === 0) continue;
+    const y = cv.height/2 + i * (r / 6);
+    ctx.fillRect(cv.width/2 - 4, y - 0.5, 8, 1);
+  }
+  ctx.restore();
+}
+
+function drawCrosshair(){
+  if (scopeActive) return;
+  const w = (pMap.get(myId)?.d.w) || 'pistol';
+  const spread = (w === 'shotgun') ? 22 : (w === 'awp' ? 26 : (w === 'ak' || w === 'm4a4' || w === 'galil' ? 14 : 8));
+  const cx = cv.width/2, cy = cv.height/2;
+  ctx.strokeStyle = 'rgba(62,224,208,.9)';
+  ctx.lineWidth = 2;
+  const g = 3;
+  ctx.beginPath();
+  ctx.moveTo(cx - spread - g, cy); ctx.lineTo(cx - g, cy);
+  ctx.moveTo(cx + g, cy); ctx.lineTo(cx + spread + g, cy);
+  ctx.moveTo(cx, cy - spread - g); ctx.lineTo(cx, cy - g);
+  ctx.moveTo(cx, cy + g); ctx.lineTo(cx, cy + spread + g);
+  ctx.stroke();
+}
+
+/* ============================================================
+   ОТПРАВКА ВВОДА
+   ============================================================ */
+function sendInput(){
+  if (!ws || !gameState || !myInit) return;
+  let mx = 0, my = 0;
+  if (keys['w'] || keys['ц']) my -= 1;
+  if (keys['s'] || keys['ы']) my += 1;
+  if (keys['a'] || keys['ф']) mx -= 1;
+  if (keys['d'] || keys['в']) mx += 1;
+  // Векторы относительно поворота
+  const c = Math.cos(myYaw), s = Math.sin(myYaw);
+  const fx = mx * c - my * s;
+  const fy = mx * s + my * c;
+  send({
+    t:'input',
+    mx: fx, my: fy,
+    a: myYaw,
+    sh: mouseDown && !buyMenuOpen ? 1 : 0,
+    jump: keys[' '] ? 1 : 0,
+    cr: (keys['control'] || keys['c'] || keys['с']) ? 1 : 0,
+  });
+}
+
+/* ============================================================
+   ОБРАБОТКА ШАГОВ ДРУГИХ ИГРОКОВ
+   ============================================================ */
+function updateFootsteps(now){
+  for (const [id, e] of pMap){
+    if (id === myId) continue;
+    const p = e.d;
+    if (!p || !p.al) continue;
+    let tr = stepTracker.get(id);
+    if (!tr){ tr = {lastX: e.x, lastY: e.y, accum: 0}; stepTracker.set(id, tr); }
+    const d = Math.hypot(e.x - tr.lastX, e.y - tr.lastY);
+    tr.accum += d;
+    tr.lastX = e.x; tr.lastY = e.y;
+    // шаг каждые ~30 px движения
+    if (tr.accum > 30){
+      tr.accum = 0;
+      const dx = e.x - myX, dy = e.y - myY;
+      const dist = Math.hypot(dx, dy);
+      if (dist < 1200){
+        const vol = Math.max(0, 1 - dist/1200) * 0.55;
+        let rel = Math.atan2(dy, dx) - myYaw;
+        while (rel > Math.PI) rel -= 2*Math.PI;
+        while (rel < -Math.PI) rel += 2*Math.PI;
+        sfxStep(panFromAngle(rel), vol);
+      }
+    }
+  }
+  // Мои шаги
+  if (myInit && gameState && gameState.phase !== 'waiting'){
+    const d = Math.hypot(myX - lastMyPos.x, myY - lastMyPos.y);
+    stepAccum += d;
+    const interval = myCrouch ? 50 : 30;
+    if (stepAccum > interval){
+      stepAccum = 0;
+      sfxStep(0, 0.35);
+    }
+    lastMyPos.x = myX; lastMyPos.y = myY;
+  }
+}
+const lastMyPos = {x:0, y:0};
+
+/* ============================================================
+   ГЛАВНЫЙ ЦИКЛ
+   ============================================================ */
+let lastFrame = performance.now();
+function loop(){
+  requestAnimationFrame(loop);
+  const now = performance.now();
+  const dt = Math.min((now - lastFrame) / 1000, 0.05);
+  lastFrame = now;
+
+  /* Локальное предсказание движения */
+  if (gameState && MAP && myInit && gameState.phase !== 'waiting'){
+    const me = pMap.get(myId);
+    if (me && me.d && me.d.al){
+      myCrouch = !!(keys['control'] || keys['c'] || keys['с']);
+      // Прыжок
+      if (keys[' '] && myZ <= 0){ myVz = 280; myZ = 0.01; }
+      myVz -= 900 * dt;
+      myZ += myVz * dt;
+      if (myZ <= 0){ myZ = 0; myVz = 0; }
+
+      // Движение
+      let mx = 0, my = 0;
+      if (keys['w'] || keys['ц']) my -= 1;
+      if (keys['s'] || keys['ы']) my += 1;
+      if (keys['a'] || keys['ф']) mx -= 1;
+      if (keys['d'] || keys['в']) mx += 1;
+      const len = Math.hypot(mx, my);
+      if (len > 0){
+        mx /= len; my /= len;
+        const c = Math.cos(myYaw), s = Math.sin(myYaw);
+        const fx = mx * c - my * s;
+        const fy = mx * s + my * c;
+        const spd = (myCrouch ? 110 : 220) * dt;
+        const r = myCrouch ? 10 : 14;
+        const nx = myX + fx * spd;
+        const ny = myY + fy * spd;
+        if (!isWall(nx + r, myY) && !isWall(nx - r, myY) && !isWall(nx, myY + r) && !isWall(nx, myY - r)) myX = nx;
+        if (!isWall(myX + r, ny) && !isWall(myX - r, ny) && !isWall(myX, ny + r) && !isWall(myX, ny - r)) myY = ny;
+      }
+      // Синхронизация с сервером
+      if (Math.abs(myX - me.d.x) > 40) myX = me.d.x;
+      if (Math.abs(myY - me.d.y) > 40) myY = me.d.y;
+    }
+  }
+
+  /* Интерполяция чужих игроков */
+  for (const [id, e] of pMap){
+    if (id === myId) continue;
+    e.x += (e.tx - e.x) * 0.35;
+    e.y += (e.ty - e.y) * 0.35;
+    e.a = e.ta;
+  }
+
+  /* Отправка ввода 30 Гц */
+  if (now - lastSend > 33){ lastSend = now; sendInput(); }
+
+  /* Шаги */
+  updateFootsteps(now);
+
+  /* Прицел AWP */
+  const myW = (pMap.get(myId)?.d.w) || '';
+  const weapon = WEAPONS[myW];
+  scopeActive = rightDown && weapon && weapon.scope && pointerLocked && !buyMenuOpen;
+
+  /* Эффекты */
+  const now2 = performance.now();
+  for (let i = effects.length - 1; i >= 0; i--){
+    if (now2 - effects[i].t > 200) effects.splice(i, 1);
+  }
+
+  /* Рендер FPS */
+  if (MAP && myInit){
+    renderFPS();
+    // Масштабируем оффскрин на главный канвас
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0,0,cv.width,cv.height);
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0,0,cv.width,cv.height);
+
+    // Заполняем область с сохранением пропорций
+    const scaleX = cv.width / RENDER_W;
+    const scaleY = cv.height / RENDER_H;
+    const scale = Math.max(scaleX, scaleY);
+    const drawW = RENDER_W * scale;
+    const drawH = RENDER_H * scale;
+    const dx = (cv.width - drawW) / 2;
+    const dy = (cv.height - drawH) / 2;
+    ctx.drawImage(off, dx, dy, drawW, drawH);
+
+    // Viewmodel поверх
+    drawViewModel();
+
+    // Прицел / скоп
+    if (scopeActive) drawScopeOverlay();
+    else drawCrosshair();
+  } else {
+    ctx.fillStyle = '#0b0d10';
+    ctx.fillRect(0, 0, cv.width, cv.height);
+  }
+
+  /* Красная вспышка при смерти */
+  const me = pMap.get(myId);
+  if (me && me.d && !me.d.al && gameState && gameState.phase !== 'waiting'){
     ctx.fillStyle = 'rgba(120,0,0,.25)';
     ctx.fillRect(0, 0, cv.width, cv.height);
-    ctx.font = 'bold 34px Trebuchet MS';
+    ctx.font = 'bold 42px Trebuchet MS';
     ctx.textAlign = 'center';
     ctx.fillStyle = '#ff6b6b';
-    ctx.fillText('ВЫ МЕРТВЫ', cv.width / 2, cv.height / 2 - 40);
+    ctx.fillText('ВЫ МЕРТВЫ', cv.width/2, cv.height/2 - 60);
+    if (me.d.w && me.d.al === false){
+      ctx.font = 'bold 20px Trebuchet MS';
+      ctx.fillStyle = '#fff';
+      ctx.fillText('Смотри, что делает твоя команда...', cv.width/2, cv.height/2 - 20);
+    }
   }
 }
 
-/* ---------- Старт ---------- */
+/* ============================================================
+   СТАРТ
+   ============================================================ */
 updateCoinUI();
 renderShop();
 renderInv();
 connect(() => send({t:'list'}));
-render();
+loop();
 </script>
 </body>
 </html>
