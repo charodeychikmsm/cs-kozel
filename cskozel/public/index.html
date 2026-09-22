@@ -13,22 +13,22 @@ canvas{position:absolute;inset:0;display:block;cursor:crosshair}
 #screen-menu{background:radial-gradient(circle at 50% 25%,#2e2418,#0b0d10 70%)}
 .logo{font-size:62px;font-weight:900;letter-spacing:8px;color:#ffb347;text-shadow:0 0 34px rgba(255,140,0,.45)}
 .logo span{color:#e04b2a}
-.sub{color:#a855f7;letter-spacing:3px;font-size:12px;margin-top:-8px;text-shadow:0 0 14px rgba(168,85,247,.6);font-weight:700}
+.sub{color:#a855f7;letter-spacing:3px;font-size:12px;margin-top:-8px;text-shadow:0 0 16px rgba(168,85,247,.7);font-weight:800}
 .panel{background:rgba(18,20,24,.94);border:1px solid #31363d;border-radius:12px;padding:18px;width:400px;display:flex;flex-direction:column;gap:10px;box-shadow:0 18px 60px rgba(0,0,0,.6)}
 input{background:#14171c;border:1px solid #3a3f47;color:#eee;padding:11px;border-radius:8px;outline:none;font-size:14px;width:100%}
-input:focus{border-color:#ffb347}
+input:focus{border-color:#3ee0d0}
 button{background:linear-gradient(#3ee0d0,#17b6ac);border:none;color:#06211f;font-weight:800;padding:12px;border-radius:8px;cursor:pointer;letter-spacing:1.5px;font-size:13px;transition:.15s;box-shadow:0 0 12px rgba(62,224,208,.25)}
 button:hover{filter:brightness(1.15);box-shadow:0 0 22px rgba(62,224,208,.55)}
 button:disabled{opacity:.4;cursor:not-allowed;filter:none}
-button.ghost{background:transparent;border:1px solid #4a5058;color:#cfd4da}
-button.ghost:hover{background:#22262c}
+button.ghost{background:transparent;border:1px solid #4a5058;color:#cfd4da;box-shadow:none}
+button.ghost:hover{background:#22262c;box-shadow:none}
 .row{display:flex;gap:8px}
 .row2{display:flex;gap:10px}
 .lobby-list{max-height:170px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
 .lobby-item{display:flex;justify-content:space-between;align-items:center;background:#191d22;border:1px solid #2b3037;border-radius:8px;padding:9px 12px;font-size:13px;cursor:pointer}
-.lobby-item:hover{border-color:#ffb347}
+.lobby-item:hover{border-color:#3ee0d0}
 .coins{position:absolute;top:22px;right:28px;font-size:20px;color:#ffd76a;font-weight:800;letter-spacing:1px}
-h2{letter-spacing:3px;font-size:22px;color:#ffb347;margin-bottom:4px;text-align:center}
+h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:center}
 .hint{font-size:12px;color:#7d848d;text-align:center}
 #screen-lobby{background:radial-gradient(circle at 50% 30%,#241d14,#0b0d10 70%)}
 .teams{display:flex;gap:20px;width:640px}
@@ -38,7 +38,7 @@ h2{letter-spacing:3px;font-size:22px;color:#ffb347;margin-bottom:4px;text-align:
 .teamBox.a.sel{border-color:#5aa9ff;box-shadow:0 0 22px rgba(90,169,255,.35)}
 .teamBox.b.sel{border-color:#ffb347;box-shadow:0 0 22px rgba(255,179,71,.35)}
 .pl{font-size:13px;padding:6px 8px;border-radius:6px;background:#191d22;margin-bottom:4px;display:flex;justify-content:space-between}
-.code{font-size:34px;letter-spacing:10px;color:#fff;font-weight:900;text-shadow:0 0 20px rgba(255,179,71,.5)}
+.code{font-size:34px;letter-spacing:10px;color:#fff;font-weight:900;text-shadow:0 0 20px rgba(62,224,208,.6)}
 #screen-game{pointer-events:none;justify-content:flex-start}
 #hudTop{position:absolute;top:14px;left:50%;transform:translateX(-50%);display:flex;gap:22px;align-items:center;background:rgba(10,12,15,.75);padding:8px 22px;border-radius:10px;border:1px solid #2c3138}
 .scoreA{color:#5aa9ff;font-size:24px;font-weight:900}
@@ -52,37 +52,54 @@ h2{letter-spacing:3px;font-size:22px;color:#ffb347;margin-bottom:4px;text-align:
 .kf{background:rgba(10,12,15,.85);border:1px solid #2c3138;border-radius:6px;padding:5px 10px;font-size:12px;animation:fade 5s forwards}
 @keyframes fade{0%{opacity:1}80%{opacity:1}100%{opacity:0}}
 #centerMsg{position:absolute;top:34%;left:50%;transform:translateX(-50%);font-size:40px;font-weight:900;letter-spacing:6px;text-shadow:0 0 30px rgba(0,0,0,.9);text-align:center;color:#fff}
-#buyHint{position:absolute;bottom:96px;left:50%;transform:translateX(-50%);font-size:13px;color:#ffd76a;letter-spacing:2px}
+#buyHint{position:absolute;bottom:96px;left:50%;transform:translateX(-50%);font-size:13px;color:#3ee0d0;letter-spacing:2px}
 #buyMenu{position:absolute;inset:0;background:rgba(6,8,10,.86);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;pointer-events:auto;z-index:20}
 .buyGrid{display:grid;grid-template-columns:repeat(3,220px);gap:12px}
 .buyItem{background:#161a1f;border:1px solid #333941;border-radius:10px;padding:14px;cursor:pointer;transition:.15s}
-.buyItem:hover{border-color:#ffb347;background:#1e242b}
+.buyItem:hover{border-color:#3ee0d0;background:#1e242b}
 .buyItem.dis{opacity:.35;cursor:not-allowed}
 .buyItem .bn{font-size:16px;font-weight:800;color:#fff}
 .buyItem .bp{font-size:14px;color:#ffd76a;margin-top:4px}
 .buyItem .bs{font-size:11px;color:#7d848d;margin-top:6px}
 #screen-shop,#screen-inv{background:radial-gradient(circle at 50% 30%,#241d14,#0b0d10 70%);z-index:30}
-.caseCard{background:linear-gradient(160deg,#2a2118,#14171c);border:1px solid #4a3a22;border-radius:14px;padding:22px;width:300px;text-align:center;cursor:pointer;transition:.2s}
-.caseCard:hover{border-color:#ffb347;box-shadow:0 0 30px rgba(255,179,71,.25)}
-.caseIcon{font-size:58px;margin-bottom:8px}
-.caseName{font-size:19px;font-weight:800;color:#ffd76a;letter-spacing:2px}
-.casePrice{margin-top:10px;font-size:15px;color:#ffb347;font-weight:700}
+.casesWrap{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;padding:10px;max-width:1100px}
+.caseCard{background:linear-gradient(160deg,#2a2118,#14171c);border:1px solid #4a3a22;border-radius:14px;padding:18px 14px;width:210px;text-align:center;cursor:pointer;transition:.2s}
+.caseCard:hover{transform:translateY(-4px)}
+.caseCard .caseIcon{font-size:48px;margin-bottom:6px;filter:drop-shadow(0 0 10px rgba(255,255,255,.2))}
+.caseCard .caseName{font-size:14px;font-weight:800;color:#ffd76a;letter-spacing:1.5px;min-height:36px;display:flex;align-items:center;justify-content:center}
+.caseCard .casePrice{margin-top:10px;font-size:15px;color:#ffb347;font-weight:800}
+.caseCard .caseSub{font-size:10px;color:#7d848d;margin-top:6px;letter-spacing:1px}
+/* Редкости кейсов */
+.caseCard.basic{border-color:#6d6d6d}
+.caseCard.basic:hover{box-shadow:0 0 24px rgba(180,180,180,.35);border-color:#b0b0b0}
+.caseCard.sand{border-color:#8b6a3a}
+.caseCard.sand:hover{box-shadow:0 0 24px rgba(200,150,90,.4);border-color:#ffb347}
+.caseCard.premium{border-color:#a855f7;background:linear-gradient(160deg,#2a1d3a,#14171c)}
+.caseCard.premium .caseName{color:#d9a5ff}
+.caseCard.premium:hover{box-shadow:0 0 28px rgba(168,85,247,.5);border-color:#d9a5ff}
+.caseCard.operation{border-color:#d32ce6;background:linear-gradient(160deg,#2e0f2e,#14171c)}
+.caseCard.operation .caseName{color:#ff7bff}
+.caseCard.operation .casePrice{color:#ff7bff}
+.caseCard.operation:hover{box-shadow:0 0 34px rgba(211,44,230,.6);border-color:#ff7bff}
 .invGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;width:min(880px,92vw);max-height:58vh;overflow-y:auto;padding:4px}
-.invItem{background:#161a1f;border:1px solid #333941;border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:.15s;position:relative}
-.invItem:hover{border-color:#ffb347}
+.invItem{background:#161a1f;border:1px solid #333941;border-radius:10px;padding:12px;text-align:center;transition:.15s;position:relative}
+.invItem:hover{border-color:#3ee0d0}
 .invItem.eq{border-color:#5aff8a;box-shadow:0 0 16px rgba(90,255,138,.3)}
+.invItem .clickArea{cursor:pointer}
 .swatch{width:100%;height:44px;border-radius:8px;margin-bottom:8px;border:1px solid rgba(255,255,255,.15)}
 .iname{font-size:12px;color:#dfe4ea;line-height:1.3}
 .irar{font-size:10px;letter-spacing:2px;margin-top:5px;font-weight:800}
 .rc{color:#b0c3d9}.rr{color:#4b69ff}.re{color:#8847ff}.rl{color:#d32ce6}
 .r-common{border-color:#4a5560}.r-rare{border-color:#4b69ff}.r-epic{border-color:#8847ff}.r-legendary{border-color:#d32ce6;box-shadow:0 0 18px rgba(211,44,230,.4)}
+.sellBtn{position:absolute;top:6px;right:6px;background:rgba(255,215,80,.15);border:1px solid #ffd76a;color:#ffd76a;font-size:10px;padding:3px 8px;border-radius:5px;font-weight:800;letter-spacing:1px;cursor:pointer;z-index:2}
+.sellBtn:hover{background:rgba(255,215,80,.4);color:#fff}
 #screen-case{background:rgba(5,6,8,.96);z-index:40}
 .reelWrap{width:100vw;height:170px;overflow:hidden;position:relative;border-top:2px solid #333;border-bottom:2px solid #333;background:#0e1114}
 #reel{display:flex;height:100%;align-items:center}
 .reelItem{width:130px;flex:0 0 130px;height:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border-right:1px solid #1c2025}
 .reelItem .swatch{width:78px;height:52px;margin:0}
 .rname{font-size:10px;color:#aab;text-align:center;padding:0 4px;line-height:1.2}
-.pointer{position:absolute;left:50%;top:0;bottom:0;width:3px;background:#ffb347;transform:translateX(-50%);box-shadow:0 0 16px #ffb347;z-index:5}
+.pointer{position:absolute;left:50%;top:0;bottom:0;width:3px;background:#3ee0d0;transform:translateX(-50%);box-shadow:0 0 16px #3ee0d0;z-index:5}
 .resultBox{text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
 .resultBox .swatch{width:150px;height:80px}
 </style>
@@ -91,7 +108,7 @@ h2{letter-spacing:3px;font-size:22px;color:#ffb347;margin-bottom:4px;text-align:
 <canvas id="cv"></canvas>
 
 <div id="screen-menu" class="screen">
-  <div class="coins">+ <span id="coinCount">0</span></div>
+  <div class="coins">🪙 <span id="coinCount">0</span></div>
   <div class="logo">CS<span>:</span>KOZEL</div>
   <div class="sub">by charodeychikmsm &lt;3</div>
   <div class="panel">
@@ -148,18 +165,13 @@ h2{letter-spacing:3px;font-size:22px;color:#ffb347;margin-bottom:4px;text-align:
 <div id="screen-shop" class="screen hidden">
   <h2>МАГАЗИН</h2>
   <div class="coins" style="position:static;margin-bottom:6px">🪙 <span id="coinCountShop">0</span></div>
-  <div class="caseCard" id="caseCard">
-    <div class="caseIcon">📦</div>
-    <div class="caseName">SAND CASE</div>
-    <div class="hint" style="margin-top:6px">Скины на оружие и персонажа</div>
-    <div class="casePrice">50 🪙</div>
-  </div>
+  <div class="casesWrap" id="casesWrap"></div>
   <button class="ghost" id="btnShopBack">НАЗАД</button>
 </div>
 
 <div id="screen-inv" class="screen hidden">
   <h2>ИНВЕНТАРЬ</h2>
-  <div class="hint">Клик по предмету — надеть / снять</div>
+  <div class="hint">Клик по предмету — надеть/снять • 💰 — продать</div>
   <div class="invGrid" id="invGrid"></div>
   <button class="ghost" id="btnInvBack">НАЗАД</button>
 </div>
@@ -171,14 +183,13 @@ h2{letter-spacing:3px;font-size:22px;color:#ffb347;margin-bottom:4px;text-align:
 </div>
 
 <script>
-/* =====================================================
-   КЛИЕНТ CS:KOZEL
-   ===================================================== */
 const $ = id => document.getElementById(id);
-const cv = $('cv');
-const ctx = cv.getContext('2d');
+const cv = $('cv'), ctx = cv.getContext('2d');
 
-/* ---------- Оружие / скины ---------- */
+/* ---------- Настройки ---------- */
+const ZOOM = 1.25;
+const SELL_PRICE = {common:15, rare:35, epic:80, legendary:200};
+
 const WEAPONS = {
   pistol:  {name:'Пистолет',     price:0,    desc:'Бесплатный'},
   p250:    {name:'P250',         price:350,  desc:'Дёшево и сердито'},
@@ -190,26 +201,70 @@ const WEAPONS = {
 };
 const BUY_ORDER = ['ak','awp','shotgun','deagle','p250','armor'];
 
+/* ---------- Скины ---------- */
 const SKINS = [
+  // обычные
   {id:'ak_sand',   name:'AK-47 | Пыль',        type:'weapon', weapon:'ak',      color:'#c8b48a', rarity:'common'},
   {id:'p250_sand', name:'P250 | Песок',        type:'weapon', weapon:'p250',    color:'#d9c07a', rarity:'common'},
   {id:'dg_clay',   name:'Deagle | Глина',      type:'weapon', weapon:'deagle',  color:'#a0522d', rarity:'common'},
   {id:'ch_inf',    name:'Персонаж | Пехота',   type:'char',   color:'#7a8b5a',  rarity:'common'},
   {id:'ch_des',    name:'Персонаж | Пустыня',  type:'char',   color:'#c2a878',  rarity:'common'},
+  // редкие
   {id:'ak_brick',  name:'AK-47 | Кирпич',      type:'weapon', weapon:'ak',      color:'#b5533c', rarity:'rare'},
   {id:'sg_brick',  name:'Дробовик | Кирпич',   type:'weapon', weapon:'shotgun', color:'#8b4a3a', rarity:'rare'},
   {id:'awp_clay',  name:'AWP | Глина',         type:'weapon', weapon:'awp',     color:'#9c6b4f', rarity:'rare'},
   {id:'ch_brick',  name:'Персонаж | Кирпич',   type:'char',   color:'#8b4a3a',  rarity:'rare'},
+  {id:'ak_redline',name:'AK-47 | Красная линия',type:'weapon',weapon:'ak',     color:'#8b0000', rarity:'rare'},
+  {id:'dg_flame',  name:'Deagle | Пламя',      type:'weapon', weapon:'deagle',  color:'#ff6600', rarity:'rare'},
+  {id:'sg_asiimov',name:'Дробовик | Азимов',   type:'weapon', weapon:'shotgun', color:'#ff5500', rarity:'rare'},
+  {id:'p250_asiimov',name:'P250 | Азимов',     type:'weapon', weapon:'p250',    color:'#ff8800', rarity:'rare'},
+  {id:'ch_spec',   name:'Персонаж | Спецназ',  type:'char',   color:'#2c3e50',  rarity:'rare'},
+  // эпические
   {id:'awp_neon',  name:'AWP | Неон',          type:'weapon', weapon:'awp',     color:'#39ff14', rarity:'epic'},
   {id:'ak_azure',  name:'AK-47 | Лазурь',      type:'weapon', weapon:'ak',      color:'#1e90ff', rarity:'epic'},
   {id:'ch_neon',   name:'Персонаж | Неон',     type:'char',   color:'#39ff14',  rarity:'epic'},
+  {id:'ak_asiimov',name:'AK-47 | Азимов',      type:'weapon', weapon:'ak',      color:'#ff5500', rarity:'epic'},
+  {id:'dg_code_red',name:'Deagle | Кодовый Красный', type:'weapon', weapon:'deagle', color:'#cc0000', rarity:'epic'},
+  {id:'ch_phoenix',name:'Персонаж | Феникс',   type:'char',   color:'#ff6600',  rarity:'epic'},
+  {id:'ch_anarch', name:'Персонаж | Анархист', type:'char',   color:'#c0392b',  rarity:'epic'},
+  {id:'ch_toxic',  name:'Персонаж | Токсик',   type:'char',   color:'#7fff00',  rarity:'epic'},
+  // легендарные
   {id:'awp_dragon',name:'AWP | Дракон',        type:'weapon', weapon:'awp',     color:'#ff2d2d', rarity:'legendary'},
   {id:'ch_gold',   name:'Персонаж | Золото',   type:'char',   color:'#ffd700',  rarity:'legendary'},
+  {id:'awp_asiimov',name:'AWP | Азимов',       type:'weapon', weapon:'awp',     color:'#ff8c00', rarity:'legendary'},
+  {id:'awp_hyper', name:'AWP | Гипербист',     type:'weapon', weapon:'awp',     color:'#d920ff', rarity:'legendary'},
+  {id:'ch_ghost',  name:'Персонаж | Призрак',  type:'char',   color:'#e0e0e0',  rarity:'legendary'},
+  {id:'ak_hyper',  name:'AK-47 | Гипербист',   type:'weapon', weapon:'ak',      color:'#ff00ff', rarity:'legendary'},
 ];
+
+/* ---------- Кейсы ---------- */
+const CASES = {
+  um8a: {
+    name:'УМ 8А КЛАССА', icon:'📕', cls:'basic', price:25,
+    sub:'Почти всё обычное',
+    odds:{common:0.88, rare:0.11, epic:0.01, legendary:0}
+  },
+  sand: {
+    name:'SAND CASE', icon:'📦', cls:'sand', price:50,
+    sub:'Базовые скины',
+    odds:{common:0.60, rare:0.25, epic:0.12, legendary:0.03}
+  },
+  premium: {
+    name:'PREMIUM CASE', icon:'💎', cls:'premium', price:200,
+    sub:'Больше редких скинов',
+    odds:{common:0.15, rare:0.40, epic:0.32, legendary:0.13}
+  },
+  operation: {
+    name:'КЕЙС ОПЕРАЦИИ', icon:'🎖️', cls:'operation', price:400,
+    sub:'Эпик + легендарки (CS:GO)',
+    odds:{common:0, rare:0.20, epic:0.50, legendary:0.30}
+  }
+};
+
 const RARITY_RU  = {common:'ОБЫЧНЫЙ',rare:'РЕДКИЙ',epic:'ЭПИЧЕСКИЙ',legendary:'ЛЕГЕНДАРНЫЙ'};
 const RARITY_CLS = {common:'rc',rare:'rr',epic:'re',legendary:'rl'};
 
-/* ---------- Локальное хранилище ---------- */
+/* ---------- Хранилище ---------- */
 let coins = +(localStorage.getItem('kozel_coins') || 500);
 let inv   = JSON.parse(localStorage.getItem('kozel_inv')   || '[]');
 let equip = JSON.parse(localStorage.getItem('kozel_equip') || '{}');
@@ -242,7 +297,6 @@ function updateCoinUI(){
   $('coinCount').textContent = coins;
   $('coinCountShop').textContent = coins;
 }
-
 function connect(cb){
   if (ws && ws.readyState === 1){ cb(); return; }
   const url = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host;
@@ -257,23 +311,14 @@ function handleMsg(m){
   switch(m.t){
     case 'init':
       MAP = m.grid; MW = m.mw; MH = m.mh; TILE = m.tile;
-      myId = m.id;
-      buildMapCanvas();
-      break;
+      myId = m.id; buildMapCanvas(); break;
     case 'joined':
       myId = m.id; lobbyCode = m.code;
       $('lobbyCode').textContent = m.code;
-      show('screen-lobby');
-      break;
-    case 'lobbies':
-      renderLobbyList(m.list);
-      break;
-    case 'error':
-      alert(m.msg);
-      break;
-    case 'state':
-      onState(m);
-      break;
+      show('screen-lobby'); pushCosmetics(); break;
+    case 'lobbies': renderLobbyList(m.list); break;
+    case 'error': alert(m.msg); break;
+    case 'state': onState(m); break;
   }
 }
 
@@ -282,7 +327,6 @@ function onState(s){
   const meInState = s.players.find(p => p.id === myId);
   if (meInState) myTeam = meInState.tm;
 
-  // события
   for (const ev of (s.ev || [])){
     if (ev.type === 'shot')
       effects.push({k:'shot', x:ev.x, y:ev.y, ang:ev.ang, len:ev.len, c:ev.color, t:performance.now()});
@@ -297,7 +341,6 @@ function onState(s){
     }
   }
 
-  // игроки
   for (const p of s.players){
     let e = pMap.get(p.id);
     if (!e){ e = {x:p.x, y:p.y, a:p.a}; pMap.set(p.id, e); }
@@ -306,7 +349,6 @@ function onState(s){
   for (const id of [...pMap.keys()])
     if (!s.players.some(p => p.id === id)) pMap.delete(id);
 
-  // HUD
   $('scoreA').textContent = s.score.A;
   $('scoreB').textContent = s.score.B;
   const me = s.players.find(p => p.id === myId);
@@ -327,7 +369,6 @@ function onState(s){
   } else {
     $('centerMsg').textContent = '';
   }
-
   if (s.matchOver){
     $('centerMsg').textContent = (s.score[myTeam] >= 10) ? 'ПОБЕДА В МАТЧЕ!' : 'ПОРАЖЕНИЕ';
     $('centerMsg').style.color = (s.score[myTeam] >= 10) ? '#7cff8a' : '#ff6b6b';
@@ -361,13 +402,12 @@ const esc = s => String(s).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&
 
 /* ---------- Меню ---------- */
 function renderLobbyList(list){
-  const el = $('lobbyList');
-  el.innerHTML = '';
+  const el = $('lobbyList'); el.innerHTML = '';
   if (!list.length){ el.innerHTML = '<div class="hint">Нет активных лобби</div>'; return; }
   for (const l of list){
     const d = document.createElement('div');
     d.className = 'lobby-item';
-    d.innerHTML = `<span><b style="color:#ffd76a">${l.code}</b> — ${esc(l.name)}</span><span>${l.players}/${l.max} 👥 ${l.locked?'🔒':''}</span>`;
+    d.innerHTML = `<span><b style="color:#3ee0d0">${l.code}</b> — ${esc(l.name)}</span><span>${l.players}/${l.max} 👥 ${l.locked?'🔒':''}</span>`;
     d.onclick = () => { $('codeInput').value = l.code; };
     el.appendChild(d);
   }
@@ -400,14 +440,32 @@ $('btnJoin').onclick = () => {
 };
 $('btnRefresh').onclick = () => connect(() => send({t:'list'}));
 $('btnLeave').onclick   = () => { if (ws) ws.close(); ws = null; location.reload(); };
-$('btnTeamA').onclick   = () => send({t:'team', team:'A'});
-$('btnTeamB').onclick   = () => send({t:'team', team:'B'});
+$('btnTeamA').onclick   = () => { send({t:'team', team:'A'}); pushCosmetics(); };
+$('btnTeamB').onclick   = () => { send({t:'team', team:'B'}); pushCosmetics(); };
 
-/* ---------- Магазин / инвентарь / кейс ---------- */
-$('btnShop').onclick      = () => { updateCoinUI(); show('screen-shop'); };
+/* ---------- Магазин ---------- */
+$('btnShop').onclick      = () => { updateCoinUI(); renderShop(); show('screen-shop'); };
 $('btnInventory').onclick = () => { renderInv();    show('screen-inv');  };
 $('btnShopBack').onclick  = () => show('screen-menu');
 $('btnInvBack').onclick   = () => show('screen-menu');
+
+function renderShop(){
+  const wrap = $('casesWrap');
+  wrap.innerHTML = '';
+  const order = ['um8a','sand','premium','operation'];
+  for (const id of order){
+    const c = CASES[id];
+    const d = document.createElement('div');
+    d.className = 'caseCard ' + c.cls;
+    d.innerHTML = `
+      <div class="caseIcon">${c.icon}</div>
+      <div class="caseName">${c.name}</div>
+      <div class="caseSub">${c.sub}</div>
+      <div class="casePrice">${c.price} 🪙</div>`;
+    d.onclick = () => openCase(id);
+    wrap.appendChild(d);
+  }
+}
 
 function renderInv(){
   const g = $('invGrid');
@@ -421,17 +479,32 @@ function renderInv(){
     if (!s) continue;
     const slot = s.type === 'char' ? 'char' : s.weapon;
     const isEq = equip[slot] === s.id;
+    const sellPrice = SELL_PRICE[s.rarity];
     const d = document.createElement('div');
     d.className = 'invItem r-' + s.rarity + (isEq ? ' eq' : '');
     d.innerHTML = `
-      <div class="swatch" style="background:${s.color}"></div>
-      <div class="iname">${esc(s.name)}${entry.count > 1 ? ' ×' + entry.count : ''}</div>
-      <div class="irar ${RARITY_CLS[s.rarity]}">${RARITY_RU[s.rarity]}</div>
-      ${isEq ? '<div class="irar" style="color:#5aff8a">✔ НАДЕТО</div>' : ''}`;
-    d.onclick = () => {
+      <div class="sellBtn" title="Продать за ${sellPrice}">💰 ${sellPrice}</div>
+      <div class="clickArea">
+        <div class="swatch" style="background:${s.color}"></div>
+        <div class="iname">${esc(s.name)}${entry.count > 1 ? ' ×' + entry.count : ''}</div>
+        <div class="irar ${RARITY_CLS[s.rarity]}">${RARITY_RU[s.rarity]}</div>
+        ${isEq ? '<div class="irar" style="color:#5aff8a">✔ НАДЕТО</div>' : ''}
+      </div>`;
+    d.querySelector('.clickArea').onclick = () => {
       if (equip[slot] === s.id) delete equip[slot];
       else                      equip[slot] = s.id;
       saveLS(); renderInv(); pushCosmetics();
+    };
+    d.querySelector('.sellBtn').onclick = (ev) => {
+      ev.stopPropagation();
+      if (!confirm(`Продать "${s.name}" за ${sellPrice} 🪙?`)) return;
+      coins += sellPrice;
+      if (entry.count > 1) entry.count--;
+      else {
+        inv = inv.filter(i => i.id !== s.id);
+        if (equip[slot] === s.id) delete equip[slot];
+      }
+      saveLS(); updateCoinUI(); renderInv(); pushCosmetics();
     };
     g.appendChild(d);
   }
@@ -447,25 +520,32 @@ function pushCosmetics(){
   send({t:'cosmetic', charColor: ch ? ch.color : null, weaponColors});
 }
 
-$('caseCard').onclick  = openCase;
+/* ---------- Открытие кейса ---------- */
 $('btnCaseOk').onclick = () => { $('screen-case').classList.add('hidden'); show('screen-shop'); };
 
-function rollItem(){
+function rollItem(caseId){
+  const odds = CASES[caseId].odds;
   const r = Math.random();
-  let rarity;
-  if (r < 0.60) rarity = 'common';
-  else if (r < 0.85) rarity = 'rare';
-  else if (r < 0.97) rarity = 'epic';
-  else rarity = 'legendary';
+  let acc = 0, rarity = 'common';
+  for (const [rar, p] of Object.entries(odds)){
+    if (p <= 0) continue;
+    acc += p;
+    if (r < acc){ rarity = rar; break; }
+  }
   const pool = SKINS.filter(s => s.rarity === rarity);
+  if (!pool.length){ // fallback
+    return SKINS[Math.floor(Math.random() * SKINS.length)];
+  }
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
-function openCase(){
-  if (coins < 50) return alert('Недостаточно монет! Нужно 50 🪙');
-  coins -= 50; saveLS(); updateCoinUI();
+function openCase(caseId){
+  const cfg = CASES[caseId];
+  if (!cfg) return;
+  if (coins < cfg.price) return alert(`Недостаточно монет! Нужно ${cfg.price} 🪙`);
+  coins -= cfg.price; saveLS(); updateCoinUI();
 
-  const item = rollItem();
+  const item = rollItem(caseId);
   const N = 52, WIN = 46, ITEM_W = 130;
   const reel = $('reel');
   reel.innerHTML = '';
@@ -500,7 +580,7 @@ function openCase(){
   }, 5200);
 }
 
-/* ---------- Меню закупки ---------- */
+/* ---------- Закупка ---------- */
 function openBuyMenu(){
   if (!gameState) return;
   const me = gameState.players.find(p => p.id === myId);
@@ -555,14 +635,13 @@ function resize(){ cv.width = window.innerWidth; cv.height = window.innerHeight;
 window.addEventListener('resize', resize);
 resize();
 
-/* ---------- Пре-рендер карты ---------- */
+/* ---------- Карта ---------- */
 let mapCanvas = null;
 function buildMapCanvas(){
   mapCanvas = document.createElement('canvas');
   mapCanvas.width  = MW * TILE;
   mapCanvas.height = MH * TILE;
   const g = mapCanvas.getContext('2d');
-
   g.fillStyle = '#c9a86a';
   g.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
   for (let i = 0; i < 4200; i++){
@@ -575,7 +654,6 @@ function buildMapCanvas(){
   g.lineWidth = 1;
   for (let x = 0; x <= MW; x++){ g.beginPath(); g.moveTo(x*TILE,0); g.lineTo(x*TILE,mapCanvas.height); g.stroke(); }
   for (let y = 0; y <= MH; y++){ g.beginPath(); g.moveTo(0,y*TILE); g.lineTo(mapCanvas.width,y*TILE); g.stroke(); }
-
   for (let ty = 0; ty < MH; ty++){
     for (let tx = 0; tx < MW; tx++){
       if (MAP[ty][tx] !== 1) continue;
@@ -598,11 +676,27 @@ function buildMapCanvas(){
       g.fillRect(x, y + TILE - 5, TILE, 5);
     }
   }
-  // Спавн-зоны
   g.fillStyle = 'rgba(90,169,255,.10)';
   g.fillRect(15*TILE, 24*TILE, 10*TILE, 5*TILE);
   g.fillStyle = 'rgba(255,179,71,.10)';
   g.fillRect(15*TILE, 1*TILE, 10*TILE, 5*TILE);
+}
+
+/* ---------- Line of Sight ---------- */
+function hasLOS(x1, y1, x2, y2){
+  if (!MAP) return true;
+  const dx = x2 - x1, dy = y2 - y1;
+  const dist = Math.hypot(dx, dy);
+  const steps = Math.ceil(dist / 16);
+  for (let i = 1; i < steps; i++){
+    const t = i / steps;
+    const px = x1 + dx * t;
+    const py = y1 + dy * t;
+    const tx = Math.floor(px / TILE), ty = Math.floor(py / TILE);
+    if (tx < 0 || ty < 0 || tx >= MW || ty >= MH) return false;
+    if (MAP[ty][tx] === 1) return false;
+  }
+  return true;
 }
 
 /* ---------- Отправка ввода ---------- */
@@ -611,8 +705,8 @@ function sendInput(){
   const me = pMap.get(myId);
   if (!me) return;
   const cx = cv.width / 2, cy = cv.height / 2;
-  const wx = me.x + (mouseX - cx);
-  const wy = me.y + (mouseY - cy);
+  const wx = me.x + (mouseX - cx) / ZOOM;
+  const wy = me.y + (mouseY - cy) / ZOOM;
   const ang = Math.atan2(wy - me.y, wx - me.x);
   me.a = ang;
   send({
@@ -631,16 +725,14 @@ let lastFrame = performance.now();
 function render(){
   requestAnimationFrame(render);
   const now = performance.now();
-  const dt = Math.min((now - lastFrame) / 1000, 0.05);
   lastFrame = now;
 
-  for (const [id, e] of pMap){
-    const k = id === myId ? 0.35 : 0.35;
+  for (const [, e] of pMap){
+    const k = 0.35;
     e.x += (e.tx - e.x) * k;
     e.y += (e.ty - e.y) * k;
     e.a  = e.ta;
   }
-
   if (now - lastSend > 33){ lastSend = now; sendInput(); }
 
   ctx.setTransform(1,0,0,1,0,0);
@@ -656,9 +748,7 @@ function render(){
   const camX = me ? me.x : MW * TILE / 2;
   const camY = me ? me.y : MH * TILE / 2;
 
-  ctx.save();
-  ctx.translate(cv.width / 2 - camX, cv.height / 2 - camY);
-
+  ctx.setTransform(ZOOM, 0, 0, ZOOM, cv.width/2 - camX*ZOOM, cv.height/2 - camY*ZOOM);
   ctx.drawImage(mapCanvas, 0, 0);
 
   effects = effects.filter(e => now - e.t < (e.k === 'shot' ? 90 : 200));
@@ -691,6 +781,8 @@ function render(){
     const p = e.d;
     if (!p || !p.al) continue;
     const isMe = id === myId;
+    if (!isMe && me && !hasLOS(me.x, me.y, e.x, e.y)) continue;
+
     const teamColor = p.tm === 'A' ? '#5aa9ff' : '#ffb347';
     const bodyColor = p.c || teamColor;
 
@@ -709,10 +801,12 @@ function render(){
     ctx.strokeStyle = wcolor;
     ctx.lineWidth = 5;
     ctx.lineCap = 'round';
+    if (p.wc){ ctx.shadowColor = p.wc; ctx.shadowBlur = 8; }
     ctx.beginPath();
     ctx.moveTo(e.x + Math.cos(e.a) * 8,  e.y + Math.sin(e.a) * 8);
     ctx.lineTo(e.x + Math.cos(e.a) * 26, e.y + Math.sin(e.a) * 26);
     ctx.stroke();
+    ctx.shadowBlur = 0;
 
     ctx.font = 'bold 12px Trebuchet MS';
     ctx.textAlign = 'center';
@@ -726,11 +820,11 @@ function render(){
     ctx.fillRect(e.x - hpw/2, e.y - 20, hpw * (p.hp / 100), 4);
   }
 
-  ctx.restore();
+  ctx.setTransform(1,0,0,1,0,0);
 
   // Прицел
   const cx = cv.width / 2, cy = cv.height / 2;
-  ctx.strokeStyle = 'rgba(255,255,255,.8)';
+  ctx.strokeStyle = 'rgba(62,224,208,.9)';
   ctx.lineWidth = 2;
   const g = 4, l = 9;
   ctx.beginPath();
@@ -739,6 +833,34 @@ function render(){
   ctx.moveTo(cx, cy - g - l); ctx.lineTo(cx, cy - g);
   ctx.moveTo(cx, cy + g);     ctx.lineTo(cx, cy + g + l);
   ctx.stroke();
+
+  // Мини-карта
+  const mmW = 170, mmH = 128;
+  const mmX = cv.width - mmW - 14, mmY = cv.height - mmH - 110;
+  ctx.fillStyle = 'rgba(10,12,15,.8)';
+  ctx.fillRect(mmX, mmY, mmW, mmH);
+  ctx.strokeStyle = '#2c3138';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(mmX, mmY, mmW, mmH);
+  const sx = mmW / (MW * TILE), sy = mmH / (MH * TILE);
+  ctx.fillStyle = 'rgba(139,74,58,.9)';
+  for (let ty = 0; ty < MH; ty++)
+    for (let tx = 0; tx < MW; tx++)
+      if (MAP[ty][tx] === 1)
+        ctx.fillRect(mmX + tx*TILE*sx, mmY + ty*TILE*sy, Math.ceil(TILE*sx), Math.ceil(TILE*sy));
+  for (const [id, e] of pMap){
+    const p = e.d; if (!p || !p.al) continue;
+    const isMe = id === myId;
+    if (!isMe && me && !hasLOS(me.x, me.y, e.x, e.y)) continue;
+    ctx.fillStyle = isMe ? '#3ee0d0' : (p.tm === 'A' ? '#5aa9ff' : '#ffb347');
+    ctx.beginPath();
+    ctx.arc(mmX + e.x*sx, mmY + e.y*sy, isMe ? 3.5 : 2.8, 0, 7);
+    ctx.fill();
+  }
+  ctx.font = 'bold 9px Trebuchet MS';
+  ctx.fillStyle = '#7d848d';
+  ctx.textAlign = 'left';
+  ctx.fillText('SANDBOOM', mmX + 6, mmY + 12);
 
   if (me && me.d && !me.d.al){
     ctx.fillStyle = 'rgba(120,0,0,.25)';
@@ -752,6 +874,7 @@ function render(){
 
 /* ---------- Старт ---------- */
 updateCoinUI();
+renderShop();
 renderInv();
 connect(() => send({t:'list'}));
 render();
