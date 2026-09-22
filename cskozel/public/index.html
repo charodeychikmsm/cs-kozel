@@ -953,7 +953,7 @@ document.addEventListener('pointerlockchange', () => {
 });
 document.addEventListener('mousemove', e => {
   if (!pointerLocked) return;
-  myYaw -= e.movementX * 0.0025;
+  myYaw += e.movementX * 0.0025;
   while (myYaw > Math.PI) myYaw -= 2*Math.PI;
   while (myYaw < -Math.PI) myYaw += 2*Math.PI;
 });
@@ -995,8 +995,8 @@ function sendInput(){
   // forward = (cos(yaw), sin(yaw))
   // right   = (-sin(yaw), cos(yaw))
   const c = Math.cos(myYaw), s = Math.sin(myYaw);
-  const fx = moveF * c - moveR * s;
-  const fy = moveF * s + moveR * c;
+  const fx = moveF * c + moveR * s;
+  const fy = moveF * s - moveR * c;
 
   send({
     t:'input',
@@ -1075,8 +1075,8 @@ function localMove(dt){
   if (len > 0){
     moveF /= len; moveR /= len;
     const c = Math.cos(myYaw), s = Math.sin(myYaw);
-    const fx = moveF * c - moveR * s;
-    const fy = moveF * s + moveR * c;
+    const fx = moveF * c + moveR * s;
+    const fy = moveF * s - moveR * c;
     const spd = (myCrouch ? 110 : 220) * dt;
     const r = 13;
     const nx = myX + fx * spd;
