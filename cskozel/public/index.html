@@ -22,8 +22,6 @@ input:focus{border-color:#3ee0d0}
 input[type=range]{-webkit-appearance:none;width:100%;background:transparent;padding:0}
 input[type=range]::-webkit-slider-runnable-track{height:6px;background:#2b3037;border-radius:4px}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:#3ee0d0;border-radius:50%;margin-top:-6px;box-shadow:0 0 10px rgba(62,224,208,.6)}
-input[type=range]::-moz-range-track{height:6px;background:#2b3037;border-radius:4px}
-input[type=range]::-moz-range-thumb{width:18px;height:18px;background:#3ee0d0;border-radius:50%;border:none}
 button{background:linear-gradient(#3ee0d0,#17b6ac);border:none;color:#06211f;font-weight:800;padding:12px;border-radius:8px;cursor:pointer;letter-spacing:1.5px;font-size:13px;transition:.15s;box-shadow:0 0 12px rgba(62,224,208,.25)}
 button:hover{filter:brightness(1.15);box-shadow:0 0 22px rgba(62,224,208,.55)}
 button.ghost{background:transparent;border:1px solid #4a5058;color:#cfd4da;box-shadow:none}
@@ -55,6 +53,13 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .stat{display:flex;flex-direction:column;align-items:center;min-width:70px}
 .stat b{font-size:18px;color:#fff}
 .stat span{font-size:10px;color:#7d848d;letter-spacing:2px}
+#ammoBox{position:absolute;bottom:18px;right:24px;background:rgba(10,12,15,.82);padding:10px 22px;border-radius:10px;border:1px solid #2c3138;text-align:center;min-width:130px}
+#ammoBox .big{font-size:32px;font-weight:900;color:#fff}
+#ammoBox .big small{font-size:18px;color:#7d848d}
+#ammoBox .lbl{font-size:10px;color:#7d848d;letter-spacing:2px;margin-top:2px}
+#ammoBox.reload .big{color:#ff6b6b}
+.reloadBar{width:100%;height:4px;background:#2b3037;border-radius:2px;margin-top:6px;overflow:hidden}
+.reloadBar .fill{height:100%;background:#3ee0d0;width:0%;transition:width .05s linear}
 #killfeed{position:absolute;top:14px;right:16px;display:flex;flex-direction:column;gap:5px;align-items:flex-end}
 .kf{background:rgba(10,12,15,.85);border:1px solid #2c3138;border-radius:6px;padding:5px 10px;font-size:12px;animation:fade 5s forwards}
 @keyframes fade{0%{opacity:1}80%{opacity:1}100%{opacity:0}}
@@ -79,7 +84,9 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .caseCard .caseSub{font-size:10px;color:#7d848d;margin-top:6px}
 .caseCard.trash{border-color:#5a5a5a;background:linear-gradient(160deg,#242424,#14171c)}
 .caseCard.trash .caseName{color:#c0c0c0}
-.caseCard.trash:hover{border-color:#c0c0c0;box-shadow:0 0 24px rgba(200,200,200,.35)}
+.caseCard.poor{border-color:#7d6a3a;background:linear-gradient(160deg,#2a2418,#14171c)}
+.caseCard.poor .caseName{color:#ffd76a}
+.caseCard.poor:hover{border-color:#ffd76a;box-shadow:0 0 24px rgba(255,215,106,.35)}
 .caseCard.basic{border-color:#6d6d6d}
 .caseCard.sand{border-color:#8b6a3a}
 .caseCard.premium{border-color:#a855f7;background:linear-gradient(160deg,#2a1d3a,#14171c)}
@@ -91,7 +98,6 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .caseCard.patriot::before{content:'🇧🇾';position:absolute;top:4px;right:6px;font-size:16px;opacity:.9}
 .caseCard.patriot .caseName{color:#ff4d4d}
 .caseCard.patriot .casePrice{color:#5aff8a}
-.caseCard.patriot:hover{border-color:#5aff8a;box-shadow:0 0 26px rgba(90,255,138,.4)}
 .invGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;width:min(960px,94vw);max-height:58vh;overflow-y:auto;padding:4px}
 .invItem{background:#161a1f;border:1px solid #333941;border-radius:10px;padding:10px;text-align:center;transition:.15s;position:relative}
 .invItem:hover{border-color:#3ee0d0}
@@ -220,7 +226,12 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
     <div class="stat"><b id="hudWeapon">ПИСТОЛЕТ</b><span>ОРУЖИЕ</span></div>
     <div class="stat"><b id="hudSlot">2</b><span>СЛОТ</span></div>
   </div>
-  <div id="buyHint">WASD — ход • Мышь — обзор • ЛКМ — стрельба • ПКМ — прицел • B — магазин • Space — прыжок • Ctrl — присесть • 1/2/3 — оружие</div>
+  <div id="ammoBox">
+    <div class="big" id="ammoMag">12<small id="ammoMax">/12</small></div>
+    <div class="lbl" id="ammoLabel">ПАТРОНЫ</div>
+    <div class="reloadBar"><div class="fill" id="reloadFill"></div></div>
+  </div>
+  <div id="buyHint">WASD — ход • Мышь — обзор • ЛКМ — стрельба • ПКМ — прицел • R — перезарядка • B — магазин • Space — прыжок • Ctrl — присесть • 1/2/3 — оружие</div>
   <div id="buyMenu" class="hidden"></div>
   <div id="lockHint" class="hidden">
     <div>КЛИКНИ, ЧТОБЫ ИГРАТЬ</div>
@@ -262,22 +273,10 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 <div id="screen-settings" class="screen hidden">
   <h2>НАСТРОЙКИ</h2>
   <div class="settingsPanel">
-    <div class="settingRow">
-      <label>Чувствительность мыши <b id="sensVal">1.00</b></label>
-      <input id="sensInput" type="range" min="0.2" max="3" step="0.05" value="1">
-    </div>
-    <div class="settingRow">
-      <label>Угол обзора (FOV) <b id="fovVal">75°</b></label>
-      <input id="fovInput" type="range" min="60" max="110" step="1" value="75">
-    </div>
-    <div class="settingRow">
-      <label>Инверсия по Y <b id="invYVal">ВЫКЛ</b></label>
-      <input id="invYInput" type="range" min="0" max="1" step="1" value="0">
-    </div>
-    <div class="settingRow">
-      <label>Цвет прицела <b id="crossVal">БИРЮЗА</b></label>
-      <input id="crossInput" type="range" min="0" max="3" step="1" value="0">
-    </div>
+    <div class="settingRow"><label>Чувствительность мыши <b id="sensVal">1.00</b></label><input id="sensInput" type="range" min="0.2" max="3" step="0.05" value="1"></div>
+    <div class="settingRow"><label>Угол обзора (FOV) <b id="fovVal">75°</b></label><input id="fovInput" type="range" min="60" max="110" step="1" value="75"></div>
+    <div class="settingRow"><label>Инверсия по Y <b id="invYVal">ВЫКЛ</b></label><input id="invYInput" type="range" min="0" max="1" step="1" value="0"></div>
+    <div class="settingRow"><label>Цвет прицела <b id="crossVal">БИРЮЗА</b></label><input id="crossInput" type="range" min="0" max="3" step="1" value="0"></div>
   </div>
   <button class="ghost" id="btnSettingsBack">НАЗАД</button>
 </div>
@@ -293,17 +292,14 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
       <button id="btnBetAll" class="ghost">ВСЁ</button>
     </div>
     <div class="colorBtns">
-      <div class="colorBtn red sel" data-color="red">КРАСНЫЙ<span class="mult">×2</span></div>
+      <div class="colorBtn red sel" data-color="red">КРАСНЫЙ<span class="mult">×4</span></div>
       <div class="colorBtn green" data-color="green">ЗЕЛЁНЫЙ<span class="mult">×2</span></div>
-      <div class="colorBtn white" data-color="white">БЕЛЫЙ<span class="mult">×5</span></div>
+      <div class="colorBtn white" data-color="white">БЕЛЫЙ<span class="mult">×10</span></div>
     </div>
-    <div class="rouletteWrap">
-      <div class="rouletteReel" id="rouletteReel"></div>
-      <div class="rPointer"></div>
-    </div>
+    <div class="rouletteWrap"><div class="rouletteReel" id="rouletteReel"></div><div class="rPointer"></div></div>
     <div class="casinoResult" id="casinoResult">Выбери цвет и жми КРУТИТЬ</div>
     <button id="btnSpin">КРУТИТЬ</button>
-    <div class="hint">40 слотов: 20 красных • 19 зелёных • 1 белый</div>
+    <div class="hint">40 слотов: 20 красных (×4) • 19 зелёных (×2) • 1 белый (×10)</div>
   </div>
   <button class="ghost" id="btnCasinoBack">НАЗАД</button>
 </div>
@@ -316,16 +312,14 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 
 <script>
 /* ============================================================
-   CS:KOZEL — WebGL FPS Edition v4
+   CS:KOZEL — FPS Edition v5
    ============================================================ */
 const $ = id => document.getElementById(id);
-const cv3d = $('cv3d');
-const cv2d = $('cv2d');
-const gl = cv3d.getContext('webgl', {antialias: true}) || cv3d.getContext('experimental-webgl');
+const cv3d = $('cv3d'), cv2d = $('cv2d');
+const gl = cv3d.getContext('webgl', {antialias:true}) || cv3d.getContext('experimental-webgl');
 const ctx = cv2d.getContext('2d');
 
-/* ---------- НАСТРОЙКИ ---------- */
-const settings = { sens: 1.0, fov: 75, invY: false, crossColor: '#3ee0d0' };
+const settings = { sens:1.0, fov:75, invY:false, crossColor:'#3ee0d0' };
 Object.assign(settings, JSON.parse(localStorage.getItem('kozel_settings') || '{}'));
 const CROSS_COLORS = ['#3ee0d0', '#5aff8a', '#ff4d4d', '#ffd76a'];
 const CROSS_NAMES = ['БИРЮЗА', 'ЗЕЛЁНЫЙ', 'КРАСНЫЙ', 'ЗОЛОТО'];
@@ -333,19 +327,14 @@ const saveSettings = () => localStorage.setItem('kozel_settings', JSON.stringify
 
 /* ---------- АУДИО ---------- */
 let audioCtx = null;
-function initAudio(){
-  if (audioCtx) return;
-  try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){}
-}
+const initAudio = () => { if (audioCtx) return; try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){} };
 document.addEventListener('click', initAudio);
 function noiseBurst(dur, freq, vol, pan, type, q){
   if (!audioCtx || vol <= 0.005) return;
   type = type || 'lowpass'; q = q || 1;
-  const sr = audioCtx.sampleRate;
-  const len = Math.max(1, Math.floor(sr * dur));
-  const buf = audioCtx.createBuffer(1, len, sr);
-  const d = buf.getChannelData(0);
-  for (let i = 0; i < len; i++){ d[i] = (Math.random()*2-1) * Math.pow(1 - i/len, 1.6); }
+  const sr = audioCtx.sampleRate, len = Math.max(1, Math.floor(sr*dur));
+  const buf = audioCtx.createBuffer(1, len, sr), d = buf.getChannelData(0);
+  for (let i=0; i<len; i++) d[i] = (Math.random()*2-1) * Math.pow(1-i/len, 1.6);
   const src = audioCtx.createBufferSource(); src.buffer = buf;
   const flt = audioCtx.createBiquadFilter(); flt.type = type; flt.frequency.value = freq; flt.Q.value = q;
   const g = audioCtx.createGain(); g.gain.value = Math.min(1, vol);
@@ -358,11 +347,11 @@ function tone(freq, dur, vol, pan, type, freqEnd){
   const o = audioCtx.createOscillator(); o.type = type;
   const t0 = audioCtx.currentTime;
   o.frequency.setValueAtTime(freq, t0);
-  if (freqEnd) o.frequency.exponentialRampToValueAtTime(Math.max(20, freqEnd), t0 + dur);
+  if (freqEnd) o.frequency.exponentialRampToValueAtTime(Math.max(20, freqEnd), t0+dur);
   const g = audioCtx.createGain();
-  g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+  g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.001, t0+dur);
   const p = audioCtx.createStereoPanner(); p.pan.value = Math.max(-1, Math.min(1, pan));
-  o.connect(g); g.connect(p); p.connect(audioCtx.destination); o.start(t0); o.stop(t0 + dur);
+  o.connect(g); g.connect(p); p.connect(audioCtx.destination); o.start(t0); o.stop(t0+dur);
 }
 function sfxShot(w, pan, vol){
   if (vol <= 0.02) return;
@@ -373,107 +362,125 @@ function sfxShot(w, pan, vol){
   else if (w === 'knife'){ noiseBurst(0.08, 5000, vol*0.5, pan, 'highpass'); }
   else { noiseBurst(0.12, 2400, vol*0.65, pan, 'bandpass', 1.5); }
 }
-function sfxStep(pan, vol){ noiseBurst(0.09, 380, vol*0.7, pan, 'lowpass', 1.6); tone(70, 0.05, vol*0.25, pan, 'sine', 50); }
-function sfxHit(pan, vol){ noiseBurst(0.08, 3500, vol*0.7, pan, 'highpass'); }
-function sfxKill(pan, vol){ tone(880, 0.12, vol, pan, 'triangle', 440); tone(1320, 0.15, vol*0.6, pan, 'sine', 660); }
+const sfxStep = (pan, vol) => { noiseBurst(0.09, 380, vol*0.7, pan, 'lowpass', 1.6); tone(70, 0.05, vol*0.25, pan, 'sine', 50); };
+const sfxHit = (pan, vol) => noiseBurst(0.08, 3500, vol*0.7, pan, 'highpass');
+const sfxKill = (pan, vol) => { tone(880, 0.12, vol, pan, 'triangle', 440); tone(1320, 0.15, vol*0.6, pan, 'sine', 660); };
 function sfxRoundEnd(win){
-  if (win){ tone(660, 0.15, 0.5, 0, 'sine'); tone(990, 0.18, 0.5, 0, 'sine'); tone(1320, 0.25, 0.5, 0, 'sine'); }
-  else { tone(440, 0.2, 0.5, 0, 'sine'); tone(330, 0.25, 0.5, 0, 'sine'); tone(220, 0.3, 0.5, 0, 'sine'); }
+  if (win){ tone(660,0.15,0.5,0,'sine'); tone(990,0.18,0.5,0,'sine'); tone(1320,0.25,0.5,0,'sine'); }
+  else { tone(440,0.2,0.5,0,'sine'); tone(330,0.25,0.5,0,'sine'); tone(220,0.3,0.5,0,'sine'); }
 }
 const panFromAngle = rel => -Math.sin(rel);
 
-/* ============================================================
-   ДАННЫЕ
-   ============================================================ */
+/* ---------- ОРУЖИЕ ---------- */
 const WEAPONS = {
-  knife:   {name:'Нож',          price:0,    slot:3, rate:400, melee:true},
-  pistol:  {name:'Пистолет',     price:0,    slot:2},
-  usp:     {name:'USP-S',        price:200,  slot:2},
-  p250:    {name:'P250',         price:350,  slot:2},
-  deagle:  {name:'Desert Eagle', price:777,  slot:2},
-  shotgun: {name:'Дробовик',     price:1050, slot:1},
-  galil:   {name:'Galil AR',     price:2000, slot:1},
-  ak:      {name:'AK-47',        price:2700, slot:1},
-  m4a4:    {name:'M4A4',         price:3100, slot:1},
-  awp:     {name:'AWP',          price:4750, slot:1, scope:true},
-  armor:   {name:'Броня',        price:950,  type:'armor'},
+  knife:{name:'Нож',price:0,slot:3,melee:true},
+  pistol:{name:'Пистолет',price:0,slot:2},
+  usp:{name:'USP-S',price:200,slot:2},
+  p250:{name:'P250',price:350,slot:2},
+  deagle:{name:'Desert Eagle',price:777,slot:2},
+  shotgun:{name:'Дробовик',price:1050,slot:1},
+  galil:{name:'Galil AR',price:2000,slot:1},
+  ak:{name:'AK-47',price:2700,slot:1},
+  m4a4:{name:'M4A4',price:3100,slot:1},
+  awp:{name:'AWP',price:4750,slot:1,scope:true},
+  armor:{name:'Броня',price:950,type:'armor'},
 };
 const BUY_PRIMARY = ['shotgun','galil','ak','m4a4','awp'];
 const BUY_SECONDARY = ['usp','p250','deagle'];
 
+/* ---------- СКИНЫ ---------- */
 const SKINS = [
-  {id:'ak_sand',   name:'AK-47 | Пыль',        type:'weapon', weapon:'ak',      color:'#c8b48a', rarity:'common'},
-  {id:'p250_sand', name:'P250 | Песок',        type:'weapon', weapon:'p250',    color:'#d9c07a', rarity:'common'},
-  {id:'dg_clay',   name:'Deagle | Глина',      type:'weapon', weapon:'deagle',  color:'#a0522d', rarity:'common'},
-  {id:'ch_inf',    name:'Персонаж | Пехота',   type:'char',   color:'#7a8b5a',  rarity:'common'},
-  {id:'ch_des',    name:'Персонаж | Пустыня',  type:'char',   color:'#c2a878',  rarity:'common'},
-  {id:'ak_brick',  name:'AK-47 | Кирпич',      type:'weapon', weapon:'ak',      color:'#b5533c', rarity:'rare'},
-  {id:'sg_brick',  name:'Дробовик | Кирпич',   type:'weapon', weapon:'shotgun', color:'#8b4a3a', rarity:'rare'},
-  {id:'awp_clay',  name:'AWP | Глина',         type:'weapon', weapon:'awp',     color:'#9c6b4f', rarity:'rare'},
-  {id:'ch_brick',  name:'Персонаж | Кирпич',   type:'char',   color:'#8b4a3a',  rarity:'rare'},
-  {id:'ak_redline',name:'AK-47 | Красная линия',type:'weapon',weapon:'ak',     color:'#8b0000', rarity:'rare'},
-  {id:'dg_flame',  name:'Deagle | Пламя',      type:'weapon', weapon:'deagle',  color:'#ff6600', rarity:'rare'},
-  {id:'sg_asiimov',name:'Дробовик | Азимов',   type:'weapon', weapon:'shotgun', color:'#ff5500', rarity:'rare'},
-  {id:'p250_asiimov',name:'P250 | Азимов',     type:'weapon', weapon:'p250',    color:'#ff8800', rarity:'rare'},
-  {id:'ch_spec',   name:'Персонаж | Спецназ',  type:'char',   color:'#2c3e50',  rarity:'rare'},
-  {id:'usp_guard', name:'USP | Гвардия',       type:'weapon', weapon:'usp',     color:'#3b5b8a', rarity:'rare'},
-  {id:'m4_brick',  name:'M4A4 | Кирпич',       type:'weapon', weapon:'m4a4',    color:'#a5614d', rarity:'rare'},
-  {id:'gl_dust',   name:'Galil | Пыль',        type:'weapon', weapon:'galil',   color:'#bfa072', rarity:'rare'},
-  {id:'awp_neon',  name:'AWP | Неон',          type:'weapon', weapon:'awp',     color:'#39ff14', rarity:'epic'},
-  {id:'ak_azure',  name:'AK-47 | Лазурь',      type:'weapon', weapon:'ak',      color:'#1e90ff', rarity:'epic'},
-  {id:'ch_neon',   name:'Персонаж | Неон',     type:'char',   color:'#39ff14',  rarity:'epic'},
-  {id:'ak_asiimov',name:'AK-47 | Азимов',      type:'weapon', weapon:'ak',      color:'#ff5500', rarity:'epic'},
-  {id:'dg_code_red',name:'Deagle | Кодовый Красный', type:'weapon', weapon:'deagle', color:'#cc0000', rarity:'epic'},
-  {id:'ch_phoenix',name:'Персонаж | Феникс',   type:'char',   color:'#ff6600',  rarity:'epic'},
-  {id:'ch_anarch', name:'Персонаж | Анархист', type:'char',   color:'#c0392b',  rarity:'epic'},
-  {id:'ch_toxic',  name:'Персонаж | Токсик',   type:'char',   color:'#7fff00',  rarity:'epic'},
-  {id:'m4_asiimov',name:'M4A4 | Азимов',       type:'weapon', weapon:'m4a4',    color:'#ff7700', rarity:'epic'},
-  {id:'gl_neon',   name:'Galil | Неон',        type:'weapon', weapon:'galil',   color:'#00ff99', rarity:'epic'},
-  {id:'usp_orion', name:'USP | Орион',         type:'weapon', weapon:'usp',     color:'#5a4a3a', rarity:'epic'},
-  {id:'awp_dragon',name:'AWP | Дракон',        type:'weapon', weapon:'awp',     color:'#ff2d2d', rarity:'legendary'},
-  {id:'ch_gold',   name:'Персонаж | Золото',   type:'char',   color:'#ffd700',  rarity:'legendary'},
-  {id:'awp_asiimov',name:'AWP | Азимов',       type:'weapon', weapon:'awp',     color:'#ff8c00', rarity:'legendary'},
-  {id:'awp_hyper', name:'AWP | Гипербист',     type:'weapon', weapon:'awp',     color:'#d920ff', rarity:'legendary'},
-  {id:'ch_ghost',  name:'Персонаж | Призрак',  type:'char',   color:'#e0e0e0',  rarity:'legendary'},
-  {id:'ak_hyper',  name:'AK-47 | Гипербист',   type:'weapon', weapon:'ak',      color:'#ff00ff', rarity:'legendary'},
-  {id:'m4_hyper',  name:'M4A4 | Гипербист',    type:'weapon', weapon:'m4a4',    color:'#ff00aa', rarity:'legendary'},
-  {id:'awp_dragonlore',name:'AWP | Dragon Lore',   type:'weapon', weapon:'awp', color:'#c9a227', rarity:'chroma'},
-  {id:'ak_case_hard',  name:'AK-47 | Case Hardened',type:'weapon',weapon:'ak',  color:'#4169e1', rarity:'chroma'},
-  {id:'dg_vertugun',   name:'Deagle | Вертугун',   type:'weapon', weapon:'deagle', color:'#8e44ad', rarity:'chroma'},
-  {id:'m4_howl',       name:'M4A4 | Howl',         type:'weapon', weapon:'m4a4', color:'#d35400', rarity:'chroma'},
+  {id:'ak_sand',name:'AK-47 | Пыль',type:'weapon',weapon:'ak',color:'#c8b48a',rarity:'common'},
+  {id:'p250_sand',name:'P250 | Песок',type:'weapon',weapon:'p250',color:'#d9c07a',rarity:'common'},
+  {id:'dg_clay',name:'Deagle | Глина',type:'weapon',weapon:'deagle',color:'#a0522d',rarity:'common'},
+  {id:'ch_inf',name:'Персонаж | Пехота',type:'char',color:'#7a8b5a',rarity:'common'},
+  {id:'ch_des',name:'Персонаж | Пустыня',type:'char',color:'#c2a878',rarity:'common'},
+  {id:'ak_brick',name:'AK-47 | Кирпич',type:'weapon',weapon:'ak',color:'#b5533c',rarity:'rare'},
+  {id:'sg_brick',name:'Дробовик | Кирпич',type:'weapon',weapon:'shotgun',color:'#8b4a3a',rarity:'rare'},
+  {id:'awp_clay',name:'AWP | Глина',type:'weapon',weapon:'awp',color:'#9c6b4f',rarity:'rare'},
+  {id:'ch_brick',name:'Персонаж | Кирпич',type:'char',color:'#8b4a3a',rarity:'rare'},
+  {id:'ak_redline',name:'AK-47 | Красная линия',type:'weapon',weapon:'ak',color:'#8b0000',rarity:'rare'},
+  {id:'dg_flame',name:'Deagle | Пламя',type:'weapon',weapon:'deagle',color:'#ff6600',rarity:'rare'},
+  {id:'sg_asiimov',name:'Дробовик | Азимов',type:'weapon',weapon:'shotgun',color:'#ff5500',rarity:'rare'},
+  {id:'p250_asiimov',name:'P250 | Азимов',type:'weapon',weapon:'p250',color:'#ff8800',rarity:'rare'},
+  {id:'ch_spec',name:'Персонаж | Спецназ',type:'char',color:'#2c3e50',rarity:'rare'},
+  {id:'usp_guard',name:'USP | Гвардия',type:'weapon',weapon:'usp',color:'#3b5b8a',rarity:'rare'},
+  {id:'m4_brick',name:'M4A4 | Кирпич',type:'weapon',weapon:'m4a4',color:'#a5614d',rarity:'rare'},
+  {id:'gl_dust',name:'Galil | Пыль',type:'weapon',weapon:'galil',color:'#bfa072',rarity:'rare'},
+  {id:'dg_sofi',name:'Deagle | Роза',type:'weapon',weapon:'deagle',color:'#e91e63',rarity:'rare'},
+  {id:'usp_sofi',name:'USP | Лаванда',type:'weapon',weapon:'usp',color:'#b39ddb',rarity:'rare'},
+  {id:'sg_dragon',name:'Дробовик | Дракон',type:'weapon',weapon:'shotgun',color:'#c0392b',rarity:'rare'},
+  {id:'p250_cyber',name:'P250 | Кибер',type:'weapon',weapon:'p250',color:'#00e5ff',rarity:'rare'},
+  {id:'awp_neon',name:'AWP | Неон',type:'weapon',weapon:'awp',color:'#39ff14',rarity:'epic'},
+  {id:'ak_azure',name:'AK-47 | Лазурь',type:'weapon',weapon:'ak',color:'#1e90ff',rarity:'epic'},
+  {id:'ch_neon',name:'Персонаж | Неон',type:'char',color:'#39ff14',rarity:'epic'},
+  {id:'ak_asiimov',name:'AK-47 | Азимов',type:'weapon',weapon:'ak',color:'#ff5500',rarity:'epic'},
+  {id:'dg_code_red',name:'Deagle | Кодовый Красный',type:'weapon',weapon:'deagle',color:'#cc0000',rarity:'epic'},
+  {id:'ch_phoenix',name:'Персонаж | Феникс',type:'char',color:'#ff6600',rarity:'epic'},
+  {id:'ch_anarch',name:'Персонаж | Анархист',type:'char',color:'#c0392b',rarity:'epic'},
+  {id:'ch_toxic',name:'Персонаж | Токсик',type:'char',color:'#7fff00',rarity:'epic'},
+  {id:'m4_asiimov',name:'M4A4 | Азимов',type:'weapon',weapon:'m4a4',color:'#ff7700',rarity:'epic'},
+  {id:'gl_neon',name:'Galil | Неон',type:'weapon',weapon:'galil',color:'#00ff99',rarity:'epic'},
+  {id:'usp_orion',name:'USP | Орион',type:'weapon',weapon:'usp',color:'#5a4a3a',rarity:'epic'},
+  {id:'m4_sofi',name:'M4A4 | SOFI MICHELLE',type:'weapon',weapon:'m4a4',color:'#ff5ec4',rarity:'epic'},
+  {id:'ak_sofi',name:'AK-47 | Киберпанк',type:'weapon',weapon:'ak',color:'#00f0ff',rarity:'epic'},
+  {id:'m4_neon',name:'M4A4 | Неоновый',type:'weapon',weapon:'m4a4',color:'#00ff88',rarity:'epic'},
+  {id:'ak_phantom',name:'AK-47 | Призрак',type:'weapon',weapon:'ak',color:'#9b59b6',rarity:'epic'},
+  {id:'gl_gold',name:'Galil | Золото',type:'weapon',weapon:'galil',color:'#ffd700',rarity:'epic'},
+  {id:'awp_dragon',name:'AWP | Дракон',type:'weapon',weapon:'awp',color:'#ff2d2d',rarity:'legendary'},
+  {id:'ch_gold',name:'Персонаж | Золото',type:'char',color:'#ffd700',rarity:'legendary'},
+  {id:'awp_asiimov',name:'AWP | Азимов',type:'weapon',weapon:'awp',color:'#ff8c00',rarity:'legendary'},
+  {id:'awp_hyper',name:'AWP | Гипербист',type:'weapon',weapon:'awp',color:'#d920ff',rarity:'legendary'},
+  {id:'ch_ghost',name:'Персонаж | Призрак',type:'char',color:'#e0e0e0',rarity:'legendary'},
+  {id:'ak_hyper',name:'AK-47 | Гипербист',type:'weapon',weapon:'ak',color:'#ff00ff',rarity:'legendary'},
+  {id:'m4_hyper',name:'M4A4 | Гипербист',type:'weapon',weapon:'m4a4',color:'#ff00aa',rarity:'legendary'},
+  {id:'awp_sofi',name:'AWP | SOFI MICHELLE',type:'weapon',weapon:'awp',color:'#ff1493',rarity:'legendary'},
+  {id:'ch_sofi',name:'Персонаж | Кицунэ',type:'char',color:'#ff69b4',rarity:'legendary'},
+  {id:'awp_dragonlore',name:'AWP | Dragon Lore',type:'weapon',weapon:'awp',color:'#c9a227',rarity:'chroma'},
+  {id:'ak_case_hard',name:'AK-47 | Case Hardened',type:'weapon',weapon:'ak',color:'#4169e1',rarity:'chroma'},
+  {id:'dg_vertugun',name:'Deagle | Вертугун',type:'weapon',weapon:'deagle',color:'#8e44ad',rarity:'chroma'},
+  {id:'m4_howl',name:'M4A4 | Howl',type:'weapon',weapon:'m4a4',color:'#d35400',rarity:'chroma'},
 ];
 
 const KNIFE_SKINS = [
-  {id:'kn_karambit',   name:'Керамбит',           type:'weapon', weapon:'knife', color:'#e0d0a0', rarity:'knife'},
-  {id:'kn_bayonet',    name:'Штык-нож',           type:'weapon', weapon:'knife', color:'#a0c0ff', rarity:'knife'},
-  {id:'kn_butterfly',  name:'Бабочка',            type:'weapon', weapon:'knife', color:'#c9a227', rarity:'knife'},
-  {id:'kn_doppler',    name:'Керамбит | Доплер',  type:'weapon', weapon:'knife', color:'#9b30ff', rarity:'knife'},
-  {id:'kn_tiger',      name:'Керамбит | Тигр',    type:'weapon', weapon:'knife', color:'#ff8c00', rarity:'knife'},
-  {id:'kn_marble',     name:'Штык | Мрамор',      type:'weapon', weapon:'knife', color:'#ff2d2d', rarity:'knife'},
+  {id:'kn_karambit',name:'Керамбит',type:'weapon',weapon:'knife',color:'#e0d0a0',rarity:'knife'},
+  {id:'kn_bayonet',name:'Штык-нож',type:'weapon',weapon:'knife',color:'#a0c0ff',rarity:'knife'},
+  {id:'kn_butterfly',name:'Бабочка',type:'weapon',weapon:'knife',color:'#c9a227',rarity:'knife'},
+  {id:'kn_doppler',name:'Керамбит | Доплер',type:'weapon',weapon:'knife',color:'#9b30ff',rarity:'knife'},
+  {id:'kn_tiger',name:'Керамбит | Тигр',type:'weapon',weapon:'knife',color:'#ff8c00',rarity:'knife'},
+  {id:'kn_marble',name:'Штык | Мрамор',type:'weapon',weapon:'knife',color:'#ff2d2d',rarity:'knife'},
+  {id:'kn_tanto',name:'Танто',type:'weapon',weapon:'knife',color:'#708090',rarity:'knife'},
+  {id:'kn_bowie',name:'Боуи',type:'weapon',weapon:'knife',color:'#8b4513',rarity:'knife'},
+  {id:'kn_claw',name:'Коготь',type:'weapon',weapon:'knife',color:'#4a4a4a',rarity:'knife'},
+  {id:'kn_stiletto',name:'Стилет',type:'weapon',weapon:'knife',color:'#dcdcdc',rarity:'knife'},
+  {id:'kn_falchion',name:'Фальшион',type:'weapon',weapon:'knife',color:'#556b2f',rarity:'knife'},
+  {id:'kn_huntsman',name:'Охотничий',type:'weapon',weapon:'knife',color:'#8b7355',rarity:'knife'},
+  {id:'kn_butterfly_fade',name:'Бабочка | Фейд',type:'weapon',weapon:'knife',color:'#ff69b4',rarity:'knife'},
+  {id:'kn_karambit_emis',name:'Керамбит | Изумруд',type:'weapon',weapon:'knife',color:'#00c957',rarity:'knife'},
 ];
 
 const PATRIOT_KNIVES = [
-  {id:'kn_pat_red',   name:'Патриот | Красный', type:'weapon', weapon:'knife', color:'#d32c2c', rarity:'knife'},
-  {id:'kn_pat_green', name:'Патриот | Зелёный', type:'weapon', weapon:'knife', color:'#3ec84a', rarity:'knife'},
-  {id:'kn_pat_white', name:'Патриот | Белый',   type:'weapon', weapon:'knife', color:'#f0f0f0', rarity:'knife'},
+  {id:'kn_pat_red',name:'Патриот | Красный',type:'weapon',weapon:'knife',color:'#d32c2c',rarity:'knife'},
+  {id:'kn_pat_green',name:'Патриот | Зелёный',type:'weapon',weapon:'knife',color:'#3ec84a',rarity:'knife'},
+  {id:'kn_pat_white',name:'Патриот | Белый',type:'weapon',weapon:'knife',color:'#f0f0f0',rarity:'knife'},
 ];
 
 const PATRIOT_SKINS = [
-  {id:'pat_ak_red',   name:'AK-47 | Патриот Красный', type:'weapon', weapon:'ak',      color:'#d32c2c', rarity:'rare'},
-  {id:'pat_ak_green', name:'AK-47 | Патриот Зелёный', type:'weapon', weapon:'ak',      color:'#3ec84a', rarity:'rare'},
-  {id:'pat_ak_white', name:'AK-47 | Патриот Белый',   type:'weapon', weapon:'ak',      color:'#f0f0f0', rarity:'rare'},
-  {id:'pat_m4_red',   name:'M4A4 | Патриот Красный',  type:'weapon', weapon:'m4a4',    color:'#c02828', rarity:'rare'},
-  {id:'pat_m4_green', name:'M4A4 | Патриот Зелёный',  type:'weapon', weapon:'m4a4',    color:'#35b842', rarity:'rare'},
-  {id:'pat_m4_white', name:'M4A4 | Патриот Белый',    type:'weapon', weapon:'m4a4',    color:'#e8e8e8', rarity:'rare'},
-  {id:'pat_awp_red',  name:'AWP | Патриот Красный',   type:'weapon', weapon:'awp',     color:'#b02020', rarity:'epic'},
-  {id:'pat_awp_green',name:'AWP | Патриот Зелёный',   type:'weapon', weapon:'awp',     color:'#2ea83a', rarity:'epic'},
-  {id:'pat_awp_white',name:'AWP | Патриот Белый',     type:'weapon', weapon:'awp',     color:'#e0e0e0', rarity:'epic'},
-  {id:'pat_dg_red',   name:'Deagle | Патриот Красный',type:'weapon', weapon:'deagle',  color:'#d32c2c', rarity:'rare'},
-  {id:'pat_dg_green', name:'Deagle | Патриот Зелёный',type:'weapon', weapon:'deagle',  color:'#3ec84a', rarity:'rare'},
-  {id:'pat_dg_white', name:'Deagle | Патриот Белый',  type:'weapon', weapon:'deagle',  color:'#f0f0f0', rarity:'rare'},
-  {id:'pat_ch_red',   name:'Персонаж | Красный',      type:'char',   color:'#d32c2c', rarity:'rare'},
-  {id:'pat_ch_green', name:'Персонаж | Зелёный',      type:'char',   color:'#3ec84a', rarity:'rare'},
-  {id:'pat_ch_white', name:'Персонаж | Белый',        type:'char',   color:'#f0f0f0', rarity:'rare'},
+  {id:'pat_ak_red',name:'AK-47 | Патриот Красный',type:'weapon',weapon:'ak',color:'#d32c2c',rarity:'rare'},
+  {id:'pat_ak_green',name:'AK-47 | Патриот Зелёный',type:'weapon',weapon:'ak',color:'#3ec84a',rarity:'rare'},
+  {id:'pat_ak_white',name:'AK-47 | Патриот Белый',type:'weapon',weapon:'ak',color:'#f0f0f0',rarity:'rare'},
+  {id:'pat_m4_red',name:'M4A4 | Патриот Красный',type:'weapon',weapon:'m4a4',color:'#c02828',rarity:'rare'},
+  {id:'pat_m4_green',name:'M4A4 | Патриот Зелёный',type:'weapon',weapon:'m4a4',color:'#35b842',rarity:'rare'},
+  {id:'pat_m4_white',name:'M4A4 | Патриот Белый',type:'weapon',weapon:'m4a4',color:'#e8e8e8',rarity:'rare'},
+  {id:'pat_awp_red',name:'AWP | Патриот Красный',type:'weapon',weapon:'awp',color:'#b02020',rarity:'epic'},
+  {id:'pat_awp_green',name:'AWP | Патриот Зелёный',type:'weapon',weapon:'awp',color:'#2ea83a',rarity:'epic'},
+  {id:'pat_awp_white',name:'AWP | Патриот Белый',type:'weapon',weapon:'awp',color:'#e0e0e0',rarity:'epic'},
+  {id:'pat_dg_red',name:'Deagle | Патриот Красный',type:'weapon',weapon:'deagle',color:'#d32c2c',rarity:'rare'},
+  {id:'pat_dg_green',name:'Deagle | Патриот Зелёный',type:'weapon',weapon:'deagle',color:'#3ec84a',rarity:'rare'},
+  {id:'pat_dg_white',name:'Deagle | Патриот Белый',type:'weapon',weapon:'deagle',color:'#f0f0f0',rarity:'rare'},
+  {id:'pat_ch_red',name:'Персонаж | Красный',type:'char',color:'#d32c2c',rarity:'rare'},
+  {id:'pat_ch_green',name:'Персонаж | Зелёный',type:'char',color:'#3ec84a',rarity:'rare'},
+  {id:'pat_ch_white',name:'Персонаж | Белый',type:'char',color:'#f0f0f0',rarity:'rare'},
 ];
 
 KNIFE_SKINS.forEach(s => SKINS.push(s));
@@ -481,23 +488,24 @@ PATRIOT_KNIVES.forEach(s => SKINS.push(s));
 PATRIOT_SKINS.forEach(s => SKINS.push(s));
 
 const CASES = {
-  trash:    { name:'МУСОР ДРОП',   icon:'🗑️', cls:'trash',     price:5,   sub:'Всегда +монеты!', odds:{} },
-  um8a:     { name:'УМ 8А КЛАССА', icon:'📕', cls:'basic',     price:25,  sub:'Почти всё обычное', odds:{common:0.88, rare:0.11, epic:0.01, legendary:0, chroma:0} },
-  sand:     { name:'SAND CASE',    icon:'📦', cls:'sand',      price:50,  sub:'Базовые скины',     odds:{common:0.60, rare:0.25, epic:0.12, legendary:0.03, chroma:0} },
-  premium:  { name:'PREMIUM CASE', icon:'💎', cls:'premium',   price:200, sub:'Больше редких + шанс ножа', odds:{common:0.15, rare:0.40, epic:0.32, legendary:0.13, chroma:0} },
-  patriot:  { name:'ПАТРИОТ',      icon:'🇧🇾', cls:'patriot',   price:250, sub:'Только красный/зелёный/белый', odds:{} },
-  operation:{ name:'КЕЙС ОПЕРАЦИИ',icon:'🎖️', cls:'operation', price:400, sub:'Эпик + хрома + ножи', odds:{common:0, rare:0.20, epic:0.45, legendary:0.25, chroma:0.10} }
+  poor:     { name:'БЕДНЯК',        icon:'💰', cls:'poor',      price:10,  sub:'Всегда скины 15+', odds:{common:0.70, rare:0.22, epic:0.06, legendary:0.015, chroma:0.005} },
+  trash:    { name:'МУСОР ДРОП',    icon:'🗑️', cls:'trash',     price:5,   sub:'Всегда +монеты!', odds:{} },
+  um8a:     { name:'УМ 8А КЛАССА',  icon:'📕', cls:'basic',     price:25,  sub:'Почти всё обычное', odds:{common:0.88, rare:0.11, epic:0.01, legendary:0, chroma:0} },
+  sand:     { name:'SAND CASE',     icon:'📦', cls:'sand',      price:50,  sub:'Базовые скины', odds:{common:0.60, rare:0.25, epic:0.12, legendary:0.03, chroma:0} },
+  premium:  { name:'PREMIUM CASE',  icon:'💎', cls:'premium',   price:200, sub:'Больше редких + шанс ножа', odds:{common:0.15, rare:0.40, epic:0.32, legendary:0.13, chroma:0} },
+  patriot:  { name:'ПАТРИОТ',       icon:'🇧🇾', cls:'patriot',  price:250, sub:'Только красный/зелёный/белый', odds:{} },
+  operation:{ name:'КЕЙС ОПЕРАЦИИ', icon:'🎖️', cls:'operation', price:400, sub:'Эпик + хрома + ножи', odds:{common:0, rare:0.20, epic:0.45, legendary:0.25, chroma:0.10} }
 };
 const SELL_PRICE = {common:15, rare:35, epic:80, legendary:200, chroma:800, knife:1500};
-const RARITY_RU  = {common:'ОБЫЧНЫЙ',rare:'РЕДКИЙ',epic:'ЭПИЧЕСКИЙ',legendary:'ЛЕГЕНДАРНЫЙ',chroma:'ХРОМАТИЧЕСКИЙ',knife:'НОЖ ★'};
+const RARITY_RU = {common:'ОБЫЧНЫЙ',rare:'РЕДКИЙ',epic:'ЭПИЧЕСКИЙ',legendary:'ЛЕГЕНДАРНЫЙ',chroma:'ХРОМАТИЧЕСКИЙ',knife:'НОЖ ★'};
 const RARITY_CLS = {common:'rc',rare:'rr',epic:'re',legendary:'rl',chroma:'rch',knife:'r-knife'};
 
 let coins = +(localStorage.getItem('kozel_coins') || 500);
-let inv   = JSON.parse(localStorage.getItem('kozel_inv')   || '[]');
+let inv = JSON.parse(localStorage.getItem('kozel_inv') || '[]');
 let equip = JSON.parse(localStorage.getItem('kozel_equip') || '{}');
 const saveLS = () => {
   localStorage.setItem('kozel_coins', coins);
-  localStorage.setItem('kozel_inv',   JSON.stringify(inv));
+  localStorage.setItem('kozel_inv', JSON.stringify(inv));
   localStorage.setItem('kozel_equip', JSON.stringify(equip));
 };
 function addItem(skin){
@@ -507,198 +515,106 @@ function addItem(skin){
 }
 const skinById = id => SKINS.find(s => s.id === id);
 
-/* ---------- SVG-иконки оружия ---------- */
+/* ---------- SVG ---------- */
 function shadeColor(hex, amt){
   if (!hex) return '#000';
   if (hex[0] === '#') hex = hex.slice(1);
-  if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
-  let r = parseInt(hex.slice(0,2),16);
-  let g = parseInt(hex.slice(2,4),16);
-  let b = parseInt(hex.slice(4,6),16);
-  r = Math.max(0, Math.min(255, r + amt * 255));
-  g = Math.max(0, Math.min(255, g + amt * 255));
-  b = Math.max(0, Math.min(255, b + amt * 255));
+  if (hex.length === 3) hex = hex.split('').map(c => c+c).join('');
+  let r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
+  r = Math.max(0, Math.min(255, r + amt*255));
+  g = Math.max(0, Math.min(255, g + amt*255));
+  b = Math.max(0, Math.min(255, b + amt*255));
   return '#' + [r,g,b].map(v => Math.round(v).toString(16).padStart(2,'0')).join('');
 }
-
-function weaponIconSVG(weaponType, color){
+function weaponIconSVG(weaponType, color, skinId){
   const c = color || '#666';
-  const cd = shadeColor(c, -0.35);
-  const cl = shadeColor(c, 0.25);
+  const cd = shadeColor(c, -0.35), cl = shadeColor(c, 0.3);
   if (weaponType === 'knife'){
-    return `<svg viewBox="0 0 40 100" xmlns="http://www.w3.org/2000/svg">
-      <polygon points="20,4 26,8 26,72 20,76 14,72 14,8" fill="${cl}" stroke="${cd}" stroke-width="1"/>
-      <polygon points="20,4 26,8 26,20 20,16 14,20 14,8" fill="${c}"/>
-      <rect x="15" y="76" width="10" height="20" fill="#2a1a0a" stroke="#1a0e05" stroke-width="1"/>
-      <rect x="16" y="80" width="8" height="3" fill="${c}"/>
-      <rect x="16" y="86" width="8" height="3" fill="${c}"/>
-    </svg>`;
+    let shape = 'default';
+    const k = skinId || '';
+    if (k.includes('karambit') || k === 'kn_doppler' || k === 'kn_tiger' || k === 'kn_karambit_emis' || k === 'kn_claw') shape = 'karambit';
+    else if (k === 'kn_butterfly' || k === 'kn_butterfly_fade') shape = 'butterfly';
+    else if (k === 'kn_bayonet' || k === 'kn_marble' || k === 'kn_stiletto') shape = 'bayonet';
+    else if (k === 'kn_tanto') shape = 'tanto';
+    else if (k === 'kn_bowie' || k === 'kn_huntsman') shape = 'bowie';
+    else if (k === 'kn_falchion') shape = 'falchion';
+    if (shape === 'karambit')
+      return `<svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg"><path d="M 30 6 Q 48 22 44 55 Q 40 78 30 84 Q 20 78 16 55 Q 12 22 30 6 Z" fill="${c}" stroke="${cd}" stroke-width="1.5"/><path d="M 30 6 Q 44 22 42 50 L 18 50 Q 16 22 30 6 Z" fill="${cl}" opacity="0.55"/><circle cx="30" cy="84" r="6" fill="none" stroke="${cd}" stroke-width="2"/><rect x="24" y="88" width="12" height="12" fill="#2a1a0a" rx="2"/></svg>`;
+    if (shape === 'butterfly')
+      return `<svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg"><polygon points="30,10 36,14 36,55 30,60 24,55 24,14" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="12" y="60" width="12" height="35" fill="#333" rx="2"/><rect x="36" y="60" width="12" height="35" fill="#333" rx="2"/><rect x="13" y="65" width="10" height="3" fill="${c}"/><rect x="37" y="65" width="10" height="3" fill="${c}"/></svg>`;
+    if (shape === 'bayonet')
+      return `<svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg"><polygon points="30,6 36,12 36,72 30,80 24,72 24,12" fill="${cl}" stroke="${cd}" stroke-width="1"/><rect x="20" y="72" width="20" height="5" fill="#333"/><rect x="26" y="80" width="8" height="16" fill="#2a1a0a" rx="2"/></svg>`;
+    if (shape === 'tanto')
+      return `<svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg"><polygon points="30,6 40,20 40,70 30,80 24,72 24,20" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="24" y="80" width="12" height="16" fill="#2a1a0a" rx="2"/></svg>`;
+    if (shape === 'bowie')
+      return `<svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg"><path d="M 30 8 Q 44 20 42 60 Q 40 78 30 82 Q 20 78 20 60 L 20 20 Q 22 10 30 8 Z" fill="${c}" stroke="${cd}" stroke-width="1.5"/><rect x="22" y="82" width="16" height="14" fill="#2a1a0a" rx="2"/></svg>`;
+    if (shape === 'falchion')
+      return `<svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg"><path d="M 20 10 Q 42 18 44 55 Q 42 78 30 82 Q 20 80 18 60 L 18 22 Q 18 12 20 10 Z" fill="${c}" stroke="${cd}" stroke-width="1.5"/><rect x="24" y="82" width="14" height="14" fill="#2a1a0a" rx="2"/></svg>`;
+    return `<svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg"><polygon points="30,6 34,12 34,72 30,80 26,72 26,12" fill="${cl}" stroke="${cd}" stroke-width="1"/><rect x="26" y="80" width="8" height="16" fill="#2a1a0a" rx="2"/></svg>`;
   }
-  if (weaponType === 'char'){
-    return `<svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="30" cy="22" r="14" fill="${c}" stroke="${cd}" stroke-width="1.5"/>
-      <path d="M 12 45 Q 30 38 48 45 L 52 90 Q 30 95 8 90 Z" fill="${c}" stroke="${cd}" stroke-width="1.5"/>
-    </svg>`;
-  }
-  if (weaponType === 'awp'){
-    return `<svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg">
-      <rect x="2" y="18" width="96" height="6" fill="#111"/>
-      <rect x="10" y="14" width="80" height="10" fill="${c}" stroke="${cd}" stroke-width="1"/>
-      <rect x="30" y="10" width="30" height="6" fill="#0a0a0a" stroke="#000" stroke-width="1"/>
-      <rect x="30" y="8" width="6" height="3" fill="#222"/>
-      <rect x="50" y="8" width="6" height="3" fill="#222"/>
-      <rect x="62" y="20" width="14" height="12" fill="${cd}" stroke="${cd}" stroke-width="1"/>
-      <rect x="78" y="12" width="4" height="8" fill="${cl}"/>
-      <polygon points="4,28 22,28 20,32 6,32" fill="${cd}"/>
-    </svg>`;
-  }
-  if (weaponType === 'shotgun'){
-    return `<svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg">
-      <rect x="2" y="18" width="96" height="5" fill="#111"/>
-      <rect x="2" y="21" width="96" height="5" fill="#0a0a0a"/>
-      <rect x="40" y="16" width="36" height="12" fill="#3a2a1a" stroke="#221a0e" stroke-width="1"/>
-      <rect x="6" y="14" width="36" height="12" fill="${c}" stroke="${cd}" stroke-width="1"/>
-      <rect x="76" y="14" width="20" height="10" fill="${c}" stroke="${cd}" stroke-width="1"/>
-    </svg>`;
-  }
-  if (weaponType === 'ak' || weaponType === 'm4a4' || weaponType === 'galil'){
-    return `<svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg">
-      <rect x="4" y="20" width="92" height="4" fill="#111"/>
-      <rect x="8" y="14" width="70" height="12" fill="${c}" stroke="${cd}" stroke-width="1"/>
-      <rect x="20" y="10" width="30" height="5" fill="${cd}"/>
-      <rect x="60" y="18" width="14" height="16" fill="#0a0a0a" stroke="${cd}" stroke-width="1"/>
-      <polygon points="76,26 96,26 94,32 78,32" fill="${cd}"/>
-      <rect x="50" y="16" width="6" height="6" fill="${cl}"/>
-    </svg>`;
-  }
-  if (weaponType === 'deagle' || weaponType === 'usp' || weaponType === 'p250' || weaponType === 'pistol'){
-    return `<svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
-      <rect x="30" y="18" width="60" height="10" fill="${c}" stroke="${cd}" stroke-width="1"/>
-      <rect x="80" y="20" width="14" height="5" fill="#111"/>
-      <polygon points="30,18 50,18 44,42 28,42" fill="${cd}" stroke="${cd}" stroke-width="1"/>
-      <rect x="32" y="28" width="18" height="14" fill="#1a1a1a"/>
-      <rect x="34" y="34" width="14" height="3" fill="${c}"/>
-      <rect x="34" y="40" width="14" height="3" fill="${c}"/>
-    </svg>`;
-  }
-  return `<svg viewBox="0 0 100 40"><rect x="10" y="15" width="80" height="14" fill="${c}"/></svg>`;
+  if (weaponType === 'char')
+    return `<svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="22" r="14" fill="${c}" stroke="${cd}" stroke-width="1.5"/><path d="M 12 45 Q 30 38 48 45 L 52 90 Q 30 95 8 90 Z" fill="${c}" stroke="${cd}" stroke-width="1.5"/></svg>`;
+  if (weaponType === 'awp')
+    return `<svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="18" width="96" height="6" fill="#111"/><rect x="10" y="14" width="80" height="10" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="30" y="10" width="30" height="6" fill="#0a0a0a"/><rect x="30" y="8" width="6" height="3" fill="#222"/><rect x="50" y="8" width="6" height="3" fill="#222"/><rect x="62" y="20" width="14" height="12" fill="${cd}"/><rect x="78" y="12" width="4" height="8" fill="${cl}"/><polygon points="4,28 22,28 20,32 6,32" fill="${cd}"/></svg>`;
+  if (weaponType === 'shotgun')
+    return `<svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="18" width="96" height="5" fill="#111"/><rect x="2" y="21" width="96" height="5" fill="#0a0a0a"/><rect x="40" y="16" width="36" height="12" fill="#3a2a1a"/><rect x="6" y="14" width="36" height="12" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="76" y="14" width="20" height="10" fill="${c}" stroke="${cd}" stroke-width="1"/></svg>`;
+  if (weaponType === 'ak' || weaponType === 'm4a4' || weaponType === 'galil')
+    return `<svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="20" width="92" height="4" fill="#111"/><rect x="8" y="14" width="70" height="12" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="20" y="10" width="30" height="5" fill="${cd}"/><rect x="60" y="18" width="14" height="16" fill="#0a0a0a"/><polygon points="76,26 96,26 94,32 78,32" fill="${cd}"/><rect x="50" y="16" width="6" height="6" fill="${cl}"/></svg>`;
+  return `<svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="18" width="60" height="10" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="80" y="20" width="14" height="5" fill="#111"/><polygon points="30,18 50,18 44,42 28,42" fill="${cd}"/><rect x="32" y="28" width="18" height="14" fill="#1a1a1a"/><rect x="34" y="34" width="14" height="3" fill="${c}"/><rect x="34" y="40" width="14" height="3" fill="${c}"/></svg>`;
 }
 
-/* ============================================================
-   WEBGL
-   ============================================================ */
+/* ---------- WEBGL ---------- */
 function mat4Perspective(fov, aspect, near, far){
-  const f = 1 / Math.tan(fov / 2);
-  return new Float32Array([
-    f/aspect, 0, 0, 0,
-    0, f, 0, 0,
-    0, 0, (far+near)/(near-far), -1,
-    0, 0, (2*far*near)/(near-far), 0
-  ]);
+  const f = 1 / Math.tan(fov/2);
+  return new Float32Array([f/aspect,0,0,0, 0,f,0,0, 0,0,(far+near)/(near-far),-1, 0,0,(2*far*near)/(near-far),0]);
 }
-function mat4Identity(){ return new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]); }
+const mat4Identity = () => new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]);
 
-const VERT_SRC = `
-attribute vec3 aPos;
-attribute vec3 aNormal;
-attribute vec3 aColor;
-uniform mat4 uProj;
-uniform mat4 uView;
-uniform mat4 uModel;
-varying vec3 vNormal;
-varying vec3 vWorldPos;
-varying vec3 vColor;
-void main(){
-  vec4 world = uModel * vec4(aPos, 1.0);
-  vWorldPos = world.xyz;
-  vNormal = mat3(uModel) * aNormal;
-  vColor = aColor;
-  gl_Position = uProj * uView * world;
-}`;
-
-const FRAG_SRC = `
-precision highp float;
-varying vec3 vNormal;
-varying vec3 vWorldPos;
-varying vec3 vColor;
-uniform vec3 uCamPos;
-uniform int uType;
-
+const VERT_SRC = `attribute vec3 aPos; attribute vec3 aNormal; attribute vec3 aColor;
+uniform mat4 uProj; uniform mat4 uView; uniform mat4 uModel;
+varying vec3 vNormal; varying vec3 vWorldPos; varying vec3 vColor;
+void main(){ vec4 w = uModel * vec4(aPos, 1.0); vWorldPos = w.xyz; vNormal = mat3(uModel) * aNormal; vColor = aColor; gl_Position = uProj * uView * w; }`;
+const FRAG_SRC = `precision highp float;
+varying vec3 vNormal; varying vec3 vWorldPos; varying vec3 vColor;
+uniform vec3 uCamPos; uniform int uType;
 float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-float noise(vec2 p){
-  vec2 i = floor(p); vec2 f = fract(p);
-  f = f*f*(3.0-2.0*f);
-  float a = hash(i);
-  float b = hash(i + vec2(1.0, 0.0));
-  float c = hash(i + vec2(0.0, 1.0));
-  float d = hash(i + vec2(1.0, 1.0));
-  return mix(mix(a,b,f.x), mix(c,d,f.x), f.y);
-}
-
+float noise(vec2 p){ vec2 i=floor(p),f=fract(p); f=f*f*(3.0-2.0*f); float a=hash(i),b=hash(i+vec2(1.0,0.0)),c=hash(i+vec2(0.0,1.0)),d=hash(i+vec2(1.0,1.0)); return mix(mix(a,b,f.x),mix(c,d,f.x),f.y); }
 void main(){
-  vec3 lightDir = normalize(vec3(0.35, 0.5, 0.8));
-  float diff = max(dot(normalize(vNormal), lightDir), 0.0) * 0.7 + 0.35;
+  vec3 lightDir = normalize(vec3(0.35,0.5,0.8));
+  float diff = max(dot(normalize(vNormal), lightDir), 0.0)*0.7 + 0.35;
   vec3 baseColor = vColor;
-
-  if (uType == 0) {
+  if (uType == 0){
     vec2 uv;
     if (abs(vNormal.x) > 0.7) uv = vec2(vWorldPos.y, vWorldPos.z) / 22.0;
     else if (abs(vNormal.y) > 0.7) uv = vec2(vWorldPos.x, vWorldPos.z) / 22.0;
     else uv = vec2(vWorldPos.x, vWorldPos.y) / 22.0;
-
     float row = floor(uv.y);
     float offs = mod(row, 2.0) * 0.5;
-    float bx = fract(uv.x + offs);
-    float by = fract(uv.y);
-    float mortar = step(0.93, bx) + step(0.86, by);
-    mortar = clamp(mortar, 0.0, 1.0);
-
-    vec2 brickId = vec2(floor(uv.x + offs), row);
-    float v1 = hash(brickId);
+    float bx = fract(uv.x + offs), by = fract(uv.y);
+    float mortar = clamp(step(0.93,bx) + step(0.86,by), 0.0, 1.0);
+    float v1 = hash(vec2(floor(uv.x+offs), row));
     float v2 = noise(uv * 3.0);
-
-    vec3 brickA = vec3(0.62, 0.30, 0.22);
-    vec3 brickB = vec3(0.48, 0.24, 0.18);
-    vec3 brickC = vec3(0.70, 0.38, 0.28);
-    vec3 brickUse = mix(brickA, brickB, v1);
-    brickUse = mix(brickUse, brickC, step(0.75, v2));
-
-    float stain = noise(uv * 8.0) * 0.15;
-    brickUse -= stain;
-
-    vec3 mortarCol = vec3(0.72, 0.66, 0.54);
+    vec3 brickA = vec3(0.62,0.30,0.22), brickB = vec3(0.48,0.24,0.18), brickC = vec3(0.70,0.38,0.28);
+    vec3 brickUse = mix(mix(brickA, brickB, v1), brickC, step(0.75, v2));
+    brickUse -= noise(uv*8.0)*0.15;
+    vec3 mortarCol = vec3(0.72,0.66,0.54);
     baseColor = mix(brickUse, mortarCol, mortar);
-    float edge = smoothstep(0.0, 0.1, bx) * smoothstep(1.0, 0.9, bx);
-    baseColor *= mix(0.85, 1.0, edge);
-  } else if (uType == 1) {
+    baseColor *= mix(0.85, 1.0, smoothstep(0.0,0.1,bx) * smoothstep(1.0,0.9,bx));
+  } else if (uType == 1){
     vec2 uv = vWorldPos.xy / 16.0;
-    float n1 = hash(uv * 40.0);
-    float n2 = hash(uv * 90.0 + 13.0);
-    float n3 = noise(uv * 1.5);
-    vec3 sandA = vec3(0.78, 0.66, 0.42);
-    vec3 sandB = vec3(0.70, 0.58, 0.36);
-    vec3 sandC = vec3(0.82, 0.72, 0.50);
-    vec3 sandUse = mix(sandA, sandB, n3);
-    sandUse = mix(sandUse, sandC, step(0.7, n3));
-    baseColor = sandUse;
-    float grain = (n1 + n2) * 0.5;
-    baseColor += (grain - 0.5) * 0.06;
-    float dots = step(0.94, n1);
-    baseColor += vec3(dots * 0.08);
-  } else if (uType == 2) {
+    float n1 = hash(uv*40.0), n2 = hash(uv*90.0+13.0), n3 = noise(uv*1.5);
+    vec3 sandA = vec3(0.78,0.66,0.42), sandB = vec3(0.70,0.58,0.36), sandC = vec3(0.82,0.72,0.50);
+    baseColor = mix(mix(sandA, sandB, n3), sandC, step(0.7, n3));
+    baseColor += ((n1+n2)*0.5 - 0.5) * 0.06;
+    baseColor += vec3(step(0.94, n1) * 0.08);
+  } else if (uType == 2){
     baseColor = vColor;
-    float n = noise(vWorldPos.xy * 0.5);
-    baseColor *= 0.9 + n * 0.15;
+    baseColor *= 0.9 + noise(vWorldPos.xy * 0.5) * 0.15;
   }
-
   float dist = length(vWorldPos - uCamPos);
   float fog = clamp(1.0 - dist / 1900.0, 0.15, 1.0);
-  if (uType == 0) {
-    float edgeShade = 0.8 + 0.2 * diff;
-    diff *= edgeShade;
-  }
-  vec3 col = baseColor * diff * fog;
-  gl_FragColor = vec4(col, 1.0);
+  if (uType == 0) diff *= 0.8 + 0.2 * diff;
+  gl_FragColor = vec4(baseColor * diff * fog, 1.0);
 }`;
 
 function compileShader(type, src){
@@ -713,52 +629,52 @@ gl.attachShader(program, compileShader(gl.FRAGMENT_SHADER, FRAG_SRC));
 gl.linkProgram(program); gl.useProgram(program);
 
 const loc = {
-  aPos:    gl.getAttribLocation(program, 'aPos'),
+  aPos: gl.getAttribLocation(program, 'aPos'),
   aNormal: gl.getAttribLocation(program, 'aNormal'),
-  aColor:  gl.getAttribLocation(program, 'aColor'),
-  uProj:   gl.getUniformLocation(program, 'uProj'),
-  uView:   gl.getUniformLocation(program, 'uView'),
-  uModel:  gl.getUniformLocation(program, 'uModel'),
+  aColor: gl.getAttribLocation(program, 'aColor'),
+  uProj: gl.getUniformLocation(program, 'uProj'),
+  uView: gl.getUniformLocation(program, 'uView'),
+  uModel: gl.getUniformLocation(program, 'uModel'),
   uCamPos: gl.getUniformLocation(program, 'uCamPos'),
-  uType:   gl.getUniformLocation(program, 'uType'),
+  uType: gl.getUniformLocation(program, 'uType'),
 };
 
 let wallBuffer = null, wallVerts = 0;
 let floorBuffer = null, floorVerts = 0;
 let playerBuffer = null;
-let WALL_H = 90;
+const WALL_H = 90;
 
 function pushCube(arr, x0, y0, z0, sx, sy, sz, r, g, b){
-  const x1 = x0 + sx, y1 = y0 + sy, z1 = z0 + sz;
-  const V = (x,y,z, nx,ny,nz) => arr.push(x, y, z, nx, ny, nz, r, g, b);
-  V(x0,y0,z0, 0,0,-1); V(x1,y0,z0, 0,0,-1); V(x1,y1,z0, 0,0,-1);
-  V(x0,y0,z0, 0,0,-1); V(x1,y1,z0, 0,0,-1); V(x0,y1,z0, 0,0,-1);
-  V(x0,y0,z1, 0,0,1);  V(x1,y1,z1, 0,0,1);  V(x1,y0,z1, 0,0,1);
-  V(x0,y0,z1, 0,0,1);  V(x0,y1,z1, 0,0,1);  V(x1,y1,z1, 0,0,1);
-  V(x0,y0,z0, -1,0,0); V(x0,y1,z0, -1,0,0); V(x0,y1,z1, -1,0,0);
-  V(x0,y0,z0, -1,0,0); V(x0,y1,z1, -1,0,0); V(x0,y0,z1, -1,0,0);
-  V(x1,y0,z0, 1,0,0);  V(x1,y1,z1, 1,0,0);  V(x1,y1,z0, 1,0,0);
-  V(x1,y0,z0, 1,0,0);  V(x1,y0,z1, 1,0,0);  V(x1,y1,z1, 1,0,0);
-  V(x0,y0,z0, 0,-1,0); V(x0,y0,z1, 0,-1,0); V(x1,y0,z1, 0,-1,0);
-  V(x0,y0,z0, 0,-1,0); V(x1,y0,z1, 0,-1,0); V(x1,y0,z0, 0,-1,0);
-  V(x0,y1,z0, 0,1,0);  V(x1,y1,z1, 0,1,0);  V(x1,y1,z0, 0,1,0);
-  V(x0,y1,z0, 0,1,0);  V(x0,y1,z1, 0,1,0);  V(x1,y1,z1, 0,1,0);
+  const x1 = x0+sx, y1 = y0+sy, z1 = z0+sz;
+  const V = (x,y,z, nx,ny,nz) => arr.push(x,y,z,nx,ny,nz,r,g,b);
+  V(x0,y0,z0,0,0,-1);V(x1,y0,z0,0,0,-1);V(x1,y1,z0,0,0,-1);
+  V(x0,y0,z0,0,0,-1);V(x1,y1,z0,0,0,-1);V(x0,y1,z0,0,0,-1);
+  V(x0,y0,z1,0,0,1);V(x1,y1,z1,0,0,1);V(x1,y0,z1,0,0,1);
+  V(x0,y0,z1,0,0,1);V(x0,y1,z1,0,0,1);V(x1,y1,z1,0,0,1);
+  V(x0,y0,z0,-1,0,0);V(x0,y1,z0,-1,0,0);V(x0,y1,z1,-1,0,0);
+  V(x0,y0,z0,-1,0,0);V(x0,y1,z1,-1,0,0);V(x0,y0,z1,-1,0,0);
+  V(x1,y0,z0,1,0,0);V(x1,y1,z1,1,0,0);V(x1,y1,z0,1,0,0);
+  V(x1,y0,z0,1,0,0);V(x1,y0,z1,1,0,0);V(x1,y1,z1,1,0,0);
+  V(x0,y0,z0,0,-1,0);V(x0,y0,z1,0,-1,0);V(x1,y0,z1,0,-1,0);
+  V(x0,y0,z0,0,-1,0);V(x1,y0,z1,0,-1,0);V(x1,y0,z0,0,-1,0);
+  V(x0,y1,z0,0,1,0);V(x1,y1,z1,0,1,0);V(x1,y1,z0,0,1,0);
+  V(x0,y1,z0,0,1,0);V(x0,y1,z1,0,1,0);V(x1,y1,z1,0,1,0);
 }
 function buildWallBuffer(MAP, MW, MH, TILE){
   const arr = [];
-  for (let ty = 0; ty < MH; ty++)
-    for (let tx = 0; tx < MW; tx++)
+  for (let ty=0; ty<MH; ty++)
+    for (let tx=0; tx<MW; tx++)
       if (MAP[ty][tx] === 1) pushCube(arr, tx*TILE, ty*TILE, 0, TILE, TILE, WALL_H, 1, 1, 1);
-  wallVerts = arr.length / 9;
+  wallVerts = arr.length/9;
   wallBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, wallBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arr), gl.STATIC_DRAW);
 }
 function buildFloorBuffer(MW, MH, TILE){
   const arr = [];
-  const W = MW * TILE, H = MH * TILE;
+  const W = MW*TILE, H = MH*TILE;
   const verts = [[0,0,0],[W,0,0],[W,H,0],[0,0,0],[W,H,0],[0,H,0]];
-  for (const [x,y,z] of verts) arr.push(x, y, z, 0, 0, 1, 1, 1, 1);
+  for (const [x,y,z] of verts) arr.push(x,y,z,0,0,1,1,1,1);
   floorVerts = 6;
   floorBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, floorBuffer);
@@ -767,33 +683,32 @@ function buildFloorBuffer(MW, MH, TILE){
 function initPlayerBuffer(){
   playerBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, playerBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, 200 * 9 * 4, gl.DYNAMIC_DRAW);
+  gl.bufferData(gl.ARRAY_BUFFER, 200*9*4, gl.DYNAMIC_DRAW);
 }
 function drawMesh(buffer, vertCount, model, type){
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  const stride = 9 * 4;
-  gl.enableVertexAttribArray(loc.aPos);    gl.vertexAttribPointer(loc.aPos, 3, gl.FLOAT, false, stride, 0);
+  const stride = 9*4;
+  gl.enableVertexAttribArray(loc.aPos); gl.vertexAttribPointer(loc.aPos, 3, gl.FLOAT, false, stride, 0);
   gl.enableVertexAttribArray(loc.aNormal); gl.vertexAttribPointer(loc.aNormal, 3, gl.FLOAT, false, stride, 12);
-  gl.enableVertexAttribArray(loc.aColor);  gl.vertexAttribPointer(loc.aColor, 3, gl.FLOAT, false, stride, 24);
+  gl.enableVertexAttribArray(loc.aColor); gl.vertexAttribPointer(loc.aColor, 3, gl.FLOAT, false, stride, 24);
   gl.uniformMatrix4fv(loc.uModel, false, model);
   gl.uniform1i(loc.uType, type);
   gl.drawArrays(gl.TRIANGLES, 0, vertCount);
 }
 function hex2rgb(hex){
-  if (!hex) return [1, 1, 1];
+  if (!hex) return [1,1,1];
   if (hex[0] === '#') hex = hex.slice(1);
-  if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+  if (hex.length === 3) hex = hex.split('').map(c => c+c).join('');
   const n = parseInt(hex, 16);
   return [((n>>16)&255)/255, ((n>>8)&255)/255, (n&255)/255];
 }
 
-/* ============================================================
-   СОСТОЯНИЕ
-   ============================================================ */
+/* ---------- СОСТОЯНИЕ ---------- */
 let ws = null, myId = null, myTeam = null, lobbyCode = null;
 let gameState = null, MAP = null, MW = 40, MH = 30, TILE = 48;
 const pMap = new Map();
 const effects = [];
+const impacts = []; // следы от пуль
 const keys = {};
 let mouseDown = false, rightDown = false;
 let lastSend = 0, lastAutoOpenRound = -1, buyMenuOpen = false;
@@ -804,11 +719,10 @@ let myInit = false;
 let stepAccumMine = 0;
 let myHealthLast = 100, myAliveLast = false;
 let scopeActive = false;
+let lastMagSent = -1; // для авто-релоада
 const stepTracker = new Map();
 const lastMyPos = {x:0, y:0};
-
-const EYE_HEIGHT = 32;
-const PLAYER_H = 46;
+const EYE_HEIGHT = 32, PLAYER_H = 46;
 
 const show = id => {
   ['screen-menu','screen-lobby','screen-game','screen-shop','screen-inv','screen-case','screen-casino','screen-settings','screen-skins']
@@ -819,24 +733,22 @@ const show = id => {
 function updateCoinUI(){
   $('coinCount').textContent = coins;
   $('coinCountShop').textContent = coins;
-  const cc = $('coinCountCasino');
-  if (cc) cc.textContent = coins;
+  const cc = $('coinCountCasino'); if (cc) cc.textContent = coins;
 }
 function connect(cb){
   if (ws && ws.readyState === 1){ cb(); return; }
   const url = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host;
   ws = new WebSocket(url);
-  ws.onopen    = () => cb();
+  ws.onopen = () => cb();
   ws.onmessage = e => handleMsg(JSON.parse(e.data));
-  ws.onclose   = () => { ws = null; };
+  ws.onclose = () => { ws = null; };
 }
 const send = o => { if (ws && ws.readyState === 1) ws.send(JSON.stringify(o)); };
 
 function handleMsg(m){
   switch(m.t){
     case 'init':
-      MAP = m.grid; MW = m.mw; MH = m.mh; TILE = m.tile;
-      myId = m.id;
+      MAP = m.grid; MW = m.mw; MH = m.mh; TILE = m.tile; myId = m.id;
       buildWallBuffer(MAP, MW, MH, TILE);
       buildFloorBuffer(MW, MH, TILE);
       initPlayerBuffer();
@@ -852,6 +764,7 @@ function handleMsg(m){
 }
 
 function onState(s){
+  const prevMatchOver = gameState ? gameState.matchOver : false;
   gameState = s;
   const me = s.players.find(p => p.id === myId);
   if (me) myTeam = me.tm;
@@ -886,6 +799,10 @@ function onState(s){
         sfxHit(panFromAngle(rel), vol);
       }
     }
+    else if (ev.type === 'impact'){
+      impacts.push({x:ev.x, y:ev.y, z:ev.z, t:performance.now()});
+      if (impacts.length > 200) impacts.shift();
+    }
     else if (ev.type === 'kill'){
       addKillFeed(ev);
       if (ev.killerId === myId){ coins += 1; saveLS(); updateCoinUI(); sfxKill(0, 0.85); }
@@ -906,12 +823,37 @@ function onState(s){
 
   $('scoreA').textContent = s.score.A;
   $('scoreB').textContent = s.score.B;
+
   if (me){
-    $('hudHp').textContent     = me.hp;
-    $('hudAr').textContent     = me.ar;
-    $('hudMoney').textContent  = me.money;
+    $('hudHp').textContent = me.hp;
+    $('hudAr').textContent = me.ar;
+    $('hudMoney').textContent = me.money;
     $('hudWeapon').textContent = (WEAPONS[me.w] || WEAPONS.pistol).name.toUpperCase();
-    $('hudSlot').textContent   = me.cs || 2;
+    $('hudSlot').textContent = me.cs || 2;
+
+    // Патроны
+    const ammoBox = $('ammoBox');
+    if (me.magMax > 0){
+      $('ammoMag').innerHTML = `${me.mag}<small>/${me.magMax}</small>`;
+      $('ammoLabel').textContent = me.reloading ? 'ПЕРЕЗАРЯДКА...' : 'ПАТРОНЫ';
+      ammoBox.classList.toggle('reload', me.reloading === 1 || me.mag === 0);
+      if (me.reloading){
+        const progress = 1 - (me.reloadT / (me.reloadTotal || 1));
+        $('reloadFill').style.width = Math.min(100, Math.max(0, progress * 100)) + '%';
+      } else {
+        $('reloadFill').style.width = '0%';
+      }
+      // Авто-релоад при 0
+      if (me.mag === 0 && !me.reloading && me.al){
+        send({t:'reload'});
+      }
+    } else {
+      $('ammoMag').innerHTML = '∞';
+      $('ammoLabel').textContent = 'НОЖ';
+      ammoBox.classList.remove('reload');
+      $('reloadFill').style.width = '0%';
+    }
+
     if (me.hp < myHealthLast - 0.1) tone(180, 0.15, 0.4, 0, 'sine', 90);
     if (me.al && !myAliveLast) myAliveLast = true;
     if (!me.al && myAliveLast){ sfxRoundEnd(false); myAliveLast = false; }
@@ -921,13 +863,13 @@ function onState(s){
   const phaseTxt = {waiting:'ОЖИДАНИЕ', buy:'ЗАКУПКА ' + s.timer, live:'РАУНД ' + s.round + ' • ' + s.timer, end:'КОНЕЦ РАУНДА'}[s.phase] || '';
   $('phaseInfo').textContent = phaseTxt;
 
-  if (s.phase === 'end' && s.winner){
+  if (s.matchOver){
+    const win = s.score[myTeam] >= ROUNDS_TO_WIN;
+    $('centerMsg').textContent = win ? 'ПОБЕДА В МАТЧЕ!' : 'ПОРАЖЕНИЕ';
+    $('centerMsg').style.color = win ? '#7cff8a' : '#ff6b6b';
+  } else if (s.phase === 'end' && s.winner){
     const win = s.winner === myTeam;
     $('centerMsg').textContent = win ? 'РАУНД ВЫИГРАН!' : (s.winner === 'draw' ? 'НИЧЬЯ' : 'РАУНД ПРОИГРАН');
-    $('centerMsg').style.color = win ? '#7cff8a' : '#ff6b6b';
-  } else if (s.matchOver){
-    const win = (s.score[myTeam] >= 10);
-    $('centerMsg').textContent = win ? 'ПОБЕДА В МАТЧЕ!' : 'ПОРАЖЕНИЕ';
     $('centerMsg').style.color = win ? '#7cff8a' : '#ff6b6b';
   } else $('centerMsg').textContent = '';
 
@@ -949,7 +891,6 @@ function addKillFeed(ev){
 }
 const esc = s => String(s).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
 
-/* ---------- UI ---------- */
 function renderLobbyList(list){
   const el = $('lobbyList'); el.innerHTML = '';
   if (!list.length){ el.innerHTML = '<div class="hint">Нет активных лобби</div>'; return; }
@@ -986,24 +927,23 @@ $('btnJoin').onclick = () => {
   connect(() => send({t:'join', name:nick, pass:$('passInput').value, code}));
 };
 $('btnRefresh').onclick = () => connect(() => send({t:'list'}));
-$('btnLeave').onclick   = () => { if (ws) ws.close(); ws = null; location.reload(); };
-$('btnTeamA').onclick   = () => { send({t:'team', team:'A'}); pushCosmetics(); };
-$('btnTeamB').onclick   = () => { send({t:'team', team:'B'}); pushCosmetics(); };
+$('btnLeave').onclick = () => { if (ws) ws.close(); ws = null; location.reload(); };
+$('btnTeamA').onclick = () => { send({t:'team', team:'A'}); pushCosmetics(); };
+$('btnTeamB').onclick = () => { send({t:'team', team:'B'}); pushCosmetics(); };
 
-$('btnShop').onclick      = () => { updateCoinUI(); renderShop(); show('screen-shop'); };
+$('btnShop').onclick = () => { updateCoinUI(); renderShop(); show('screen-shop'); };
 $('btnInventory').onclick = () => { renderInv(); show('screen-inv'); };
-$('btnCasino').onclick    = () => {
+$('btnCasino').onclick = () => {
   updateCoinUI();
   const r = $('casinoResult');
-  r.textContent = 'Выбери цвет и жми КРУТИТЬ';
-  r.style.color = '#7d848d';
+  r.textContent = 'Выбери цвет и жми КРУТИТЬ'; r.style.color = '#7d848d';
   $('rouletteReel').innerHTML = '';
   show('screen-casino');
 };
-$('btnSkins').onclick     = () => { renderSkins(); show('screen-skins'); };
-$('btnSettings').onclick  = () => { loadSettingsUI(); show('screen-settings'); };
-$('btnShopBack').onclick  = () => show('screen-menu');
-$('btnInvBack').onclick   = () => show('screen-menu');
+$('btnSkins').onclick = () => { renderSkins(); show('screen-skins'); };
+$('btnSettings').onclick = () => { loadSettingsUI(); show('screen-settings'); };
+$('btnShopBack').onclick = () => show('screen-menu');
+$('btnInvBack').onclick = () => show('screen-menu');
 $('btnCasinoBack').onclick = () => show('screen-menu');
 $('btnSkinsBack').onclick = () => show('screen-menu');
 $('btnSettingsBack').onclick = () => show('screen-menu');
@@ -1033,7 +973,7 @@ $('crossInput').oninput = e => {
 
 function renderShop(){
   const wrap = $('casesWrap'); wrap.innerHTML = '';
-  const order = ['trash','um8a','sand','premium','patriot','operation'];
+  const order = ['poor','trash','um8a','sand','premium','patriot','operation'];
   for (const id of order){
     const c = CASES[id];
     const d = document.createElement('div');
@@ -1058,7 +998,7 @@ function renderInv(){
     d.innerHTML = `
       <div class="sellBtn">💰 ${sellPrice}</div>
       <div class="clickArea">
-        <div class="weaponIconWrap">${weaponIconSVG(iconType, s.color)}</div>
+        <div class="weaponIconWrap">${weaponIconSVG(iconType, s.color, s.id)}</div>
         <div class="swatch" style="background:${s.color}"></div>
         <div class="iname">${esc(s.name)}${entry.count > 1 ? ' ×' + entry.count : ''}</div>
         <div class="irar ${RARITY_CLS[s.rarity] || 'rc'}">${RARITY_RU[s.rarity] || s.rarity}</div>
@@ -1080,9 +1020,7 @@ function renderInv(){
   }
 }
 
-/* ---------- Вкладка ВСЕ СКИНЫ ---------- */
 let skinsFilter = 'all';
-
 function renderSkins(){
   const g = $('skinsGrid'); if (!g) return;
   g.innerHTML = '';
@@ -1090,18 +1028,12 @@ function renderSkins(){
   const total = SKINS.length;
   const ownedCount = SKINS.filter(s => owned.has(s.id)).length;
   $('skinsStat').textContent = `Собрано: ${ownedCount} / ${total}`;
-
   let list = SKINS.slice();
   if (skinsFilter === 'owned') list = list.filter(s => owned.has(s.id));
   else if (skinsFilter !== 'all') list = list.filter(s => s.rarity === skinsFilter);
-
   const order = {knife:0, chroma:1, legendary:2, epic:3, rare:4, common:5};
   list.sort((a,b) => (order[a.rarity]||9) - (order[b.rarity]||9));
-
-  if (!list.length){
-    g.innerHTML = '<div class="hint" style="grid-column:1/-1">Пусто</div>';
-    return;
-  }
+  if (!list.length){ g.innerHTML = '<div class="hint" style="grid-column:1/-1">Пусто</div>'; return; }
   for (const s of list){
     const has = owned.has(s.id);
     const iconType = s.type === 'char' ? 'char' : s.weapon;
@@ -1109,14 +1041,13 @@ function renderSkins(){
     d.className = 'skinCard r-' + s.rarity + (has ? ' owned' : ' locked');
     d.innerHTML = `
       ${has ? '<div class="skinBadge">ЕСТЬ</div>' : ''}
-      <div class="weaponIconWrap">${weaponIconSVG(iconType, s.color)}</div>
+      <div class="weaponIconWrap">${weaponIconSVG(iconType, s.color, s.id)}</div>
       <div class="swatch" style="background:${s.color}"></div>
       <div class="iname">${esc(s.name)}</div>
       <div class="irar ${RARITY_CLS[s.rarity] || 'rc'}">${RARITY_RU[s.rarity] || s.rarity}</div>`;
     g.appendChild(d);
   }
 }
-
 document.querySelectorAll('.filterBtn').forEach(b => {
   b.addEventListener('click', () => {
     document.querySelectorAll('.filterBtn').forEach(x => x.classList.remove('sel'));
@@ -1146,11 +1077,8 @@ function rollItem(caseId){
     if (r < 0.15) return PATRIOT_KNIVES[2];
     return PATRIOT_SKINS[Math.floor(Math.random() * PATRIOT_SKINS.length)];
   }
-  if (caseId === 'premium' && Math.random() < 0.03)
-    return KNIFE_SKINS[Math.floor(Math.random()*KNIFE_SKINS.length)];
-  if (caseId === 'operation' && Math.random() < 0.08)
-    return KNIFE_SKINS[Math.floor(Math.random()*KNIFE_SKINS.length)];
-
+  if (caseId === 'premium' && Math.random() < 0.03) return KNIFE_SKINS[Math.floor(Math.random()*KNIFE_SKINS.length)];
+  if (caseId === 'operation' && Math.random() < 0.08) return KNIFE_SKINS[Math.floor(Math.random()*KNIFE_SKINS.length)];
   const odds = CASES[caseId].odds;
   const r = Math.random();
   let acc = 0, rarity = 'common';
@@ -1168,19 +1096,19 @@ function openTrashCase(){
   coins -= cfg.price; saveLS(); updateCoinUI();
   const r = Math.random();
   let reward;
-  if (r < 0.70)      reward = 3 + Math.floor(Math.random() * 6);
-  else if (r < 0.95) reward = 10 + Math.floor(Math.random() * 11);
-  else               reward = 25 + Math.floor(Math.random() * 11);
+  if (r < 0.70) reward = 3 + Math.floor(Math.random()*6);
+  else if (r < 0.95) reward = 10 + Math.floor(Math.random()*11);
+  else reward = 25 + Math.floor(Math.random()*11);
   const N = 52, WIN = 46, ITEM_W = 130;
   const reel = $('reel'); reel.innerHTML = '';
-  for (let i = 0; i < N; i++){
+  for (let i=0; i<N; i++){
     let val;
     if (i === WIN) val = reward;
     else {
       const rr = Math.random();
-      if (rr < 0.7) val = 3 + Math.floor(Math.random() * 6);
-      else if (rr < 0.95) val = 10 + Math.floor(Math.random() * 11);
-      else val = 25 + Math.floor(Math.random() * 11);
+      if (rr < 0.7) val = 3 + Math.floor(Math.random()*6);
+      else if (rr < 0.95) val = 10 + Math.floor(Math.random()*11);
+      else val = 25 + Math.floor(Math.random()*11);
     }
     const d = document.createElement('div');
     d.className = 'reelItem';
@@ -1188,12 +1116,12 @@ function openTrashCase(){
     d.innerHTML = `<div style="font-size:42px;line-height:1">🪙</div><div style="font-size:26px;font-weight:900;color:${col}">+${val}</div>`;
     reel.appendChild(d);
   }
-  const offset = WIN * ITEM_W + ITEM_W / 2 - window.innerWidth / 2 + (Math.random() * 70 - 35);
+  const offset = WIN*ITEM_W + ITEM_W/2 - window.innerWidth/2 + (Math.random()*70 - 35);
   reel.style.transition = 'none'; reel.style.transform = 'translateX(0px)';
   $('caseResult').innerHTML = ''; $('btnCaseOk').classList.add('hidden'); show('screen-case');
   requestAnimationFrame(() => requestAnimationFrame(() => {
     reel.style.transition = 'transform 5s cubic-bezier(.10,.82,.14,1)';
-    reel.style.transform  = `translateX(${-offset}px)`;
+    reel.style.transform = `translateX(${-offset}px)`;
   }));
   setTimeout(() => {
     coins += reward; saveLS(); updateCoinUI();
@@ -1213,19 +1141,19 @@ function openCase(caseId){
   const N = 52, WIN = 46, ITEM_W = 130;
   const reel = $('reel'); reel.innerHTML = '';
   const pool = caseId === 'patriot' ? PATRIOT_SKINS.concat(PATRIOT_KNIVES) : SKINS;
-  for (let i = 0; i < N; i++){
+  for (let i=0; i<N; i++){
     const it = (i === WIN) ? item : pool[Math.floor(Math.random() * pool.length)];
     const d = document.createElement('div');
     d.className = 'reelItem';
     d.innerHTML = `<div class="swatch" style="background:${it.color};box-shadow:0 0 14px ${it.color}"></div><div class="rname">${esc(it.name)}</div>`;
     reel.appendChild(d);
   }
-  const offset = WIN * ITEM_W + ITEM_W / 2 - window.innerWidth / 2 + (Math.random() * 70 - 35);
+  const offset = WIN*ITEM_W + ITEM_W/2 - window.innerWidth/2 + (Math.random()*70 - 35);
   reel.style.transition = 'none'; reel.style.transform = 'translateX(0px)';
   $('caseResult').innerHTML = ''; $('btnCaseOk').classList.add('hidden'); show('screen-case');
   requestAnimationFrame(() => requestAnimationFrame(() => {
     reel.style.transition = 'transform 5s cubic-bezier(.10,.82,.14,1)';
-    reel.style.transform  = `translateX(${-offset}px)`;
+    reel.style.transform = `translateX(${-offset}px)`;
   }));
   setTimeout(() => {
     addItem(item);
@@ -1284,6 +1212,7 @@ window.addEventListener('keydown', e => {
   if (e.key.toLowerCase() === 'b' && gameState && gameState.phase === 'buy'){ buyMenuOpen ? closeBuyMenu() : openBuyMenu(); }
   if (e.key === 'Escape') closeBuyMenu();
   if (e.key === ' ') e.preventDefault();
+  if (e.key.toLowerCase() === 'r'){ send({t:'reload'}); }
   if (gameState && gameState.phase !== 'waiting'){
     if (e.key === '1') send({t:'input', mx:0, my:0, a:myYaw, sh:0, sw:1});
     if (e.key === '2') send({t:'input', mx:0, my:0, a:myYaw, sh:0, sw:2});
@@ -1296,9 +1225,7 @@ cv3d.addEventListener('click', () => {
   if (!gameState || $('screen-game').classList.contains('hidden')) return;
   if (!buyMenuOpen && document.pointerLockElement !== cv3d) cv3d.requestPointerLock();
 });
-$('lockHint').addEventListener('click', () => {
-  if (gameState && !buyMenuOpen) cv3d.requestPointerLock();
-});
+$('lockHint').addEventListener('click', () => { if (gameState && !buyMenuOpen) cv3d.requestPointerLock(); });
 document.addEventListener('pointerlockchange', () => {
   pointerLocked = (document.pointerLockElement === cv3d);
   if (pointerLocked) $('lockHint').classList.add('hidden');
@@ -1339,9 +1266,6 @@ function resize(){
 }
 window.addEventListener('resize', resize);
 
-/* ============================================================
-   ВВОД
-   ============================================================ */
 function sendInput(){
   if (!ws || !gameState || !myInit) return;
   let moveF = 0, moveR = 0;
@@ -1360,9 +1284,6 @@ function sendInput(){
   });
 }
 
-/* ============================================================
-   ШАГИ
-   ============================================================ */
 function updateFootsteps(){
   for (const [id, e] of pMap){
     if (id === myId) continue;
@@ -1393,36 +1314,42 @@ function updateFootsteps(){
   }
 }
 
-/* ============================================================
-   КОЛЛИЗИЯ
-   ============================================================ */
+function hasLOS(x1, y1, x2, y2){
+  const dx = x2-x1, dy = y2-y1;
+  const dist = Math.hypot(dx, dy);
+  const steps = Math.ceil(dist/16);
+  for (let i=1; i<steps; i++){
+    const t = i/steps;
+    const px = x1 + dx*t, py = y1 + dy*t;
+    const tx = Math.floor(px/TILE), ty = Math.floor(py/TILE);
+    if (tx<0||ty<0||tx>=MW||ty>=MH) return false;
+    if (MAP[ty][tx] === 1) return false;
+  }
+  return true;
+}
+
 function resolveCollision(px, py, r){
-  const minTx = Math.floor((px - r) / TILE);
-  const maxTx = Math.floor((px + r) / TILE);
-  const minTy = Math.floor((py - r) / TILE);
-  const maxTy = Math.floor((py + r) / TILE);
+  const minTx = Math.floor((px-r)/TILE), maxTx = Math.floor((px+r)/TILE);
+  const minTy = Math.floor((py-r)/TILE), maxTy = Math.floor((py+r)/TILE);
   let nx = px, ny = py;
-  for (let ty = minTy; ty <= maxTy; ty++){
-    for (let tx = minTx; tx <= maxTx; tx++){
+  for (let ty=minTy; ty<=maxTy; ty++){
+    for (let tx=minTx; tx<=maxTx; tx++){
       if (tx<0||ty<0||tx>=MW||ty>=MH) continue;
       if (MAP[ty][tx] !== 1) continue;
       const tx0 = tx*TILE, ty0 = ty*TILE;
-      const tx1 = tx0 + TILE, ty1 = ty0 + TILE;
-      const cx = Math.max(tx0, Math.min(nx, tx1));
-      const cy = Math.max(ty0, Math.min(ny, ty1));
+      const cx = Math.max(tx0, Math.min(nx, tx0+TILE));
+      const cy = Math.max(ty0, Math.min(ny, ty0+TILE));
       const dx = nx - cx, dy = ny - cy;
       const d2 = dx*dx + dy*dy;
       if (d2 < r*r){
         if (d2 > 0.0001){
-          const d = Math.sqrt(d2);
-          const push = r - d;
-          nx += (dx / d) * push;
-          ny += (dy / d) * push;
+          const d = Math.sqrt(d2), push = r - d;
+          nx += (dx/d) * push; ny += (dy/d) * push;
         } else {
-          const ccx = tx0 + TILE/2, ccy = ty0 + TILE/2;
+          const ccx = tx0+TILE/2, ccy = ty0+TILE/2;
           const dcx = nx - ccx, dcy = ny - ccy;
-          if (Math.abs(dcx) > Math.abs(dcy)) nx += Math.sign(dcx || 1) * (TILE/2 + r);
-          else ny += Math.sign(dcy || 1) * (TILE/2 + r);
+          if (Math.abs(dcx) > Math.abs(dcy)) nx += Math.sign(dcx||1)*(TILE/2+r);
+          else ny += Math.sign(dcy||1)*(TILE/2+r);
         }
       }
     }
@@ -1438,16 +1365,17 @@ function localMove(dt){
 
   myCrouch = !!(keys['control'] || keys['c'] || keys['с']);
   if (keys[' '] && myZ <= 0){ myVz = 280; myZ = 0.01; }
-  myVz -= 900 * dt;
+  myVz -= 1100 * dt;
   myZ += myVz * dt;
   if (myZ <= 0){ myZ = 0; myVz = 0; }
+  if (myZ > 200){ myZ = 200; myVz = 0; }
+  myZ = Math.max(0, myZ);
 
   let moveF = 0, moveR = 0;
   if (keys['w'] || keys['ц']) moveF += 1;
   if (keys['s'] || keys['ы']) moveF -= 1;
   if (keys['d'] || keys['в']) moveR += 1;
   if (keys['a'] || keys['ф']) moveR -= 1;
-
   const len = Math.hypot(moveF, moveR);
   if (len > 0){
     moveF /= len; moveR /= len;
@@ -1456,8 +1384,7 @@ function localMove(dt){
     const fy = moveF * s - moveR * c;
     const spd = (myCrouch ? 110 : 220) * dt;
     const r = 13;
-    let nx = myX + fx * spd;
-    let ny = myY + fy * spd;
+    let nx = myX + fx * spd, ny = myY + fy * spd;
     [nx, ny] = resolveCollision(nx, ny, r);
     myX = nx; myY = ny;
   } else {
@@ -1469,30 +1396,16 @@ function localMove(dt){
   if (Math.abs(myY - me.d.y) > 80) myY = me.d.y;
 }
 
-/* ============================================================
-   3D РЕНДЕР
-   ============================================================ */
-/* ИСПРАВЛЕННАЯ viewMatrix — питч не влияет на позицию */
 function viewMatrix(px, py, pz, yaw, pitch){
   const cy = Math.cos(yaw), sy = Math.sin(yaw);
   const cp = Math.cos(pitch), sp = Math.sin(pitch);
-
-  // Ортонормированный базис камеры
-  const rx = sy,         ry = -cy,        rz = 0;
-  const ux = -cy * sp,   uy = -sy * sp,   uz = cp;
-  const fx = cy * cp,    fy = sy * cp,    fz = sp;
-
-  // Сдвиг — только позиция, БЕЗ влияния питча
+  const rx = sy, ry = -cy, rz = 0;
+  const ux = -cy*sp, uy = -sy*sp, uz = cp;
+  const fx = cy*cp, fy = sy*cp, fz = sp;
   const tx = -(rx*px + ry*py + rz*pz);
   const ty = -(ux*px + uy*py + uz*pz);
   const tz =  (fx*px + fy*py + fz*pz);
-
-  return new Float32Array([
-    rx, ux, -fx, 0,
-    ry, uy, -fy, 0,
-    rz, uz, -fz, 0,
-    tx, ty, tz,  1
-  ]);
+  return new Float32Array([rx, ux, -fx, 0, ry, uy, -fy, 0, rz, uz, -fz, 0, tx, ty, tz, 1]);
 }
 
 function render3D(){
@@ -1511,7 +1424,6 @@ function render3D(){
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.enable(gl.DEPTH_TEST);
   gl.disable(gl.CULL_FACE);
-
   gl.useProgram(program);
   gl.uniformMatrix4fv(loc.uProj, false, proj);
   gl.uniformMatrix4fv(loc.uView, false, view);
@@ -1525,47 +1437,82 @@ function render3D(){
   for (const [id, e] of pMap){
     if (id === myId) continue;
     const p = e.d; if (!p || !p.al) continue;
-    if (Math.hypot(e.x - myX, e.y - myY) > 2000) continue;
+    const d = Math.hypot(e.x - myX, e.y - myY);
+    if (d > 2000) continue;
+    if (!hasLOS(myX, myY, e.x, e.y)) continue;
     const teamColor = p.tm === 'A' ? '#5aa9ff' : '#ffb347';
     const bodyColor = p.c || teamColor;
     const rgb = hex2rgb(bodyColor);
     const z = e.z || 0;
     const h = p.cr ? 32 : PLAYER_H;
-    pushCube(pArr, e.x - 10, e.y - 10, z, 20, 20, h * 0.7, rgb[0]*0.9, rgb[1]*0.9, rgb[2]*0.9);
-    pushCube(pArr, e.x - 8, e.y - 8, z + h * 0.7, 16, 16, h * 0.3, rgb[0], rgb[1], rgb[2]);
+    pushCube(pArr, e.x-10, e.y-10, z, 20, 20, h*0.7, rgb[0]*0.9, rgb[1]*0.9, rgb[2]*0.9);
+    pushCube(pArr, e.x-8, e.y-8, z + h*0.7, 16, 16, h*0.3, rgb[0], rgb[1], rgb[2]);
     const wdx = Math.cos(e.a) * 18, wdy = Math.sin(e.a) * 18;
     const wcol = hex2rgb(p.wc || '#666666');
-    pushCube(pArr, e.x + wdx - 3, e.y + wdy - 3, z + h * 0.45, 6, 6, 10, wcol[0], wcol[1], wcol[2]);
+    pushCube(pArr, e.x + wdx - 3, e.y + wdy - 3, z + h*0.45, 6, 6, 10, wcol[0], wcol[1], wcol[2]);
   }
   if (pArr.length > 0){
     gl.bindBuffer(gl.ARRAY_BUFFER, playerBuffer);
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(pArr));
-    drawMesh(playerBuffer, pArr.length / 9, model, 2);
+    drawMesh(playerBuffer, pArr.length/9, model, 2);
   }
 }
 
-/* ============================================================
-   2D ОВЕРЛЕЙ
-   ============================================================ */
+/* Проекция мира на экран */
+function projectToScreen(wx, wy, wz){
+  const cy = Math.cos(myYaw), sy = Math.sin(myYaw);
+  const cp = Math.cos(myPitch), sp = Math.sin(myPitch);
+  const rx = sy, ry = -cy, rz = 0;
+  const ux = -cy*sp, uy = -sy*sp, uz = cp;
+  const fx = cy*cp, fy = sy*cp, fz = sp;
+  const eyeZ = (myCrouch ? 22 : EYE_HEIGHT) + myZ;
+  const dx = wx - myX, dy = wy - myY, dz = wz - eyeZ;
+  const eX = dx*rx + dy*ry + dz*rz;
+  const eY = dx*ux + dy*uy + dz*uz;
+  const eZ = dx*fx + dy*fy + dz*fz;
+  if (eZ <= 0.5) return null;
+  const fovRad = (scopeActive ? 22 : settings.fov) * Math.PI / 180;
+  const focal = cv2d.height / (2 * Math.tan(fovRad / 2));
+  return { x: cv2d.width/2 + eX/eZ*focal, y: cv2d.height/2 - eY/eZ*focal, dist: eZ, scale: focal/eZ };
+}
+
+function drawImpacts(){
+  const now = performance.now();
+  // Убираем старые (>30с)
+  while (impacts.length && now - impacts[0].t > 30000) impacts.shift();
+  for (const imp of impacts){
+    const p = projectToScreen(imp.x, imp.y, imp.z);
+    if (!p) continue;
+    if (!hasLOS(myX, myY, imp.x, imp.y)) continue;
+    const size = Math.max(2, Math.min(10, 400 / p.dist));
+    ctx.fillStyle = 'rgba(15, 10, 5, 0.9)';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, size, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.95)';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, size * 0.55, 0, Math.PI*2);
+    ctx.fill();
+  }
+}
+
 function drawCrosshair(){
   if (scopeActive) return;
   const me = pMap.get(myId);
   const w = me && me.d ? me.d.w : 'pistol';
   const spread = (w === 'shotgun') ? 22 : (w === 'awp' ? 26 : (w === 'ak' || w === 'm4a4' || w === 'galil' ? 14 : 8));
   const cx = cv2d.width/2, cy = cv2d.height/2;
-  ctx.strokeStyle = settings.crossColor;
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = settings.crossColor; ctx.lineWidth = 2;
   const g = 3;
   ctx.beginPath();
-  ctx.moveTo(cx - spread - g, cy); ctx.lineTo(cx - g, cy);
-  ctx.moveTo(cx + g, cy); ctx.lineTo(cx + spread + g, cy);
-  ctx.moveTo(cx, cy - spread - g); ctx.lineTo(cx, cy - g);
-  ctx.moveTo(cx, cy + g); ctx.lineTo(cx, cy + spread + g);
+  ctx.moveTo(cx-spread-g, cy); ctx.lineTo(cx-g, cy);
+  ctx.moveTo(cx+g, cy); ctx.lineTo(cx+spread+g, cy);
+  ctx.moveTo(cx, cy-spread-g); ctx.lineTo(cx, cy-g);
+  ctx.moveTo(cx, cy+g); ctx.lineTo(cx, cy+spread+g);
   ctx.stroke();
   ctx.fillStyle = settings.crossColor;
-  ctx.fillRect(cx - 1, cy - 1, 2, 2);
+  ctx.fillRect(cx-1, cy-1, 2, 2);
 }
-
 function drawScope(){
   if (!scopeActive) return;
   ctx.save();
@@ -1575,17 +1522,16 @@ function drawScope(){
   ctx.rect(0, 0, cv2d.width, cv2d.height);
   ctx.arc(cv2d.width/2, cv2d.height/2, r, 0, Math.PI*2, true);
   ctx.fill();
-  ctx.strokeStyle = 'rgba(20,20,20,.9)';
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = 'rgba(20,20,20,.9)'; ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(cv2d.width/2 - r, cv2d.height/2); ctx.lineTo(cv2d.width/2 + r, cv2d.height/2);
-  ctx.moveTo(cv2d.width/2, cv2d.height/2 - r); ctx.lineTo(cv2d.width/2, cv2d.height/2 + r);
+  ctx.moveTo(cv2d.width/2-r, cv2d.height/2); ctx.lineTo(cv2d.width/2+r, cv2d.height/2);
+  ctx.moveTo(cv2d.width/2, cv2d.height/2-r); ctx.lineTo(cv2d.width/2, cv2d.height/2+r);
   ctx.stroke();
   ctx.fillStyle = 'rgba(30,30,30,.9)';
-  for (let i = -6; i <= 6; i++){
-    if (i === 0) continue;
-    const y = cv2d.height/2 + i * (r / 7);
-    ctx.fillRect(cv2d.width/2 - 5, y - 1, 10, 2);
+  for (let i=-6; i<=6; i++){
+    if (i===0) continue;
+    const y = cv2d.height/2 + i*(r/7);
+    ctx.fillRect(cv2d.width/2-5, y-1, 10, 2);
   }
   ctx.restore();
 }
@@ -1593,21 +1539,21 @@ function drawScope(){
 function drawViewModel(){
   const me = pMap.get(myId);
   const myW = me && me.d ? me.d.w : 'pistol';
-  const wc = (me && me.d && me.d.wc) ? me.d.wc : null;
+  const mySkinId = equip[myW] || null;
+  const mySkin = mySkinId ? skinById(mySkinId) : null;
+  const wc = mySkin ? mySkin.color : ((me && me.d && me.d.wc) ? me.d.wc : null);
   const baseCol = wc || '#3a3a3a';
   const darkCol = wc ? shadeColor(wc, -0.4) : '#1e1e1e';
   const lightCol = wc ? shadeColor(wc, 0.3) : '#555';
-  const cx = cv2d.width / 2, cy = cv2d.height;
+  const cx = cv2d.width/2, cy = cv2d.height;
   const S = Math.min(cv2d.width, cv2d.height) / 720;
   const K = 1.85 * S;
-
   if (scopeActive) return;
 
   const t = performance.now() / 1000;
   const moving = keys['w'] || keys['a'] || keys['s'] || keys['d'];
-  const bob = moving ? Math.sin(t * 10) * 3 * S : 0;
-  const bobY = moving ? Math.abs(Math.cos(t * 10)) * 3 * S : 0;
-
+  const bob = moving ? Math.sin(t*10)*3*S : 0;
+  const bobY = moving ? Math.abs(Math.cos(t*10))*3*S : 0;
   ctx.save();
   ctx.translate(0, bob + bobY);
   ctx.translate(cv2d.width * 0.08, 0);
@@ -1615,109 +1561,160 @@ function drawViewModel(){
   ctx.shadowBlur = 10;
 
   if (myW === 'knife'){
-    ctx.fillStyle = wc ? lightCol : '#c8c8c8';
-    ctx.beginPath();
-    ctx.moveTo(cx + 40*K, cy - 30*K);
-    ctx.lineTo(cx + 130*K, cy - 200*K);
-    ctx.lineTo(cx + 142*K, cy - 190*K);
-    ctx.lineTo(cx + 50*K, cy - 10*K);
-    ctx.closePath();
-    ctx.fill();
-    ctx.fillStyle = wc ? baseCol : '#888';
-    ctx.beginPath();
-    ctx.moveTo(cx + 40*K, cy - 30*K);
-    ctx.lineTo(cx + 130*K, cy - 200*K);
-    ctx.lineTo(cx + 120*K, cy - 205*K);
-    ctx.lineTo(cx + 34*K, cy - 38*K);
-    ctx.closePath();
-    ctx.fill();
-    ctx.fillStyle = '#2a1a0a';
-    ctx.fillRect(cx + 20*K, cy - 20*K, 30*K, 20*K);
-    ctx.fillStyle = wc || '#555';
-    ctx.fillRect(cx + 22*K, cy - 22*K, 26*K, 5*K);
+    let shape = 'default';
+    const k = mySkinId || '';
+    if (k.includes('karambit') || k === 'kn_doppler' || k === 'kn_tiger' || k === 'kn_karambit_emis' || k === 'kn_claw') shape = 'karambit';
+    else if (k === 'kn_butterfly' || k === 'kn_butterfly_fade') shape = 'butterfly';
+    else if (k === 'kn_bayonet' || k === 'kn_marble' || k === 'kn_stiletto') shape = 'bayonet';
+    else if (k === 'kn_tanto') shape = 'tanto';
+    else if (k === 'kn_bowie' || k === 'kn_huntsman') shape = 'bowie';
+    else if (k === 'kn_falchion') shape = 'falchion';
+    const bx = cx + 60*K, by = cy - 40*K;
+    const bladeCol = wc ? lightCol : '#d0d0d0';
+    const edgeCol = wc ? darkCol : '#555';
+    const handleCol = '#2a1a0a';
+    if (shape === 'karambit'){
+      ctx.fillStyle = bladeCol;
+      ctx.beginPath();
+      ctx.moveTo(bx + 10*K, by - 180*K);
+      ctx.quadraticCurveTo(bx + 110*K, by - 100*K, bx + 60*K, by - 20*K);
+      ctx.quadraticCurveTo(bx + 15*K, by - 50*K, bx + 10*K, by - 180*K);
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = edgeCol; ctx.lineWidth = 2*S; ctx.stroke();
+      ctx.strokeStyle = edgeCol; ctx.lineWidth = 3*S;
+      ctx.beginPath(); ctx.arc(bx + 40*K, by - 10*K, 12*K, 0, 7); ctx.stroke();
+      ctx.fillStyle = handleCol; ctx.fillRect(bx + 40*K, by - 5*K, 20*K, 40*K);
+    } else if (shape === 'butterfly'){
+      ctx.fillStyle = bladeCol;
+      ctx.beginPath();
+      ctx.moveTo(bx + 30*K, by - 180*K);
+      ctx.lineTo(bx + 50*K, by - 170*K);
+      ctx.lineTo(bx + 50*K, by - 20*K);
+      ctx.lineTo(bx + 30*K, by - 10*K);
+      ctx.lineTo(bx + 10*K, by - 20*K);
+      ctx.lineTo(bx + 10*K, by - 170*K);
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = edgeCol; ctx.lineWidth = 2*S; ctx.stroke();
+      ctx.fillStyle = '#222';
+      ctx.fillRect(bx - 10*K, by, 25*K, 70*K);
+      ctx.fillRect(bx + 45*K, by, 25*K, 70*K);
+    } else if (shape === 'bayonet'){
+      ctx.fillStyle = bladeCol;
+      ctx.beginPath();
+      ctx.moveTo(bx + 30*K, by - 200*K);
+      ctx.lineTo(bx + 50*K, by - 170*K);
+      ctx.lineTo(bx + 50*K, by - 10*K);
+      ctx.lineTo(bx + 10*K, by - 10*K);
+      ctx.lineTo(bx + 10*K, by - 170*K);
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = edgeCol; ctx.lineWidth = 2*S; ctx.stroke();
+      ctx.fillStyle = '#333'; ctx.fillRect(bx - 5*K, by - 10*K, 70*K, 8*K);
+      ctx.fillStyle = handleCol; ctx.fillRect(bx + 15*K, by + 2*K, 30*K, 45*K);
+    } else if (shape === 'tanto'){
+      ctx.fillStyle = bladeCol;
+      ctx.beginPath();
+      ctx.moveTo(bx + 30*K, by - 190*K);
+      ctx.lineTo(bx + 65*K, by - 130*K);
+      ctx.lineTo(bx + 55*K, by - 10*K);
+      ctx.lineTo(bx + 10*K, by - 10*K);
+      ctx.lineTo(bx + 10*K, by - 130*K);
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = edgeCol; ctx.lineWidth = 2*S; ctx.stroke();
+      ctx.fillStyle = handleCol; ctx.fillRect(bx + 15*K, by, 25*K, 45*K);
+    } else if (shape === 'bowie'){
+      ctx.fillStyle = bladeCol;
+      ctx.beginPath();
+      ctx.moveTo(bx + 5*K, by - 200*K);
+      ctx.quadraticCurveTo(bx + 70*K, by - 130*K, bx + 55*K, by - 10*K);
+      ctx.lineTo(bx, by - 10*K);
+      ctx.lineTo(bx, by - 140*K);
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = edgeCol; ctx.lineWidth = 2*S; ctx.stroke();
+      ctx.fillStyle = handleCol; ctx.fillRect(bx - 5*K, by, 30*K, 45*K);
+    } else if (shape === 'falchion'){
+      ctx.fillStyle = bladeCol;
+      ctx.beginPath();
+      ctx.moveTo(bx, by - 190*K);
+      ctx.quadraticCurveTo(bx + 80*K, by - 130*K, bx + 60*K, by - 10*K);
+      ctx.lineTo(bx - 5*K, by - 10*K);
+      ctx.lineTo(bx - 5*K, by - 140*K);
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = edgeCol; ctx.lineWidth = 2*S; ctx.stroke();
+      ctx.fillStyle = handleCol; ctx.fillRect(bx - 10*K, by, 30*K, 45*K);
+    } else {
+      ctx.fillStyle = bladeCol;
+      ctx.beginPath();
+      ctx.moveTo(bx + 15*K, by - 190*K);
+      ctx.lineTo(bx + 40*K, by - 180*K);
+      ctx.lineTo(bx + 40*K, by - 10*K);
+      ctx.lineTo(bx + 10*K, by - 10*K);
+      ctx.lineTo(bx + 10*K, by - 180*K);
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = edgeCol; ctx.lineWidth = 2*S; ctx.stroke();
+      ctx.fillStyle = handleCol; ctx.fillRect(bx + 12*K, by, 26*K, 45*K);
+    }
   } else if (myW === 'awp'){
     ctx.fillStyle = wc ? darkCol : '#0c3a2a';
     ctx.fillRect(cx + 20*K, cy - 130*K, 320*K, 32*K);
-    ctx.fillStyle = '#111';
-    ctx.fillRect(cx + 300*K, cy - 122*K, 90*K, 16*K);
-    ctx.fillStyle = '#0a0a0a';
-    ctx.fillRect(cx + 60*K, cy - 155*K, 100*K, 25*K);
+    ctx.fillStyle = '#111'; ctx.fillRect(cx + 300*K, cy - 122*K, 90*K, 16*K);
+    ctx.fillStyle = '#0a0a0a'; ctx.fillRect(cx + 60*K, cy - 155*K, 100*K, 25*K);
     ctx.fillStyle = wc ? baseCol : '#0c3a2a';
     ctx.fillRect(cx + 120*K, cy - 100*K, 60*K, 40*K);
-    if (wc){
-      ctx.fillStyle = lightCol;
-      ctx.fillRect(cx + 20*K, cy - 130*K, 320*K, 4*K);
-    }
+    if (wc){ ctx.fillStyle = lightCol; ctx.fillRect(cx + 20*K, cy - 130*K, 320*K, 4*K); }
   } else if (myW === 'ak' || myW === 'm4a4' || myW === 'galil'){
     ctx.fillStyle = wc ? baseCol : '#2a2a2a';
     ctx.fillRect(cx + 15*K, cy - 95*K, 300*K, 30*K);
-    ctx.fillStyle = '#111';
-    ctx.fillRect(cx + 280*K, cy - 88*K, 80*K, 14*K);
+    ctx.fillStyle = '#111'; ctx.fillRect(cx + 280*K, cy - 88*K, 80*K, 14*K);
     ctx.fillStyle = wc ? darkCol : '#1a1a1a';
     ctx.fillRect(cx + 180*K, cy - 92*K, 70*K, 22*K);
     ctx.fillStyle = wc ? darkCol : '#1a1a1a';
     ctx.fillRect(cx + 40*K, cy - 115*K, 60*K, 22*K);
-    ctx.fillStyle = '#0a0a0a';
-    ctx.fillRect(cx + 100*K, cy - 70*K, 40*K, 35*K);
-    if (wc){
-      ctx.fillStyle = lightCol;
-      ctx.fillRect(cx + 15*K, cy - 95*K, 300*K, 3*K);
-    }
-    ctx.fillStyle = '#3a2a1a';
-    ctx.fillRect(cx + 60*K, cy - 65*K, 55*K, 45*K);
+    ctx.fillStyle = '#0a0a0a'; ctx.fillRect(cx + 100*K, cy - 70*K, 40*K, 35*K);
+    if (wc){ ctx.fillStyle = lightCol; ctx.fillRect(cx + 15*K, cy - 95*K, 300*K, 3*K); }
+    ctx.fillStyle = '#3a2a1a'; ctx.fillRect(cx + 60*K, cy - 65*K, 55*K, 45*K);
   } else if (myW === 'shotgun'){
     ctx.fillStyle = wc ? baseCol : '#3a3a3a';
     ctx.fillRect(cx + 10*K, cy - 90*K, 320*K, 26*K);
-    ctx.fillStyle = '#111';
-    ctx.fillRect(cx + 180*K, cy - 82*K, 130*K, 12*K);
+    ctx.fillStyle = '#111'; ctx.fillRect(cx + 180*K, cy - 82*K, 130*K, 12*K);
     ctx.fillStyle = wc ? darkCol : '#3a2a1a';
     ctx.fillRect(cx + 130*K, cy - 86*K, 100*K, 20*K);
-    ctx.fillStyle = wc ? darkCol : '#3a2a1a';
     ctx.fillRect(cx + 30*K, cy - 105*K, 60*K, 22*K);
-    ctx.fillStyle = '#3a2a1a';
-    ctx.fillRect(cx + 70*K, cy - 60*K, 55*K, 45*K);
+    ctx.fillStyle = '#3a2a1a'; ctx.fillRect(cx + 70*K, cy - 60*K, 55*K, 45*K);
   } else {
     ctx.fillStyle = wc ? baseCol : '#333';
     ctx.fillRect(cx + 30*K, cy - 105*K, 90*K, 28*K);
-    ctx.fillStyle = '#111';
-    ctx.fillRect(cx + 100*K, cy - 100*K, 25*K, 14*K);
+    ctx.fillStyle = '#111'; ctx.fillRect(cx + 100*K, cy - 100*K, 25*K, 14*K);
     ctx.fillStyle = wc ? darkCol : '#1e1e1e';
     ctx.fillRect(cx + 42*K, cy - 77*K, 50*K, 45*K);
-    ctx.fillStyle = '#3a2a1a';
-    ctx.fillRect(cx + 40*K, cy - 55*K, 55*K, 45*K);
-    if (wc){
-      ctx.fillStyle = lightCol;
-      ctx.fillRect(cx + 30*K, cy - 105*K, 90*K, 3*K);
-    }
+    ctx.fillStyle = '#3a2a1a'; ctx.fillRect(cx + 40*K, cy - 55*K, 55*K, 45*K);
+    if (wc){ ctx.fillStyle = lightCol; ctx.fillRect(cx + 30*K, cy - 105*K, 90*K, 3*K); }
   }
   ctx.restore();
 }
 
 function drawMiniMap(){
-  const mmW = 130, mmH = 98;
-  const mmX = cv2d.width - mmW - 12;
-  const mmY = cv2d.height - mmH - 100;
+  const mmW = 150, mmH = 112;
+  const mmX = 12, mmY = 12; // ЛЕВЫЙ ВЕРХНИЙ УГОЛ
   ctx.fillStyle = 'rgba(10,12,15,.78)';
   ctx.fillRect(mmX, mmY, mmW, mmH);
-  ctx.strokeStyle = '#2c3138';
-  ctx.lineWidth = 1.5;
+  ctx.strokeStyle = '#2c3138'; ctx.lineWidth = 1.5;
   ctx.strokeRect(mmX, mmY, mmW, mmH);
   if (!MAP) return;
   const sx = mmW / (MW * TILE), sy = mmH / (MH * TILE);
   ctx.fillStyle = 'rgba(139,74,58,.95)';
-  for (let ty = 0; ty < MH; ty++)
-    for (let tx = 0; tx < MW; tx++)
+  for (let ty=0; ty<MH; ty++)
+    for (let tx=0; tx<MW; tx++)
       if (MAP[ty][tx] === 1)
         ctx.fillRect(mmX + tx*TILE*sx, mmY + ty*TILE*sy, Math.ceil(TILE*sx), Math.ceil(TILE*sy));
   ctx.fillStyle = 'rgba(62,224,208,.25)';
   ctx.beginPath();
   ctx.moveTo(mmX + myX*sx, mmY + myY*sy);
   ctx.arc(mmX + myX*sx, mmY + myY*sy, 16, myYaw - Math.PI/4, myYaw + Math.PI/4);
-  ctx.closePath();
-  ctx.fill();
+  ctx.closePath(); ctx.fill();
   for (const [id, e] of pMap){
     const p = e.d; if (!p || !p.al) continue;
     const isMe = id === myId;
+    if (!isMe && !hasLOS(myX, myY, e.x, e.y)) continue;
     ctx.fillStyle = isMe ? '#3ee0d0' : (p.tm === 'A' ? '#5aa9ff' : '#ffb347');
     ctx.beginPath();
     ctx.arc(mmX + e.x*sx, mmY + e.y*sy, isMe ? 3 : 2.5, 0, 7);
@@ -1732,6 +1729,19 @@ function drawMiniMap(){
 function drawDamageOverlay(){
   const me = pMap.get(myId);
   if (!me || !me.d) return;
+  if (gameState.matchOver){
+    const win = gameState.score[myTeam] >= 10;
+    ctx.fillStyle = win ? 'rgba(0,80,0,.35)' : 'rgba(120,0,0,.35)';
+    ctx.fillRect(0, 0, cv2d.width, cv2d.height);
+    ctx.font = 'bold 56px Trebuchet MS';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = win ? '#7cff8a' : '#ff6b6b';
+    ctx.fillText(win ? '🏆 ПОБЕДА' : 'ПОРАЖЕНИЕ', cv2d.width/2, cv2d.height/2);
+    ctx.font = 'bold 20px Trebuchet MS';
+    ctx.fillStyle = '#fff';
+    ctx.fillText('Выйди из лобби чтобы начать заново', cv2d.width/2, cv2d.height/2 + 40);
+    return;
+  }
   if (!me.d.al && gameState && gameState.phase !== 'waiting'){
     ctx.fillStyle = 'rgba(120,0,0,.25)';
     ctx.fillRect(0, 0, cv2d.width, cv2d.height);
@@ -1749,6 +1759,7 @@ function draw2DOverlay(){
   ctx.setTransform(1,0,0,1,0,0);
   ctx.clearRect(0, 0, cv2d.width, cv2d.height);
   if (!gameState || $('screen-game').classList.contains('hidden')) return;
+  drawImpacts();
   drawViewModel();
   drawCrosshair();
   drawScope();
@@ -1756,82 +1767,62 @@ function draw2DOverlay(){
   drawDamageOverlay();
 }
 
-/* ============================================================
-   КАЗИНО
-   ============================================================ */
+/* ---------- КАЗИНО ---------- */
 let selectedColor = 'red';
 let spinning = false;
-
 document.querySelectorAll('.colorBtn').forEach(b => {
-  b.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  b.addEventListener('click', e => {
+    e.preventDefault(); e.stopPropagation();
     if (spinning) return;
     document.querySelectorAll('.colorBtn').forEach(x => x.classList.remove('sel'));
     b.classList.add('sel');
     selectedColor = b.dataset.color;
   });
 });
-
-$('btnBetHalf').addEventListener('click', () => {
-  const v = Math.max(1, Math.floor((parseInt($('betInput').value) || 0) / 2));
-  $('betInput').value = v;
-});
-$('btnBetDouble').addEventListener('click', () => {
-  const v = Math.min(coins, (parseInt($('betInput').value) || 0) * 2 || 2);
-  $('betInput').value = v;
-});
+$('btnBetHalf').addEventListener('click', () => { $('betInput').value = Math.max(1, Math.floor((parseInt($('betInput').value)||0)/2)); });
+$('btnBetDouble').addEventListener('click', () => { $('betInput').value = Math.min(coins, (parseInt($('betInput').value)||0)*2 || 2); });
 $('btnBetAll').addEventListener('click', () => { $('betInput').value = coins; });
 $('btnSpin').addEventListener('click', spinRoulette);
-
 function pickSlotClass(){
   const r = Math.random();
-  if (r < 0.5)  return 'red';
+  if (r < 0.5) return 'red';
   if (r < 0.975) return 'green';
   return 'white';
 }
-
 function spinRoulette(){
   if (spinning) return;
   const bet = parseInt($('betInput').value) || 0;
   const r = $('casinoResult');
   if (bet <= 0){ r.textContent = 'Введи ставку > 0'; r.style.color = '#ff6b6b'; return; }
   if (coins < bet){ r.textContent = 'Мало монет!'; r.style.color = '#ff6b6b'; return; }
-
   coins -= bet; saveLS(); updateCoinUI();
   r.textContent = 'Крутим...'; r.style.color = '#ffd76a';
   spinning = true;
-
   const roll = Math.floor(Math.random() * 40);
   let result;
-  if (roll < 20)      result = 'red';
+  if (roll < 20) result = 'red';
   else if (roll < 39) result = 'green';
-  else                result = 'white';
-
-  const N = 50, WIN = 42;
-  const slotStep = 64;
-  const wrapW = 470;
+  else result = 'white';
+  const N = 50, WIN = 42, slotStep = 64, wrapW = 470;
   const reel = $('rouletteReel');
   reel.innerHTML = '';
-  for (let i = 0; i < N; i++){
+  for (let i=0; i<N; i++){
     const d = document.createElement('div');
     d.className = 'rSlot ' + (i === WIN ? result : pickSlotClass());
     reel.appendChild(d);
   }
-  const targetX = WIN * slotStep + slotStep / 2 - wrapW / 2 + (Math.random() * 30 - 15);
-
+  const targetX = WIN*slotStep + slotStep/2 - wrapW/2 + (Math.random()*30 - 15);
   reel.style.transition = 'none';
-  reel.style.transform  = 'translateX(0px)';
+  reel.style.transform = 'translateX(0px)';
   requestAnimationFrame(() => requestAnimationFrame(() => {
     reel.style.transition = 'transform 4s cubic-bezier(.15,.85,.25,1)';
-    reel.style.transform  = `translateX(${-targetX}px)`;
+    reel.style.transform = `translateX(${-targetX}px)`;
   }));
-
   setTimeout(() => {
     spinning = false;
     let msg, col;
     if (result === selectedColor){
-      const mult = result === 'white' ? 5 : 2;
+      const mult = result === 'white' ? 10 : (result === 'red' ? 4 : 2);
       const win = bet * mult;
       coins += win; saveLS(); updateCoinUI();
       msg = `ВЫИГРЫШ +${win} 🪙 (×${mult})`; col = '#5aff8a';
@@ -1844,16 +1835,13 @@ function spinRoulette(){
   }, 4200);
 }
 
-/* ============================================================
-   ГЛАВНЫЙ ЦИКЛ
-   ============================================================ */
+/* ---------- ГЛАВНЫЙ ЦИКЛ ---------- */
 let lastFrame = performance.now();
 function loop(){
   requestAnimationFrame(loop);
   const now = performance.now();
-  const dt = Math.min((now - lastFrame) / 1000, 0.05);
+  const dt = Math.min((now - lastFrame)/1000, 0.05);
   lastFrame = now;
-
   for (const [id, e] of pMap){
     if (id === myId) continue;
     e.x += (e.tx - e.x) * 0.35;
@@ -1864,21 +1852,15 @@ function loop(){
   localMove(dt);
   if (now - lastSend > 33){ lastSend = now; sendInput(); }
   updateFootsteps();
-
   const me = pMap.get(myId);
   const w = me && me.d ? me.d.w : '';
   scopeActive = rightDown && WEAPONS[w] && WEAPONS[w].scope && pointerLocked && !buyMenuOpen;
-
   for (let i = effects.length - 1; i >= 0; i--)
     if (now - effects[i].t > 300) effects.splice(i, 1);
-
   render3D();
   draw2DOverlay();
 }
 
-/* ============================================================
-   СТАРТ
-   ============================================================ */
 updateCoinUI();
 renderShop();
 renderInv();
