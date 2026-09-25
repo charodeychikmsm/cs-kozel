@@ -112,8 +112,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .iname{font-size:12px;color:#dfe4ea;line-height:1.3}
 .irar{font-size:10px;letter-spacing:2px;margin-top:5px;font-weight:800}
 .rc{color:#b0c3d9}.rr{color:#4b69ff}.re{color:#8847ff}.rl{color:#d32ce6}.rch{color:#3ee0d0}
-.r-knife{color:#ffd700}
-.rgod{color:#ffd700;text-shadow:0 0 8px rgba(255,215,0,.7)}
+.r-knife{color:#ffd700}.rgod{color:#ffd700;text-shadow:0 0 8px rgba(255,215,0,.7)}
 .r-common{border-color:#4a5560}.r-rare{border-color:#4b69ff}.r-epic{border-color:#8847ff}
 .r-legendary{border-color:#d32ce6;box-shadow:0 0 18px rgba(211,44,230,.4)}
 .r-chroma{border-color:#3ee0d0;box-shadow:0 0 24px rgba(62,224,208,.6);animation:chromaGlow 2s infinite}
@@ -341,8 +340,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 
 <script>
 /* ============================================================
-   CS:KOZEL — FPS Edition v7
-   Фикс мерцания + декор карты + золотая монета
+   CS:KOZEL — FPS Edition v8
    ============================================================ */
 const $ = id => document.getElementById(id);
 const cv3d = $('cv3d'), cv2d = $('cv2d');
@@ -607,7 +605,6 @@ uniform mat4 uProj; uniform mat4 uView; uniform mat4 uModel;
 varying vec3 vNormal; varying vec3 vWorldPos; varying vec3 vColor;
 void main(){ vec4 w = uModel * vec4(aPos, 1.0); vWorldPos = w.xyz; vNormal = mat3(uModel) * aNormal; vColor = aColor; gl_Position = uProj * uView * w; }`;
 
-// ДОБАВЛЕНЫ ДЕКОРАЦИИ НА СТЕНАХ (граффити, пятна)
 const FRAG_SRC = `precision highp float;
 varying vec3 vNormal; varying vec3 vWorldPos; varying vec3 vColor;
 uniform vec3 uCamPos; uniform int uType;
@@ -637,7 +634,6 @@ void main(){
     baseColor = mix(brickUse, mortarCol, mortar);
     baseColor *= mix(0.85, 1.0, smoothstep(0.0,0.1,bx) * smoothstep(1.0,0.9,bx));
 
-    // ДЕКОР: граффити и пятна
     vec2 decoUV = uv * 3.0;
     float decoHash = hash(floor(decoUV));
     if (decoHash > 0.94 && decoHash < 0.97){
@@ -717,7 +713,7 @@ let playerBuffer = null;
 let crateBuffer = null, crateVerts = 0;
 let coinBuffer = null;
 const WALL_H = 90;
-const FLOOR_Z = -0.3; // Слегка ниже стен чтобы не было мерцания
+const FLOOR_Z = -0.3;
 
 function pushCube(arr, x0, y0, z0, sx, sy, sz, r, g, b){
   const x1 = x0+sx, y1 = y0+sy, z1 = z0+sz;
@@ -746,7 +742,6 @@ function buildWallBuffer(MAP, MW, MH, TILE){
   gl.bindBuffer(gl.ARRAY_BUFFER, wallBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arr), gl.STATIC_DRAW);
 }
-
 function buildFloorBuffer(MW, MH, TILE){
   const arr = [];
   const W = MW*TILE, H = MH*TILE;
@@ -757,25 +752,19 @@ function buildFloorBuffer(MW, MH, TILE){
   gl.bindBuffer(gl.ARRAY_BUFFER, floorBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arr), gl.STATIC_DRAW);
 }
-
-// ЯЩИКИ-ДЕКОРАЦИИ на карте
 function buildCrateBuffer(MAP, MW, MH, TILE){
   const arr = [];
   const placed = [];
   for (let ty=1; ty<MH-1; ty++){
     for (let tx=1; tx<MW-1; tx++){
       if (MAP[ty][tx] !== 0) continue;
-      // Только у стен
       const nearWall = MAP[ty-1][tx]===1 || MAP[ty+1][tx]===1 || MAP[ty][tx-1]===1 || MAP[ty][tx+1]===1;
       if (!nearWall) continue;
-      // Детерминированный рандом
       const h = Math.abs(Math.sin(tx*12.9898 + ty*78.233) * 43758.5453) % 1;
       if (h > 0.88){
-        // Не ставим на пути спавна
         const isSpawnZoneA = (ty >= 24 && ty <= 28 && tx >= 8 && tx <= 20);
         const isSpawnZoneB = (ty >= 1 && ty <= 5 && tx >= 8 && tx <= 20);
         if (isSpawnZoneA || isSpawnZoneB) continue;
-        // Смещение внутри клетки
         const offX = (h*13) % 1 * 20 + 10;
         const offY = (h*17) % 1 * 20 + 10;
         const cx = tx*TILE + offX;
@@ -783,8 +772,8 @@ function buildCrateBuffer(MAP, MW, MH, TILE){
         const size = 18 + ((h*7) % 1) * 8;
         const h2 = Math.abs(Math.sin(cx*0.5 + cy*0.3) * 43758.5453) % 1;
         const height = 16 + h2 * 10;
-        pushCube(arr, cx, cy, FLOOR_Z, size, size, height, 1, 1, 1);
-        placed.push({x:cx, y:cy, size});
+        pushCube(arr, cx - size/2, cy - size/2, FLOOR_Z, size, size, height, 1, 1, 1);
+        placed.push({x:cx, y:cy, size:size});
       }
     }
   }
@@ -794,22 +783,18 @@ function buildCrateBuffer(MAP, MW, MH, TILE){
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arr), gl.STATIC_DRAW);
   return placed;
 }
-
 function initPlayerBuffer(){
   playerBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, playerBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, 200*9*4, gl.DYNAMIC_DRAW);
 }
-
 function initCoinBuffer(){
   const arr = [];
-  // Маленький кубик-монетка
   pushCube(arr, -6, -6, 4, 12, 12, 4, 1, 1, 1);
   coinBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, coinBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arr), gl.STATIC_DRAW);
 }
-
 function drawMesh(buffer, vertCount, model, type){
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
   const stride = 9*4;
@@ -849,8 +834,6 @@ const lastMyPos = {x:0, y:0};
 const EYE_HEIGHT = 32, PLAYER_H = 46;
 
 let bloodTimer = 0;
-
-// Пасхалка — золотая монета
 let goldenCoin = null;
 let crates = [];
 
@@ -912,7 +895,6 @@ function onState(s){
   if (me) myTeam = me.tm;
   if (!myInit && me){ myX = me.x; myY = me.y; myYaw = me.a || 0; myInit = true; }
 
-  // Спавн монетки при старте раунда
   if (s.phase === 'buy' && s.round !== lastAutoOpenRound && !goldenCoin){
     setTimeout(spawnGoldenCoin, 5000);
   }
@@ -1046,7 +1028,7 @@ function addKillFeed(ev){
   const d = document.createElement('div');
   d.className = 'kf';
   const kc = ev.killerTeam === 'A' ? '#5aa9ff' : '#ffb347';
-  const wIcon = ev.weapon ? {awp:'🎯', ak:'🔫', m4a4:'🔫', galil:'🔫', deagle:'🔫', shotgun:'💥', knife:'🔪', pistol:'🔫', usp:'🔫', p250:'🔫'}[ev.weapon] || '🔫' : '🔫';
+  const wIcon = ev.weapon ? ({awp:'🎯', ak:'🔫', m4a4:'🔫', galil:'🔫', deagle:'🔫', shotgun:'💥', knife:'🔪', pistol:'🔫', usp:'🔫', p250:'🔫'}[ev.weapon] || '🔫') : '🔫';
   d.innerHTML = `<span style="color:${kc}">${esc(ev.killer)}</span> ${wIcon} <span style="color:#ff8a8a">${esc(ev.victim)}</span>`;
   $('killfeed').appendChild(d);
   setTimeout(() => d.remove(), 5000);
@@ -1542,34 +1524,32 @@ function resolveCollision(px, py, r){
           const dcx = nx - ccx, dcy = ny - ccy;
           if (Math.abs(dcx) > Math.abs(dcy)) nx += Math.sign(dcx||1)*(TILE/2+r+0.5);
           else ny += Math.sign(dcy||1)*(TILE/2+r+0.5);
+        }
       }
     }
   }
-
-  // Коллизия с ящиками
-  if (typeof crates !== 'undefined' && crates){
+  if (crates && crates.length){
     for (const c of crates){
-      const hx = c.size / 2;
-      const hy = c.size / 2;
-      const ccx = Math.max(c.x - hx, Math.min(nx, c.x + hx));
-      const ccy = Math.max(c.y - hy, Math.min(ny, c.y + hy));
-      const dx = nx - ccx, dy = ny - ccy;
+      const hx = c.size/2, hy = c.size/2;
+      const ccx = Math.max(c.x-hx, Math.min(nx, c.x+hx));
+      const ccy = Math.max(c.y-hy, Math.min(ny, c.y+hy));
+      const dx = nx-ccx, dy = ny-ccy;
       const d2 = dx*dx + dy*dy;
       if (d2 < r*r){
         if (d2 > 0.0001){
           const d = Math.sqrt(d2), push = r - d + 0.1;
-          nx += (dx/d) * push;
-          ny += (dy/d) * push;
+          nx += (dx/d)*push; ny += (dy/d)*push;
         } else {
-          const dcx = nx - c.x, dcy = ny - c.y;
-          if (Math.abs(dcx) > Math.abs(dcy)) nx += Math.sign(dcx||1) * (hx + r + 0.5);
-          else ny += Math.sign(dcy||1) * (hy + r + 0.5);
+          const dcx = nx-c.x, dcy = ny-c.y;
+          if (Math.abs(dcx) > Math.abs(dcy)) nx += Math.sign(dcx||1)*(hx+r+0.5);
+          else ny += Math.sign(dcy||1)*(hy+r+0.5);
         }
       }
     }
   }
   return [nx, ny];
 }
+
 function localMove(dt){
   if (!gameState || !MAP || !myInit) return;
   if (gameState.phase === 'waiting') return;
@@ -1608,7 +1588,7 @@ function localMove(dt){
   if (Math.abs(myX - me.d.x) > 80) myX = me.d.x;
   if (Math.abs(myY - me.d.y) > 80) myY = me.d.y;
 
-  // Проверка подбора монетки
+  // Подбор золотой монеты
   if (goldenCoin){
     const d = Math.hypot(myX - goldenCoin.x, myY - goldenCoin.y);
     if (d < 30 && performance.now() - goldenCoin.t > 3000){
@@ -1620,7 +1600,6 @@ function localMove(dt){
       toast.classList.add('show');
       setTimeout(() => toast.classList.remove('show'), 1600);
       goldenCoin = null;
-      // Респавн через 45 сек
       setTimeout(() => { if (!goldenCoin) spawnGoldenCoin(); }, 45000);
     }
   }
@@ -1646,7 +1625,6 @@ function render3D(){
   }
   const aspect = cv3d.width / cv3d.height;
   const fovRad = (scopeActive ? 22 : settings.fov) * Math.PI / 180;
-  // ФИКС МЕРЦАНИЯ: near = 3 (был 1)
   const proj = mat4Perspective(fovRad, aspect, 3, 2500);
   const eyeZ = (myCrouch ? 22 : EYE_HEIGHT) + myZ;
   const view = viewMatrix(myX, myY, eyeZ, myYaw, myPitch);
@@ -1665,7 +1643,6 @@ function render3D(){
   drawMesh(wallBuffer, wallVerts, model, 0);
   if (crateBuffer && crateVerts > 0) drawMesh(crateBuffer, crateVerts, model, 3);
 
-  // Золотая монета (пасхалка)
   if (goldenCoin && coinBuffer){
     const t = (performance.now() - goldenCoin.t) / 1000;
     const bob = Math.sin(t * 3) * 6 + 15;
@@ -1985,7 +1962,6 @@ function drawMiniMap(){
       if (MAP[ty][tx] === 1)
         ctx.fillRect(mmX + tx*TILE*sx, mmY + ty*TILE*sy, Math.ceil(TILE*sx), Math.ceil(TILE*sy));
 
-  // Ящики на миникарте
   ctx.fillStyle = 'rgba(180,130,80,.8)';
   for (const c of crates){
     ctx.fillRect(mmX + (c.x - c.size/2)*sx, mmY + (c.y - c.size/2)*sy, Math.max(2, c.size*sx), Math.max(2, c.size*sy));
@@ -1997,15 +1973,11 @@ function drawMiniMap(){
   ctx.arc(mmX + myX*sx, mmY + myY*sy, 16, myYaw - Math.PI/4, myYaw + Math.PI/4);
   ctx.closePath(); ctx.fill();
 
-  // Золотая монета
   if (goldenCoin){
     ctx.fillStyle = '#ffd700';
     ctx.beginPath();
     ctx.arc(mmX + goldenCoin.x*sx, mmY + goldenCoin.y*sy, 3, 0, 7);
     ctx.fill();
-    ctx.strokeStyle = 'rgba(255,215,0,.7)';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
   }
 
   for (const [id, e] of pMap){
