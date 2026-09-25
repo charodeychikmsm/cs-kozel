@@ -62,8 +62,9 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .reloadBar .fill{height:100%;background:#3ee0d0;width:0%;transition:width .05s linear}
 #killfeed{position:absolute;top:14px;right:16px;display:flex;flex-direction:column;gap:5px;align-items:flex-end}
 .kf{background:rgba(10,12,15,.85);border:1px solid #2c3138;border-radius:6px;padding:5px 10px;font-size:12px;animation:fade 5s forwards}
-@keyframes fade{0%{opacity:1}80%{opacity:1}100%{opacity:0}}
-#centerMsg{position:absolute;top:34%;left:50%;transform:translateX(-50%);font-size:40px;font-weight:900;letter-spacing:6px;text-shadow:0 0 30px rgba(0,0,0,.9);text-align:center;color:#fff}
+@keyframes fade{0%{opacity:0;transform:translateX(20px)}10%{opacity:1;transform:translateX(0)}80%{opacity:1}100%{opacity:0}}
+#centerMsg{position:absolute;top:34%;left:50%;transform:translateX(-50%);font-size:40px;font-weight:900;letter-spacing:6px;text-shadow:0 0 30px rgba(0,0,0,.9);text-align:center;color:#fff;transition:opacity .2s;opacity:0}
+#centerMsg.show{opacity:1}
 #buyHint{position:absolute;bottom:96px;left:50%;transform:translateX(-50%);font-size:12px;color:#3ee0d0;letter-spacing:1px;text-align:center;max-width:90vw}
 #buyMenu{position:absolute;inset:0;background:rgba(6,8,10,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;pointer-events:auto;z-index:20}
 .buyRow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:900px}
@@ -126,6 +127,8 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .resultBox .swatch{width:150px;height:80px}
 #lockHint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.7);color:#3ee0d0;font-size:20px;letter-spacing:3px;font-weight:800;text-shadow:0 0 20px rgba(62,224,208,.8);z-index:15;pointer-events:auto;cursor:pointer;flex-direction:column;gap:8px}
 #lockHint .k{font-size:12px;color:#7d848d;letter-spacing:1px}
+#screen-pause{background:rgba(5,6,8,.85);z-index:35;backdrop-filter:blur(6px)}
+#screen-pause h2{font-size:36px;margin-bottom:8px}
 #screen-casino{background:radial-gradient(circle at 50% 30%,#241d14,#0b0d10 70%);z-index:30}
 .casinoPanel{background:rgba(18,20,24,.94);border:1px solid #31363d;border-radius:14px;padding:22px;width:560px;max-width:94vw;display:flex;flex-direction:column;gap:14px;align-items:center}
 .betRow{display:flex;gap:8px;align-items:center;width:100%}
@@ -164,11 +167,20 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .skinCard.owned{border-color:#5aff8a;box-shadow:0 0 12px rgba(90,255,138,.2)}
 .skinCard .iname{font-size:11px;line-height:1.25}
 .skinBadge{position:absolute;top:6px;left:6px;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;background:rgba(90,255,138,.15);color:#5aff8a;letter-spacing:1px}
+/* Индикатор HP */
+#hpBarWrap{position:absolute;top:80px;left:50%;transform:translateX(-50%);width:240px;height:8px;background:rgba(0,0,0,.6);border:1px solid #2c3138;border-radius:4px;overflow:hidden}
+#hpBarFill{height:100%;background:#5aff8a;transition:width .2s, background .3s;width:100%}
+#hpBarWrap.low #hpBarFill{background:#ff6b6b;animation:hpPulse 0.8s infinite}
+@keyframes hpPulse{0%,100%{opacity:1}50%{opacity:.4}}
+/* Кровь на экране */
+#bloodOverlay{position:absolute;inset:0;pointer-events:none;z-index:12;opacity:0;transition:opacity .3s;
+  background:radial-gradient(ellipse at center, rgba(180,0,0,0) 30%, rgba(140,0,0,.55) 100%);}
 </style>
 </head>
 <body>
 <canvas id="cv3d"></canvas>
 <canvas id="cv2d"></canvas>
+<div id="bloodOverlay"></div>
 
 <div id="screen-menu" class="screen">
   <div class="coins">🪙 <span id="coinCount">0</span></div>
@@ -217,6 +229,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
     <span id="phaseInfo">ОЖИДАНИЕ</span>
     <span class="scoreB" id="scoreB">0</span>
   </div>
+  <div id="hpBarWrap"><div id="hpBarFill"></div></div>
   <div id="killfeed"></div>
   <div id="centerMsg"></div>
   <div id="hudBottom">
@@ -231,12 +244,19 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
     <div class="lbl" id="ammoLabel">ПАТРОНЫ</div>
     <div class="reloadBar"><div class="fill" id="reloadFill"></div></div>
   </div>
-  <div id="buyHint">WASD — ход • Мышь — обзор • ЛКМ — стрельба • ПКМ — прицел • R — перезарядка • B — магазин • Space — прыжок • Ctrl — присесть • 1/2/3 — оружие</div>
+  <div id="buyHint">WASD — ход • Мышь — обзор • ЛКМ — стрельба • ПКМ — прицел • R — перезарядка • B — магазин • ESC — пауза • Space — прыжок • Ctrl — присесть • 1/2/3 — оружие</div>
   <div id="buyMenu" class="hidden"></div>
   <div id="lockHint" class="hidden">
     <div>КЛИКНИ, ЧТОБЫ ИГРАТЬ</div>
-    <div class="k">ESC — отпустить мышь</div>
+    <div class="k">ESC — пауза</div>
   </div>
+</div>
+
+<div id="screen-pause" class="screen hidden">
+  <h2>ПАУЗА</h2>
+  <div class="hint">Матч идёт — нажми продолжить или выйди</div>
+  <button id="btnResume">ПРОДОЛЖИТЬ</button>
+  <button id="btnExitGame" class="ghost">ВЫЙТИ ИЗ МАТЧА</button>
 </div>
 
 <div id="screen-shop" class="screen hidden">
@@ -248,7 +268,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 
 <div id="screen-inv" class="screen hidden">
   <h2>ИНВЕНТАРЬ</h2>
-  <div class="hint">Клик — надеть/снять • 💰 — продать</div>
+  <div class="hint">Клик — надеть/снять • 💰 — продать (мгновенно)</div>
   <div class="invGrid" id="invGrid"></div>
   <button class="ghost" id="btnInvBack">НАЗАД</button>
 </div>
@@ -312,7 +332,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 
 <script>
 /* ============================================================
-   CS:KOZEL — FPS Edition v5
+   CS:KOZEL — FPS Edition v6
    ============================================================ */
 const $ = id => document.getElementById(id);
 const cv3d = $('cv3d'), cv2d = $('cv2d');
@@ -388,7 +408,6 @@ const WEAPONS = {
 const BUY_PRIMARY = ['shotgun','galil','ak','m4a4','awp'];
 const BUY_SECONDARY = ['usp','p250','deagle'];
 
-/* ---------- СКИНЫ ---------- */
 const SKINS = [
   {id:'ak_sand',name:'AK-47 | Пыль',type:'weapon',weapon:'ak',color:'#c8b48a',rarity:'common'},
   {id:'p250_sand',name:'P250 | Песок',type:'weapon',weapon:'p250',color:'#d9c07a',rarity:'common'},
@@ -460,9 +479,9 @@ const KNIFE_SKINS = [
 ];
 
 const PATRIOT_KNIVES = [
-  {id:'kn_pat_red',name:'Патриот | Красный',type:'weapon',weapon:'knife',color:'#d32c2c',rarity:'knife'},
-  {id:'kn_pat_green',name:'Патриот | Зелёный',type:'weapon',weapon:'knife',color:'#3ec84a',rarity:'knife'},
-  {id:'kn_pat_white',name:'Патриот | Белый',type:'weapon',weapon:'knife',color:'#f0f0f0',rarity:'knife'},
+  {id:'kn_pat_red',name:'Делокс | Красный',type:'weapon',weapon:'knife',color:'#d32c2c',rarity:'knife'},
+  {id:'kn_pat_green',name:'Делокс | Зелёный',type:'weapon',weapon:'knife',color:'#3ec84a',rarity:'knife'},
+  {id:'kn_pat_white',name:'Делокс | Белый',type:'weapon',weapon:'knife',color:'#f0f0f0',rarity:'knife'},
 ];
 
 const PATRIOT_SKINS = [
@@ -494,7 +513,7 @@ const CASES = {
   sand:     { name:'SAND CASE',     icon:'📦', cls:'sand',      price:50,  sub:'Базовые скины', odds:{common:0.60, rare:0.25, epic:0.12, legendary:0.03, chroma:0} },
   premium:  { name:'PREMIUM CASE',  icon:'💎', cls:'premium',   price:200, sub:'Больше редких + шанс ножа', odds:{common:0.15, rare:0.40, epic:0.32, legendary:0.13, chroma:0} },
   patriot:  { name:'ПАТРИОТ',       icon:'🇧🇾', cls:'patriot',  price:250, sub:'Только красный/зелёный/белый', odds:{} },
-  operation:{ name:'КЕЙС ОПЕРАЦИИ', icon:'🎖️', cls:'operation', price:400, sub:'Эпик + хрома + ножи', odds:{common:0, rare:0.20, epic:0.45, legendary:0.25, chroma:0.10} }
+  operation:{ name:'КЕЙС ОПЕРАЦИИ', icon:'🎖️', cls:'operation', price:400, sub:'Только дроп 500+ монет', odds:{chroma:0.55, knife:0.45} }
 };
 const SELL_PRICE = {common:15, rare:35, epic:80, legendary:200, chroma:800, knife:1500};
 const RARITY_RU = {common:'ОБЫЧНЫЙ',rare:'РЕДКИЙ',epic:'ЭПИЧЕСКИЙ',legendary:'ЛЕГЕНДАРНЫЙ',chroma:'ХРОМАТИЧЕСКИЙ',knife:'НОЖ ★'};
@@ -515,7 +534,6 @@ function addItem(skin){
 }
 const skinById = id => SKINS.find(s => s.id === id);
 
-/* ---------- SVG ---------- */
 function shadeColor(hex, amt){
   if (!hex) return '#000';
   if (hex[0] === '#') hex = hex.slice(1);
@@ -539,7 +557,13 @@ function weaponIconSVG(weaponType, color, skinId){
     else if (k === 'kn_bowie' || k === 'kn_huntsman') shape = 'bowie';
     else if (k === 'kn_falchion') shape = 'falchion';
     if (shape === 'karambit')
-      return `<svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg"><path d="M 30 6 Q 48 22 44 55 Q 40 78 30 84 Q 20 78 16 55 Q 12 22 30 6 Z" fill="${c}" stroke="${cd}" stroke-width="1.5"/><path d="M 30 6 Q 44 22 42 50 L 18 50 Q 16 22 30 6 Z" fill="${cl}" opacity="0.55"/><circle cx="30" cy="84" r="6" fill="none" stroke="${cd}" stroke-width="2"/><rect x="24" y="88" width="12" height="12" fill="#2a1a0a" rx="2"/></svg>`;
+      return `<svg viewBox="0 0 70 120" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 36 8 Q 62 30 58 70 Q 52 95 42 105 L 36 105 Q 45 90 50 68 Q 53 32 36 12 Z" fill="${c}" stroke="${cd}" stroke-width="1.5"/>
+        <path d="M 36 10 Q 58 30 54 68 Q 49 90 40 102 L 42 102 Q 52 90 56 68 Q 60 32 38 12 Z" fill="${cl}"/>
+        <path d="M 32 100 Q 30 110 34 118 Q 40 122 46 118 Q 44 108 42 100 Z" fill="#2a1a0a" stroke="#150d05" stroke-width="1"/>
+        <path d="M 34 104 Q 33 110 36 116 L 43 116 Q 43 108 42 104 Z" fill="${c}" opacity="0.7"/>
+        <circle cx="38" cy="118" r="5" fill="none" stroke="#555" stroke-width="2.2"/>
+      </svg>`;
     if (shape === 'butterfly')
       return `<svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg"><polygon points="30,10 36,14 36,55 30,60 24,55 24,14" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="12" y="60" width="12" height="35" fill="#333" rx="2"/><rect x="36" y="60" width="12" height="35" fill="#333" rx="2"/><rect x="13" y="65" width="10" height="3" fill="${c}"/><rect x="37" y="65" width="10" height="3" fill="${c}"/></svg>`;
     if (shape === 'bayonet')
@@ -555,12 +579,12 @@ function weaponIconSVG(weaponType, color, skinId){
   if (weaponType === 'char')
     return `<svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="22" r="14" fill="${c}" stroke="${cd}" stroke-width="1.5"/><path d="M 12 45 Q 30 38 48 45 L 52 90 Q 30 95 8 90 Z" fill="${c}" stroke="${cd}" stroke-width="1.5"/></svg>`;
   if (weaponType === 'awp')
-    return `<svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="18" width="96" height="6" fill="#111"/><rect x="10" y="14" width="80" height="10" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="30" y="10" width="30" height="6" fill="#0a0a0a"/><rect x="30" y="8" width="6" height="3" fill="#222"/><rect x="50" y="8" width="6" height="3" fill="#222"/><rect x="62" y="20" width="14" height="12" fill="${cd}"/><rect x="78" y="12" width="4" height="8" fill="${cl}"/><polygon points="4,28 22,28 20,32 6,32" fill="${cd}"/></svg>`;
+    return `<svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="18" width="96" height="6" fill="#111"/><rect x="10" y="14" width="80" height="10" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="30" y="10" width="30" height="6" fill="#0a0a0a"/><rect x="62" y="20" width="14" height="12" fill="${cd}"/><rect x="78" y="12" width="4" height="8" fill="${cl}"/><polygon points="4,28 22,28 20,32 6,32" fill="${cd}"/></svg>`;
   if (weaponType === 'shotgun')
     return `<svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="18" width="96" height="5" fill="#111"/><rect x="2" y="21" width="96" height="5" fill="#0a0a0a"/><rect x="40" y="16" width="36" height="12" fill="#3a2a1a"/><rect x="6" y="14" width="36" height="12" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="76" y="14" width="20" height="10" fill="${c}" stroke="${cd}" stroke-width="1"/></svg>`;
   if (weaponType === 'ak' || weaponType === 'm4a4' || weaponType === 'galil')
     return `<svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="20" width="92" height="4" fill="#111"/><rect x="8" y="14" width="70" height="12" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="20" y="10" width="30" height="5" fill="${cd}"/><rect x="60" y="18" width="14" height="16" fill="#0a0a0a"/><polygon points="76,26 96,26 94,32 78,32" fill="${cd}"/><rect x="50" y="16" width="6" height="6" fill="${cl}"/></svg>`;
-  return `<svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="18" width="60" height="10" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="80" y="20" width="14" height="5" fill="#111"/><polygon points="30,18 50,18 44,42 28,42" fill="${cd}"/><rect x="32" y="28" width="18" height="14" fill="#1a1a1a"/><rect x="34" y="34" width="14" height="3" fill="${c}"/><rect x="34" y="40" width="14" height="3" fill="${c}"/></svg>`;
+  return `<svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="18" width="60" height="10" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="80" y="20" width="14" height="5" fill="#111"/><polygon points="30,18 50,18 44,42 28,42" fill="${cd}"/><rect x="32" y="28" width="18" height="14" fill="#1a1a1a"/></svg>`;
 }
 
 /* ---------- WEBGL ---------- */
@@ -708,7 +732,7 @@ let ws = null, myId = null, myTeam = null, lobbyCode = null;
 let gameState = null, MAP = null, MW = 40, MH = 30, TILE = 48;
 const pMap = new Map();
 const effects = [];
-const impacts = []; // следы от пуль
+const impacts = [];
 const keys = {};
 let mouseDown = false, rightDown = false;
 let lastSend = 0, lastAutoOpenRound = -1, buyMenuOpen = false;
@@ -719,13 +743,14 @@ let myInit = false;
 let stepAccumMine = 0;
 let myHealthLast = 100, myAliveLast = false;
 let scopeActive = false;
-let lastMagSent = -1; // для авто-релоада
 const stepTracker = new Map();
 const lastMyPos = {x:0, y:0};
 const EYE_HEIGHT = 32, PLAYER_H = 46;
 
+let bloodTimer = 0;
+
 const show = id => {
-  ['screen-menu','screen-lobby','screen-game','screen-shop','screen-inv','screen-case','screen-casino','screen-settings','screen-skins']
+  ['screen-menu','screen-lobby','screen-game','screen-shop','screen-inv','screen-case','screen-casino','screen-settings','screen-skins','screen-pause']
     .forEach(s => $(s).classList.toggle('hidden', s !== id));
   if (id === 'screen-game') $('lockHint').classList.remove('hidden');
   else if (document.pointerLockElement === cv3d) document.exitPointerLock();
@@ -764,7 +789,6 @@ function handleMsg(m){
 }
 
 function onState(s){
-  const prevMatchOver = gameState ? gameState.matchOver : false;
   gameState = s;
   const me = s.players.find(p => p.id === myId);
   if (me) myTeam = me.tm;
@@ -831,6 +855,19 @@ function onState(s){
     $('hudWeapon').textContent = (WEAPONS[me.w] || WEAPONS.pistol).name.toUpperCase();
     $('hudSlot').textContent = me.cs || 2;
 
+    // HP-бар
+    const hpPct = Math.max(0, Math.min(100, me.hp));
+    $('hpBarFill').style.width = hpPct + '%';
+    $('hpBarWrap').classList.toggle('low', hpPct < 35);
+
+    // Кровь на экране если ранен
+    if (me.hp < 40){
+      const intensity = (40 - me.hp) / 40;
+      $('bloodOverlay').style.opacity = String(Math.min(0.8, intensity));
+    } else if (performance.now() - bloodTimer > 200){
+      $('bloodOverlay').style.opacity = '0';
+    }
+
     // Патроны
     const ammoBox = $('ammoBox');
     if (me.magMax > 0){
@@ -843,10 +880,7 @@ function onState(s){
       } else {
         $('reloadFill').style.width = '0%';
       }
-      // Авто-релоад при 0
-      if (me.mag === 0 && !me.reloading && me.al){
-        send({t:'reload'});
-      }
+      if (me.mag === 0 && !me.reloading && me.al) send({t:'reload'});
     } else {
       $('ammoMag').innerHTML = '∞';
       $('ammoLabel').textContent = 'НОЖ';
@@ -854,7 +888,10 @@ function onState(s){
       $('reloadFill').style.width = '0%';
     }
 
-    if (me.hp < myHealthLast - 0.1) tone(180, 0.15, 0.4, 0, 'sine', 90);
+    if (me.hp < myHealthLast - 0.1){
+      tone(180, 0.15, 0.4, 0, 'sine', 90);
+      bloodTimer = performance.now();
+    }
     if (me.al && !myAliveLast) myAliveLast = true;
     if (!me.al && myAliveLast){ sfxRoundEnd(false); myAliveLast = false; }
     myHealthLast = me.hp;
@@ -863,15 +900,20 @@ function onState(s){
   const phaseTxt = {waiting:'ОЖИДАНИЕ', buy:'ЗАКУПКА ' + s.timer, live:'РАУНД ' + s.round + ' • ' + s.timer, end:'КОНЕЦ РАУНДА'}[s.phase] || '';
   $('phaseInfo').textContent = phaseTxt;
 
+  const cm = $('centerMsg');
   if (s.matchOver){
-    const win = s.score[myTeam] >= ROUNDS_TO_WIN;
-    $('centerMsg').textContent = win ? 'ПОБЕДА В МАТЧЕ!' : 'ПОРАЖЕНИЕ';
-    $('centerMsg').style.color = win ? '#7cff8a' : '#ff6b6b';
+    const win = s.score[myTeam] >= 10;
+    cm.textContent = win ? 'ПОБЕДА В МАТЧЕ!' : 'ПОРАЖЕНИЕ';
+    cm.style.color = win ? '#7cff8a' : '#ff6b6b';
+    cm.classList.add('show');
   } else if (s.phase === 'end' && s.winner){
     const win = s.winner === myTeam;
-    $('centerMsg').textContent = win ? 'РАУНД ВЫИГРАН!' : (s.winner === 'draw' ? 'НИЧЬЯ' : 'РАУНД ПРОИГРАН');
-    $('centerMsg').style.color = win ? '#7cff8a' : '#ff6b6b';
-  } else $('centerMsg').textContent = '';
+    cm.textContent = win ? 'РАУНД ВЫИГРАН!' : (s.winner === 'draw' ? 'НИЧЬЯ' : 'РАУНД ПРОИГРАН');
+    cm.style.color = win ? '#7cff8a' : '#ff6b6b';
+    cm.classList.add('show');
+  } else {
+    cm.classList.remove('show');
+  }
 
   if (s.phase === 'waiting'){ show('screen-lobby'); renderLobbyScreen(s); $('lobbyCode').textContent = lobbyCode || '----'; }
   else if ($('screen-game').classList.contains('hidden')){ show('screen-game'); }
@@ -884,7 +926,8 @@ function addKillFeed(ev){
   const d = document.createElement('div');
   d.className = 'kf';
   const kc = ev.killerTeam === 'A' ? '#5aa9ff' : '#ffb347';
-  d.innerHTML = `<span style="color:${kc}">${esc(ev.killer)}</span> 🔫 <span style="color:#ff8a8a">${esc(ev.victim)}</span>`;
+  const wIcon = ev.weapon ? {awp:'🎯', ak:'🔫', m4a4:'🔫', galil:'🔫', deagle:'🔫', shotgun:'💥', knife:'🔪', pistol:'🔫', usp:'🔫', p250:'🔫'}[ev.weapon] || '🔫' : '🔫';
+  d.innerHTML = `<span style="color:${kc}">${esc(ev.killer)}</span> ${wIcon} <span style="color:#ff8a8a">${esc(ev.victim)}</span>`;
   $('killfeed').appendChild(d);
   setTimeout(() => d.remove(), 5000);
   while ($('killfeed').children.length > 6) $('killfeed').firstChild.remove();
@@ -948,6 +991,16 @@ $('btnCasinoBack').onclick = () => show('screen-menu');
 $('btnSkinsBack').onclick = () => show('screen-menu');
 $('btnSettingsBack').onclick = () => show('screen-menu');
 
+$('btnResume').onclick = () => {
+  $('screen-pause').classList.add('hidden');
+  if (gameState && !$('screen-game').classList.contains('hidden')) cv3d.requestPointerLock();
+};
+$('btnExitGame').onclick = () => {
+  if (ws) ws.close();
+  ws = null;
+  setTimeout(() => location.reload(), 200);
+};
+
 function loadSettingsUI(){
   $('sensInput').value = settings.sens;
   $('sensVal').textContent = settings.sens.toFixed(2);
@@ -1008,9 +1061,9 @@ function renderInv(){
       if (equip[slot] === s.id) delete equip[slot]; else equip[slot] = s.id;
       saveLS(); renderInv(); pushCosmetics();
     };
+    // Продажа без confirm
     d.querySelector('.sellBtn').onclick = (ev) => {
       ev.stopPropagation();
-      if (!confirm(`Продать "${s.name}" за ${sellPrice} 🪙?`)) return;
       coins += sellPrice;
       if (entry.count > 1) entry.count--;
       else { inv = inv.filter(i => i.id !== s.id); if (equip[slot] === s.id) delete equip[slot]; }
@@ -1078,7 +1131,7 @@ function rollItem(caseId){
     return PATRIOT_SKINS[Math.floor(Math.random() * PATRIOT_SKINS.length)];
   }
   if (caseId === 'premium' && Math.random() < 0.03) return KNIFE_SKINS[Math.floor(Math.random()*KNIFE_SKINS.length)];
-  if (caseId === 'operation' && Math.random() < 0.08) return KNIFE_SKINS[Math.floor(Math.random()*KNIFE_SKINS.length)];
+  // Operation кейс — только хрома/ножи (обрабатывается через odds ниже)
   const odds = CASES[caseId].odds;
   const r = Math.random();
   let acc = 0, rarity = 'common';
@@ -1087,6 +1140,8 @@ function rollItem(caseId){
     acc += p;
     if (r < acc){ rarity = rar; break; }
   }
+  // Если операция дала "knife" — возвращаем случайный нож
+  if (rarity === 'knife') return KNIFE_SKINS[Math.floor(Math.random()*KNIFE_SKINS.length)];
   const pool = SKINS.filter(s => s.rarity === rarity);
   return pool.length ? pool[Math.floor(Math.random() * pool.length)] : SKINS[0];
 }
@@ -1210,7 +1265,14 @@ function closeBuyMenu(){
 window.addEventListener('keydown', e => {
   keys[e.key.toLowerCase()] = true;
   if (e.key.toLowerCase() === 'b' && gameState && gameState.phase === 'buy'){ buyMenuOpen ? closeBuyMenu() : openBuyMenu(); }
-  if (e.key === 'Escape') closeBuyMenu();
+  if (e.key === 'Escape'){
+    closeBuyMenu();
+    if (gameState && !$('screen-game').classList.contains('hidden') && gameState.phase !== 'waiting'){
+      $('screen-pause').classList.remove('hidden');
+      $('lockHint').classList.add('hidden');
+      if (document.pointerLockElement === cv3d) document.exitPointerLock();
+    }
+  }
   if (e.key === ' ') e.preventDefault();
   if (e.key.toLowerCase() === 'r'){ send({t:'reload'}); }
   if (gameState && gameState.phase !== 'waiting'){
@@ -1223,13 +1285,26 @@ window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
 
 cv3d.addEventListener('click', () => {
   if (!gameState || $('screen-game').classList.contains('hidden')) return;
+  if (!$('screen-pause').classList.contains('hidden')) return;
   if (!buyMenuOpen && document.pointerLockElement !== cv3d) cv3d.requestPointerLock();
 });
 $('lockHint').addEventListener('click', () => { if (gameState && !buyMenuOpen) cv3d.requestPointerLock(); });
 document.addEventListener('pointerlockchange', () => {
+  const wasLocked = pointerLocked;
   pointerLocked = (document.pointerLockElement === cv3d);
-  if (pointerLocked) $('lockHint').classList.add('hidden');
-  else if (gameState && !buyMenuOpen) $('lockHint').classList.remove('hidden');
+  if (pointerLocked){
+    $('lockHint').classList.add('hidden');
+    $('screen-pause').classList.add('hidden');
+  } else if (gameState && !buyMenuOpen && gameState.phase !== 'waiting'){
+    if (wasLocked){
+      $('screen-pause').classList.remove('hidden');
+      $('lockHint').classList.add('hidden');
+    } else if (!$('screen-pause').classList.contains('hidden')){
+      // остаёмся в паузе
+    } else {
+      $('lockHint').classList.remove('hidden');
+    }
+  }
 });
 document.addEventListener('mousemove', e => {
   if (!pointerLocked) return;
@@ -1458,7 +1533,6 @@ function render3D(){
   }
 }
 
-/* Проекция мира на экран */
 function projectToScreen(wx, wy, wz){
   const cy = Math.cos(myYaw), sy = Math.sin(myYaw);
   const cp = Math.cos(myPitch), sp = Math.sin(myPitch);
@@ -1478,7 +1552,6 @@ function projectToScreen(wx, wy, wz){
 
 function drawImpacts(){
   const now = performance.now();
-  // Убираем старые (>30с)
   while (impacts.length && now - impacts[0].t > 30000) impacts.shift();
   for (const imp of impacts){
     const p = projectToScreen(imp.x, imp.y, imp.z);
@@ -1574,16 +1647,60 @@ function drawViewModel(){
     const edgeCol = wc ? darkCol : '#555';
     const handleCol = '#2a1a0a';
     if (shape === 'karambit'){
+      // Клинок — кривой серп
       ctx.fillStyle = bladeCol;
       ctx.beginPath();
-      ctx.moveTo(bx + 10*K, by - 180*K);
-      ctx.quadraticCurveTo(bx + 110*K, by - 100*K, bx + 60*K, by - 20*K);
-      ctx.quadraticCurveTo(bx + 15*K, by - 50*K, bx + 10*K, by - 180*K);
-      ctx.closePath(); ctx.fill();
-      ctx.strokeStyle = edgeCol; ctx.lineWidth = 2*S; ctx.stroke();
+      ctx.moveTo(bx + 20*K, by - 210*K);
+      ctx.quadraticCurveTo(bx + 130*K, by - 130*K, bx + 80*K, by - 20*K);
+      ctx.lineTo(bx + 65*K, by - 25*K);
+      ctx.quadraticCurveTo(bx + 100*K, by - 120*K, bx + 25*K, by - 200*K);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = edgeCol; ctx.lineWidth = 1.8*S; ctx.stroke();
+      // Тёмная спинка
       ctx.strokeStyle = edgeCol; ctx.lineWidth = 3*S;
-      ctx.beginPath(); ctx.arc(bx + 40*K, by - 10*K, 12*K, 0, 7); ctx.stroke();
-      ctx.fillStyle = handleCol; ctx.fillRect(bx + 40*K, by - 5*K, 20*K, 40*K);
+      ctx.beginPath();
+      ctx.moveTo(bx + 20*K, by - 210*K);
+      ctx.quadraticCurveTo(bx + 130*K, by - 130*K, bx + 80*K, by - 20*K);
+      ctx.stroke();
+      // Светлая кромка
+      ctx.strokeStyle = wc ? lightCol : '#fff';
+      ctx.lineWidth = 1.5*S;
+      ctx.beginPath();
+      ctx.moveTo(bx + 22*K, by - 205*K);
+      ctx.quadraticCurveTo(bx + 125*K, by - 128*K, bx + 78*K, by - 24*K);
+      ctx.stroke();
+      // Рукоять пистолетная
+      ctx.fillStyle = handleCol;
+      ctx.beginPath();
+      ctx.moveTo(bx + 55*K, by - 25*K);
+      ctx.quadraticCurveTo(bx + 45*K, by + 10*K, bx + 50*K, by + 45*K);
+      ctx.lineTo(bx + 80*K, by + 45*K);
+      ctx.quadraticCurveTo(bx + 78*K, by + 10*K, bx + 72*K, by - 25*K);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#150d05'; ctx.lineWidth = 1.5*S; ctx.stroke();
+      // Накладка на рукоять
+      if (wc){
+        ctx.fillStyle = baseCol;
+        ctx.beginPath();
+        ctx.moveTo(bx + 58*K, by - 18*K);
+        ctx.quadraticCurveTo(bx + 52*K, by + 10*K, bx + 55*K, by + 38*K);
+        ctx.lineTo(bx + 76*K, by + 38*K);
+        ctx.quadraticCurveTo(bx + 74*K, by + 10*K, bx + 70*K, by - 18*K);
+        ctx.closePath();
+        ctx.fill();
+      }
+      // Кольцо для пальца
+      ctx.strokeStyle = edgeCol; ctx.lineWidth = 3.5*S;
+      ctx.beginPath();
+      ctx.arc(bx + 65*K, by + 60*K, 18*K, 0, Math.PI*2);
+      ctx.stroke();
+      ctx.strokeStyle = wc ? lightCol : '#aaa';
+      ctx.lineWidth = 1.2*S;
+      ctx.beginPath();
+      ctx.arc(bx + 65*K, by + 60*K, 18*K, Math.PI*1.1, Math.PI*1.6);
+      ctx.stroke();
     } else if (shape === 'butterfly'){
       ctx.fillStyle = bladeCol;
       ctx.beginPath();
@@ -1667,7 +1784,6 @@ function drawViewModel(){
     ctx.fillStyle = '#111'; ctx.fillRect(cx + 280*K, cy - 88*K, 80*K, 14*K);
     ctx.fillStyle = wc ? darkCol : '#1a1a1a';
     ctx.fillRect(cx + 180*K, cy - 92*K, 70*K, 22*K);
-    ctx.fillStyle = wc ? darkCol : '#1a1a1a';
     ctx.fillRect(cx + 40*K, cy - 115*K, 60*K, 22*K);
     ctx.fillStyle = '#0a0a0a'; ctx.fillRect(cx + 100*K, cy - 70*K, 40*K, 35*K);
     if (wc){ ctx.fillStyle = lightCol; ctx.fillRect(cx + 15*K, cy - 95*K, 300*K, 3*K); }
@@ -1694,7 +1810,7 @@ function drawViewModel(){
 
 function drawMiniMap(){
   const mmW = 150, mmH = 112;
-  const mmX = 12, mmY = 12; // ЛЕВЫЙ ВЕРХНИЙ УГОЛ
+  const mmX = 12, mmY = 12;
   ctx.fillStyle = 'rgba(10,12,15,.78)';
   ctx.fillRect(mmX, mmY, mmW, mmH);
   ctx.strokeStyle = '#2c3138'; ctx.lineWidth = 1.5;
