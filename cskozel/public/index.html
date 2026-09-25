@@ -23,7 +23,7 @@ input[type=range]{-webkit-appearance:none;width:100%;background:transparent;padd
 input[type=range]::-webkit-slider-runnable-track{height:6px;background:#2b3037;border-radius:4px}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:#3ee0d0;border-radius:50%;margin-top:-6px;box-shadow:0 0 10px rgba(62,224,208,.6)}
 input[type=range]::-moz-range-track{height:6px;background:#2b3037;border-radius:4px}
-input[type=range]::-moz-range-thumb{width:18px;height:18px;background:#3ee0d0;border-radius:50%;border:none;box-shadow:0 0 10px rgba(62,224,208,.6)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;background:#3ee0d0;border-radius:50%;border:none}
 button{background:linear-gradient(#3ee0d0,#17b6ac);border:none;color:#06211f;font-weight:800;padding:12px;border-radius:8px;cursor:pointer;letter-spacing:1.5px;font-size:13px;transition:.15s;box-shadow:0 0 12px rgba(62,224,208,.25)}
 button:hover{filter:brightness(1.15);box-shadow:0 0 22px rgba(62,224,208,.55)}
 button.ghost{background:transparent;border:1px solid #4a5058;color:#cfd4da;box-shadow:none}
@@ -71,7 +71,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .buyCat{font-size:12px;color:#7d848d;letter-spacing:3px;margin-top:8px}
 #screen-shop,#screen-inv,#screen-settings{background:radial-gradient(circle at 50% 30%,#241d14,#0b0d10 70%);z-index:30}
 .casesWrap{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;padding:10px;max-width:1200px}
-.caseCard{background:linear-gradient(160deg,#2a2118,#14171c);border:1px solid #4a3a22;border-radius:14px;padding:18px 14px;width:200px;text-align:center;cursor:pointer;transition:.2s}
+.caseCard{background:linear-gradient(160deg,#2a2118,#14171c);border:1px solid #4a3a22;border-radius:14px;padding:18px 14px;width:200px;text-align:center;cursor:pointer;transition:.2s;position:relative}
 .caseCard:hover{transform:translateY(-4px)}
 .caseCard .caseIcon{font-size:44px;margin-bottom:6px}
 .caseCard .caseName{font-size:13px;font-weight:800;color:#ffd76a;letter-spacing:1.5px;min-height:34px;display:flex;align-items:center;justify-content:center}
@@ -87,6 +87,11 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .caseCard.operation{border-color:#d32ce6;background:linear-gradient(160deg,#2e0f2e,#14171c)}
 .caseCard.operation .caseName{color:#ff7bff}
 .caseCard.operation .casePrice{color:#ff7bff}
+.caseCard.patriot{border-color:#c8102e;background:linear-gradient(160deg,#2a0a0a,#14171c);overflow:hidden}
+.caseCard.patriot::before{content:'🇧🇾';position:absolute;top:4px;right:6px;font-size:16px;opacity:.9}
+.caseCard.patriot .caseName{color:#ff4d4d}
+.caseCard.patriot .casePrice{color:#5aff8a}
+.caseCard.patriot:hover{border-color:#5aff8a;box-shadow:0 0 26px rgba(90,255,138,.4)}
 .invGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;width:min(900px,94vw);max-height:58vh;overflow-y:auto;padding:4px}
 .invItem{background:#161a1f;border:1px solid #333941;border-radius:10px;padding:12px;text-align:center;transition:.15s;position:relative}
 .invItem:hover{border-color:#3ee0d0}
@@ -115,7 +120,6 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .resultBox .swatch{width:150px;height:80px}
 #lockHint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.7);color:#3ee0d0;font-size:20px;letter-spacing:3px;font-weight:800;text-shadow:0 0 20px rgba(62,224,208,.8);z-index:15;pointer-events:auto;cursor:pointer;flex-direction:column;gap:8px}
 #lockHint .k{font-size:12px;color:#7d848d;letter-spacing:1px}
-/* Казино */
 #screen-casino{background:radial-gradient(circle at 50% 30%,#241d14,#0b0d10 70%);z-index:30}
 .casinoPanel{background:rgba(18,20,24,.94);border:1px solid #31363d;border-radius:14px;padding:22px;width:560px;max-width:94vw;display:flex;flex-direction:column;gap:14px;align-items:center}
 .betRow{display:flex;gap:8px;align-items:center;width:100%}
@@ -124,11 +128,11 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .colorBtn{flex:1;padding:14px;border-radius:10px;border:2px solid #333;background:#161a1f;cursor:pointer;font-weight:800;letter-spacing:2px;transition:.15s;text-align:center;font-size:13px;color:#eee}
 .colorBtn .mult{display:block;font-size:11px;margin-top:4px;opacity:.7}
 .colorBtn.red{color:#ff4d4d;border-color:#5a1a1a}
-.colorBtn.red:hover,.colorBtn.red.sel{border-color:#ff4d4d;background:rgba(255,77,77,.15)}
+.colorBtn.red:hover,.colorBtn.red.sel{border-color:#ff4d4d;background:rgba(255,77,77,.15);box-shadow:0 0 16px rgba(255,77,77,.4)}
 .colorBtn.green{color:#5aff8a;border-color:#1a5a2a}
-.colorBtn.green:hover,.colorBtn.green.sel{border-color:#5aff8a;background:rgba(90,255,138,.15)}
+.colorBtn.green:hover,.colorBtn.green.sel{border-color:#5aff8a;background:rgba(90,255,138,.15);box-shadow:0 0 16px rgba(90,255,138,.4)}
 .colorBtn.white{color:#fff;border-color:#555}
-.colorBtn.white:hover,.colorBtn.white.sel{border-color:#fff;background:rgba(255,255,255,.15)}
+.colorBtn.white:hover,.colorBtn.white.sel{border-color:#fff;background:rgba(255,255,255,.15);box-shadow:0 0 16px rgba(255,255,255,.4)}
 .rouletteWrap{width:100%;height:110px;overflow:hidden;position:relative;border:2px solid #333;border-radius:10px;background:#0e1114}
 .rouletteReel{display:flex;height:100%;align-items:center;will-change:transform}
 .rSlot{width:60px;flex:0 0 60px;height:84px;margin:0 2px;border-radius:6px}
@@ -137,7 +141,6 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .rSlot.white{background:linear-gradient(160deg,#eaeaea,#9a9a9a);border:1px solid #fff;box-shadow:0 0 18px rgba(255,255,255,.7)}
 .rPointer{position:absolute;left:50%;top:0;bottom:0;width:3px;background:#ffd76a;transform:translateX(-50%);box-shadow:0 0 16px #ffd76a;z-index:5}
 .casinoResult{font-size:18px;font-weight:900;letter-spacing:2px;text-align:center;min-height:26px;color:#7d848d}
-/* Настройки */
 .settingsPanel{background:rgba(18,20,24,.94);border:1px solid #31363d;border-radius:12px;padding:20px;width:520px;max-width:94vw;display:flex;flex-direction:column;gap:16px}
 .settingRow{display:flex;flex-direction:column;gap:6px}
 .settingRow label{font-size:13px;color:#cfd4da;letter-spacing:1px;display:flex;justify-content:space-between}
@@ -282,7 +285,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 
 <script>
 /* ============================================================
-   CS:KOZEL — WebGL FPS Edition v2
+   CS:KOZEL — WebGL FPS Edition v3
    ============================================================ */
 const $ = id => document.getElementById(id);
 const cv3d = $('cv3d');
@@ -422,13 +425,41 @@ const KNIFE_SKINS = [
   {id:'kn_tiger',      name:'Керамбит | Тигр',    type:'weapon', weapon:'knife', color:'#ff8c00', rarity:'knife'},
   {id:'kn_marble',     name:'Штык | Мрамор',      type:'weapon', weapon:'knife', color:'#ff2d2d', rarity:'knife'},
 ];
+
+const PATRIOT_KNIVES = [
+  {id:'kn_pat_red',   name:'Патриот | Красный', type:'weapon', weapon:'knife', color:'#d32c2c', rarity:'knife'},
+  {id:'kn_pat_green', name:'Патриот | Зелёный', type:'weapon', weapon:'knife', color:'#3ec84a', rarity:'knife'},
+  {id:'kn_pat_white', name:'Патриот | Белый',   type:'weapon', weapon:'knife', color:'#f0f0f0', rarity:'knife'},
+];
+
+const PATRIOT_SKINS = [
+  {id:'pat_ak_red',   name:'AK-47 | Патриот Красный', type:'weapon', weapon:'ak',      color:'#d32c2c', rarity:'rare'},
+  {id:'pat_ak_green', name:'AK-47 | Патриот Зелёный', type:'weapon', weapon:'ak',      color:'#3ec84a', rarity:'rare'},
+  {id:'pat_ak_white', name:'AK-47 | Патриот Белый',   type:'weapon', weapon:'ak',      color:'#f0f0f0', rarity:'rare'},
+  {id:'pat_m4_red',   name:'M4A4 | Патриот Красный',  type:'weapon', weapon:'m4a4',    color:'#c02828', rarity:'rare'},
+  {id:'pat_m4_green', name:'M4A4 | Патриот Зелёный',  type:'weapon', weapon:'m4a4',    color:'#35b842', rarity:'rare'},
+  {id:'pat_m4_white', name:'M4A4 | Патриот Белый',    type:'weapon', weapon:'m4a4',    color:'#e8e8e8', rarity:'rare'},
+  {id:'pat_awp_red',  name:'AWP | Патриот Красный',   type:'weapon', weapon:'awp',     color:'#b02020', rarity:'epic'},
+  {id:'pat_awp_green',name:'AWP | Патриот Зелёный',   type:'weapon', weapon:'awp',     color:'#2ea83a', rarity:'epic'},
+  {id:'pat_awp_white',name:'AWP | Патриот Белый',     type:'weapon', weapon:'awp',     color:'#e0e0e0', rarity:'epic'},
+  {id:'pat_dg_red',   name:'Deagle | Патриот Красный',type:'weapon', weapon:'deagle',  color:'#d32c2c', rarity:'rare'},
+  {id:'pat_dg_green', name:'Deagle | Патриот Зелёный',type:'weapon', weapon:'deagle',  color:'#3ec84a', rarity:'rare'},
+  {id:'pat_dg_white', name:'Deagle | Патриот Белый',  type:'weapon', weapon:'deagle',  color:'#f0f0f0', rarity:'rare'},
+  {id:'pat_ch_red',   name:'Персонаж | Красный',      type:'char',   color:'#d32c2c', rarity:'rare'},
+  {id:'pat_ch_green', name:'Персонаж | Зелёный',      type:'char',   color:'#3ec84a', rarity:'rare'},
+  {id:'pat_ch_white', name:'Персонаж | Белый',        type:'char',   color:'#f0f0f0', rarity:'rare'},
+];
+
 KNIFE_SKINS.forEach(s => SKINS.push(s));
+PATRIOT_KNIVES.forEach(s => SKINS.push(s));
+PATRIOT_SKINS.forEach(s => SKINS.push(s));
 
 const CASES = {
   trash:    { name:'МУСОР ДРОП',   icon:'🗑️', cls:'trash',     price:5,   sub:'Всегда +монеты!', odds:{} },
   um8a:     { name:'УМ 8А КЛАССА', icon:'📕', cls:'basic',     price:25,  sub:'Почти всё обычное', odds:{common:0.88, rare:0.11, epic:0.01, legendary:0, chroma:0} },
   sand:     { name:'SAND CASE',    icon:'📦', cls:'sand',      price:50,  sub:'Базовые скины',     odds:{common:0.60, rare:0.25, epic:0.12, legendary:0.03, chroma:0} },
   premium:  { name:'PREMIUM CASE', icon:'💎', cls:'premium',   price:200, sub:'Больше редких + шанс ножа', odds:{common:0.15, rare:0.40, epic:0.32, legendary:0.13, chroma:0} },
+  patriot:  { name:'ПАТРИОТ',      icon:'🇧🇾', cls:'patriot',   price:250, sub:'Только красный/зелёный/белый', odds:{} },
   operation:{ name:'КЕЙС ОПЕРАЦИИ',icon:'🎖️', cls:'operation', price:400, sub:'Эпик + хрома + ножи', odds:{common:0, rare:0.20, epic:0.45, legendary:0.25, chroma:0.10} }
 };
 const SELL_PRICE = {common:15, rare:35, epic:80, legendary:200, chroma:800, knife:1500};
@@ -507,7 +538,6 @@ void main(){
   vec3 baseColor = vColor;
 
   if (uType == 0) {
-    // Стена — кирпич с вариацией
     vec2 uv;
     if (abs(vNormal.x) > 0.7) uv = vec2(vWorldPos.y, vWorldPos.z) / 22.0;
     else if (abs(vNormal.y) > 0.7) uv = vec2(vWorldPos.x, vWorldPos.z) / 22.0;
@@ -520,29 +550,24 @@ void main(){
     float mortar = step(0.93, bx) + step(0.86, by);
     mortar = clamp(mortar, 0.0, 1.0);
 
-    // Базовая вариация по позиции кирпича
     vec2 brickId = vec2(floor(uv.x + offs), row);
     float v1 = hash(brickId);
     float v2 = noise(uv * 3.0);
 
-    // Разные оттенки красного
     vec3 brickA = vec3(0.62, 0.30, 0.22);
     vec3 brickB = vec3(0.48, 0.24, 0.18);
     vec3 brickC = vec3(0.70, 0.38, 0.28);
     vec3 brickUse = mix(brickA, brickB, v1);
     brickUse = mix(brickUse, brickC, step(0.75, v2));
 
-    // Пятна от старости
     float stain = noise(uv * 8.0) * 0.15;
     brickUse -= stain;
 
     vec3 mortarCol = vec3(0.72, 0.66, 0.54);
     baseColor = mix(brickUse, mortarCol, mortar);
-    // Легкая тень на кромке
     float edge = smoothstep(0.0, 0.1, bx) * smoothstep(1.0, 0.9, bx);
     baseColor *= mix(0.85, 1.0, edge);
   } else if (uType == 1) {
-    // Пол — песок с зерном
     vec2 uv = vWorldPos.xy / 16.0;
     float n1 = hash(uv * 40.0);
     float n2 = hash(uv * 90.0 + 13.0);
@@ -558,7 +583,6 @@ void main(){
     float dots = step(0.94, n1);
     baseColor += vec3(dots * 0.08);
   } else if (uType == 2) {
-    // Игрок — просто цвет + вариация
     baseColor = vColor;
     float n = noise(vWorldPos.xy * 0.5);
     baseColor *= 0.9 + n * 0.15;
@@ -599,7 +623,7 @@ const loc = {
 let wallBuffer = null, wallVerts = 0;
 let floorBuffer = null, floorVerts = 0;
 let playerBuffer = null;
-let WALL_H = 90;  // было 60 — теперь выше
+let WALL_H = 90;
 
 function pushCube(arr, x0, y0, z0, sx, sy, sz, r, g, b){
   const x1 = x0 + sx, y1 = y0 + sy, z1 = z0 + sz;
@@ -867,8 +891,9 @@ $('btnShop').onclick      = () => { updateCoinUI(); renderShop(); show('screen-s
 $('btnInventory').onclick = () => { renderInv(); show('screen-inv'); };
 $('btnCasino').onclick    = () => {
   updateCoinUI();
-  $('casinoResult').textContent = 'Выбери цвет и жми КРУТИТЬ';
-  $('casinoResult').style.color = '#7d848d';
+  const r = $('casinoResult');
+  r.textContent = 'Выбери цвет и жми КРУТИТЬ';
+  r.style.color = '#7d848d';
   $('rouletteReel').innerHTML = '';
   show('screen-casino');
 };
@@ -878,7 +903,6 @@ $('btnInvBack').onclick   = () => show('screen-menu');
 $('btnCasinoBack').onclick = () => show('screen-menu');
 $('btnSettingsBack').onclick = () => show('screen-menu');
 
-/* ---------- Настройки UI ---------- */
 function loadSettingsUI(){
   $('sensInput').value = settings.sens;
   $('sensVal').textContent = settings.sens.toFixed(2);
@@ -904,7 +928,7 @@ $('crossInput').oninput = e => {
 
 function renderShop(){
   const wrap = $('casesWrap'); wrap.innerHTML = '';
-  const order = ['trash','um8a','sand','premium','operation'];
+  const order = ['trash','um8a','sand','premium','patriot','operation'];
   for (const id of order){
     const c = CASES[id];
     const d = document.createElement('div');
@@ -961,6 +985,13 @@ function pushCosmetics(){
 $('btnCaseOk').onclick = () => { $('screen-case').classList.add('hidden'); show('screen-shop'); };
 
 function rollItem(caseId){
+  if (caseId === 'patriot'){
+    const r = Math.random();
+    if (r < 0.05) return PATRIOT_KNIVES[0];
+    if (r < 0.10) return PATRIOT_KNIVES[1];
+    if (r < 0.15) return PATRIOT_KNIVES[2];
+    return PATRIOT_SKINS[Math.floor(Math.random() * PATRIOT_SKINS.length)];
+  }
   if (caseId === 'premium' && Math.random() < 0.03)
     return KNIFE_SKINS[Math.floor(Math.random()*KNIFE_SKINS.length)];
   if (caseId === 'operation' && Math.random() < 0.08)
@@ -1027,8 +1058,9 @@ function openCase(caseId){
   const item = rollItem(caseId);
   const N = 52, WIN = 46, ITEM_W = 130;
   const reel = $('reel'); reel.innerHTML = '';
+  const pool = caseId === 'patriot' ? PATRIOT_SKINS.concat(PATRIOT_KNIVES) : SKINS;
   for (let i = 0; i < N; i++){
-    const it = (i === WIN) ? item : SKINS[Math.floor(Math.random() * SKINS.length)];
+    const it = (i === WIN) ? item : pool[Math.floor(Math.random() * pool.length)];
     const d = document.createElement('div');
     d.className = 'reelItem';
     d.innerHTML = `<div class="swatch" style="background:${it.color};box-shadow:0 0 14px ${it.color}"></div><div class="rname">${esc(it.name)}</div>`;
@@ -1208,7 +1240,7 @@ function updateFootsteps(){
 }
 
 /* ============================================================
-   КОЛЛИЗИЯ — правильная circle-AABB
+   КОЛЛИЗИЯ
    ============================================================ */
 function resolveCollision(px, py, r){
   const minTx = Math.floor((px - r) / TILE);
@@ -1275,7 +1307,6 @@ function localMove(dt){
     [nx, ny] = resolveCollision(nx, ny, r);
     myX = nx; myY = ny;
   } else {
-    // Даже без движения — выталкиваем из стены (если застрял)
     const r = 13;
     const [nx, ny] = resolveCollision(myX, myY, r);
     myX = nx; myY = ny;
@@ -1407,17 +1438,16 @@ function drawScope(){
   ctx.restore();
 }
 
-/* ---------- ViewModel (увеличенный, с скинами) ---------- */
 function drawViewModel(){
   const me = pMap.get(myId);
   const myW = me && me.d ? me.d.w : 'pistol';
   const wc = (me && me.d && me.d.wc) ? me.d.wc : null;
-  const baseCol = wc || '#3a3a3a';           // скин = основной цвет
+  const baseCol = wc || '#3a3a3a';
   const darkCol = wc ? shadeColor(wc, -0.4) : '#1e1e1e';
   const lightCol = wc ? shadeColor(wc, 0.3) : '#555';
   const cx = cv2d.width / 2, cy = cv2d.height;
-  const S = Math.min(cv2d.width, cv2d.height) / 720;  // масштаб
-  const K = 1.85 * S;                                  // общий множитель (было ~1)
+  const S = Math.min(cv2d.width, cv2d.height) / 720;
+  const K = 1.85 * S;
 
   if (scopeActive) return;
 
@@ -1428,14 +1458,11 @@ function drawViewModel(){
 
   ctx.save();
   ctx.translate(0, bob + bobY);
-  // Смещаем к правому низу
   ctx.translate(cv2d.width * 0.08, 0);
-
   ctx.shadowColor = 'rgba(0,0,0,.5)';
   ctx.shadowBlur = 10;
 
   if (myW === 'knife'){
-    // Клинок
     ctx.fillStyle = wc ? lightCol : '#c8c8c8';
     ctx.beginPath();
     ctx.moveTo(cx + 40*K, cy - 30*K);
@@ -1444,7 +1471,6 @@ function drawViewModel(){
     ctx.lineTo(cx + 50*K, cy - 10*K);
     ctx.closePath();
     ctx.fill();
-    // Обух
     ctx.fillStyle = wc ? baseCol : '#888';
     ctx.beginPath();
     ctx.moveTo(cx + 40*K, cy - 30*K);
@@ -1453,79 +1479,58 @@ function drawViewModel(){
     ctx.lineTo(cx + 34*K, cy - 38*K);
     ctx.closePath();
     ctx.fill();
-    // Рукоять
     ctx.fillStyle = '#2a1a0a';
     ctx.fillRect(cx + 20*K, cy - 20*K, 30*K, 20*K);
     ctx.fillStyle = wc || '#555';
     ctx.fillRect(cx + 22*K, cy - 22*K, 26*K, 5*K);
   } else if (myW === 'awp'){
-    // AWP — большая винтовка
     ctx.fillStyle = wc ? darkCol : '#0c3a2a';
     ctx.fillRect(cx + 20*K, cy - 130*K, 320*K, 32*K);
-    // Ствол
     ctx.fillStyle = '#111';
     ctx.fillRect(cx + 300*K, cy - 122*K, 90*K, 16*K);
-    // Прицел
     ctx.fillStyle = '#0a0a0a';
     ctx.fillRect(cx + 60*K, cy - 155*K, 100*K, 25*K);
-    // Магазин
     ctx.fillStyle = wc ? baseCol : '#0c3a2a';
     ctx.fillRect(cx + 120*K, cy - 100*K, 60*K, 40*K);
-    // Акцент
     if (wc){
       ctx.fillStyle = lightCol;
       ctx.fillRect(cx + 20*K, cy - 130*K, 320*K, 4*K);
     }
   } else if (myW === 'ak' || myW === 'm4a4' || myW === 'galil'){
-    // Основной корпус
     ctx.fillStyle = wc ? baseCol : '#2a2a2a';
     ctx.fillRect(cx + 15*K, cy - 95*K, 300*K, 30*K);
-    // Ствол
     ctx.fillStyle = '#111';
     ctx.fillRect(cx + 280*K, cy - 88*K, 80*K, 14*K);
-    // Цевьё
     ctx.fillStyle = wc ? darkCol : '#1a1a1a';
     ctx.fillRect(cx + 180*K, cy - 92*K, 70*K, 22*K);
-    // Приклад/ствольная коробка
     ctx.fillStyle = wc ? darkCol : '#1a1a1a';
     ctx.fillRect(cx + 40*K, cy - 115*K, 60*K, 22*K);
-    // Магазин
     ctx.fillStyle = '#0a0a0a';
     ctx.fillRect(cx + 100*K, cy - 70*K, 40*K, 35*K);
-    // Блик
     if (wc){
       ctx.fillStyle = lightCol;
       ctx.fillRect(cx + 15*K, cy - 95*K, 300*K, 3*K);
     }
-    // Рука
     ctx.fillStyle = '#3a2a1a';
     ctx.fillRect(cx + 60*K, cy - 65*K, 55*K, 45*K);
   } else if (myW === 'shotgun'){
     ctx.fillStyle = wc ? baseCol : '#3a3a3a';
     ctx.fillRect(cx + 10*K, cy - 90*K, 320*K, 26*K);
-    // Ствол
     ctx.fillStyle = '#111';
     ctx.fillRect(cx + 180*K, cy - 82*K, 130*K, 12*K);
-    // Цевьё деревянное
     ctx.fillStyle = wc ? darkCol : '#3a2a1a';
     ctx.fillRect(cx + 130*K, cy - 86*K, 100*K, 20*K);
-    // Приклад
     ctx.fillStyle = wc ? darkCol : '#3a2a1a';
     ctx.fillRect(cx + 30*K, cy - 105*K, 60*K, 22*K);
-    // Рука
     ctx.fillStyle = '#3a2a1a';
     ctx.fillRect(cx + 70*K, cy - 60*K, 55*K, 45*K);
   } else {
-    // Пистолеты
     ctx.fillStyle = wc ? baseCol : '#333';
     ctx.fillRect(cx + 30*K, cy - 105*K, 90*K, 28*K);
-    // Ствол
     ctx.fillStyle = '#111';
     ctx.fillRect(cx + 100*K, cy - 100*K, 25*K, 14*K);
-    // Рукоять
     ctx.fillStyle = wc ? darkCol : '#1e1e1e';
     ctx.fillRect(cx + 42*K, cy - 77*K, 50*K, 45*K);
-    // Рука
     ctx.fillStyle = '#3a2a1a';
     ctx.fillRect(cx + 40*K, cy - 55*K, 55*K, 45*K);
     if (wc){
@@ -1609,6 +1614,94 @@ function draw2DOverlay(){
   drawScope();
   drawMiniMap();
   drawDamageOverlay();
+}
+
+/* ============================================================
+   КАЗИНО
+   ============================================================ */
+let selectedColor = 'red';
+let spinning = false;
+
+document.querySelectorAll('.colorBtn').forEach(b => {
+  b.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (spinning) return;
+    document.querySelectorAll('.colorBtn').forEach(x => x.classList.remove('sel'));
+    b.classList.add('sel');
+    selectedColor = b.dataset.color;
+  });
+});
+
+$('btnBetHalf').addEventListener('click', () => {
+  const v = Math.max(1, Math.floor((parseInt($('betInput').value) || 0) / 2));
+  $('betInput').value = v;
+});
+$('btnBetDouble').addEventListener('click', () => {
+  const v = Math.min(coins, (parseInt($('betInput').value) || 0) * 2 || 2);
+  $('betInput').value = v;
+});
+$('btnBetAll').addEventListener('click', () => { $('betInput').value = coins; });
+$('btnSpin').addEventListener('click', spinRoulette);
+
+function pickSlotClass(){
+  const r = Math.random();
+  if (r < 0.5)  return 'red';
+  if (r < 0.975) return 'green';
+  return 'white';
+}
+
+function spinRoulette(){
+  if (spinning) return;
+  const bet = parseInt($('betInput').value) || 0;
+  const r = $('casinoResult');
+  if (bet <= 0){ r.textContent = 'Введи ставку > 0'; r.style.color = '#ff6b6b'; return; }
+  if (coins < bet){ r.textContent = 'Мало монет!'; r.style.color = '#ff6b6b'; return; }
+
+  coins -= bet; saveLS(); updateCoinUI();
+  r.textContent = 'Крутим...'; r.style.color = '#ffd76a';
+  spinning = true;
+
+  const roll = Math.floor(Math.random() * 40);
+  let result;
+  if (roll < 20)      result = 'red';
+  else if (roll < 39) result = 'green';
+  else                result = 'white';
+
+  const N = 50, WIN = 42;
+  const slotStep = 64;
+  const wrapW = 470;
+  const reel = $('rouletteReel');
+  reel.innerHTML = '';
+  for (let i = 0; i < N; i++){
+    const d = document.createElement('div');
+    d.className = 'rSlot ' + (i === WIN ? result : pickSlotClass());
+    reel.appendChild(d);
+  }
+  const targetX = WIN * slotStep + slotStep / 2 - wrapW / 2 + (Math.random() * 30 - 15);
+
+  reel.style.transition = 'none';
+  reel.style.transform  = 'translateX(0px)';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    reel.style.transition = 'transform 4s cubic-bezier(.15,.85,.25,1)';
+    reel.style.transform  = `translateX(${-targetX}px)`;
+  }));
+
+  setTimeout(() => {
+    spinning = false;
+    let msg, col;
+    if (result === selectedColor){
+      const mult = result === 'white' ? 5 : 2;
+      const win = bet * mult;
+      coins += win; saveLS(); updateCoinUI();
+      msg = `ВЫИГРЫШ +${win} 🪙 (×${mult})`; col = '#5aff8a';
+    } else {
+      const name = result === 'red' ? 'красный' : result === 'green' ? 'зелёный' : 'белый';
+      msg = `ПРОИГРЫШ -${bet} 🪙 (выпал ${name})`;
+      col = '#ff6b6b';
+    }
+    r.textContent = msg; r.style.color = col;
+  }, 4200);
 }
 
 /* ============================================================
