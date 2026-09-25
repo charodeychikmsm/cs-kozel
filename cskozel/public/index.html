@@ -1542,13 +1542,34 @@ function resolveCollision(px, py, r){
           const dcx = nx - ccx, dcy = ny - ccy;
           if (Math.abs(dcx) > Math.abs(dcy)) nx += Math.sign(dcx||1)*(TILE/2+r+0.5);
           else ny += Math.sign(dcy||1)*(TILE/2+r+0.5);
+      }
+    }
+  }
+
+  // Коллизия с ящиками
+  if (typeof crates !== 'undefined' && crates){
+    for (const c of crates){
+      const hx = c.size / 2;
+      const hy = c.size / 2;
+      const ccx = Math.max(c.x - hx, Math.min(nx, c.x + hx));
+      const ccy = Math.max(c.y - hy, Math.min(ny, c.y + hy));
+      const dx = nx - ccx, dy = ny - ccy;
+      const d2 = dx*dx + dy*dy;
+      if (d2 < r*r){
+        if (d2 > 0.0001){
+          const d = Math.sqrt(d2), push = r - d + 0.1;
+          nx += (dx/d) * push;
+          ny += (dy/d) * push;
+        } else {
+          const dcx = nx - c.x, dcy = ny - c.y;
+          if (Math.abs(dcx) > Math.abs(dcy)) nx += Math.sign(dcx||1) * (hx + r + 0.5);
+          else ny += Math.sign(dcy||1) * (hy + r + 0.5);
         }
       }
     }
   }
   return [nx, ny];
 }
-
 function localMove(dt){
   if (!gameState || !MAP || !myInit) return;
   if (gameState.phase === 'waiting') return;
@@ -1597,6 +1618,7 @@ function localMove(dt){
       toast.classList.remove('show');
       void toast.offsetWidth;
       toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1600);
       goldenCoin = null;
       // Респавн через 45 сек
       setTimeout(() => { if (!goldenCoin) spawnGoldenCoin(); }, 45000);
