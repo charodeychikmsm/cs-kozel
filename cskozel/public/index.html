@@ -87,7 +87,6 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .caseCard.trash .caseName{color:#c0c0c0}
 .caseCard.poor{border-color:#7d6a3a;background:linear-gradient(160deg,#2a2418,#14171c)}
 .caseCard.poor .caseName{color:#ffd76a}
-.caseCard.poor:hover{border-color:#ffd76a;box-shadow:0 0 24px rgba(255,215,106,.35)}
 .caseCard.basic{border-color:#6d6d6d}
 .caseCard.sand{border-color:#8b6a3a}
 .caseCard.premium{border-color:#a855f7;background:linear-gradient(160deg,#2a1d3a,#14171c)}
@@ -99,6 +98,11 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .caseCard.patriot::before{content:'🇧🇾';position:absolute;top:4px;right:6px;font-size:16px;opacity:.9}
 .caseCard.patriot .caseName{color:#ff4d4d}
 .caseCard.patriot .casePrice{color:#5aff8a}
+.caseCard.fear{border-color:#8b1a1a;background:linear-gradient(160deg,#1a0505,#14171c)}
+.caseCard.fear .caseName{color:#ff2222;text-shadow:0 0 12px rgba(255,0,0,.5)}
+.caseCard.fear .casePrice{color:#ff4444}
+.caseCard.fear .caseSub{color:#a33}
+.caseCard.fear:hover{border-color:#ff2222;box-shadow:0 0 30px rgba(255,0,0,.5)}
 .invGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;width:min(960px,94vw);max-height:58vh;overflow-y:auto;padding:4px}
 .invItem{background:#161a1f;border:1px solid #333941;border-radius:10px;padding:10px;text-align:center;transition:.15s;position:relative}
 .invItem:hover{border-color:#3ee0d0}
@@ -109,12 +113,15 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .irar{font-size:10px;letter-spacing:2px;margin-top:5px;font-weight:800}
 .rc{color:#b0c3d9}.rr{color:#4b69ff}.re{color:#8847ff}.rl{color:#d32ce6}.rch{color:#3ee0d0}
 .r-knife{color:#ffd700}
+.rgod{color:#ffd700;text-shadow:0 0 8px rgba(255,215,0,.7)}
 .r-common{border-color:#4a5560}.r-rare{border-color:#4b69ff}.r-epic{border-color:#8847ff}
 .r-legendary{border-color:#d32ce6;box-shadow:0 0 18px rgba(211,44,230,.4)}
 .r-chroma{border-color:#3ee0d0;box-shadow:0 0 24px rgba(62,224,208,.6);animation:chromaGlow 2s infinite}
 .r-knife{border-color:#ffd700;box-shadow:0 0 26px rgba(255,215,0,.7);animation:knifeGlow 1.6s infinite}
+.r-god{border-color:#ffd700;box-shadow:0 0 40px rgba(255,215,0,.85);animation:godGlow 1.5s infinite}
 @keyframes chromaGlow{0%,100%{box-shadow:0 0 24px rgba(62,224,208,.6)}50%{box-shadow:0 0 32px rgba(255,100,220,.7)}}
 @keyframes knifeGlow{0%,100%{box-shadow:0 0 26px rgba(255,215,0,.7)}50%{box-shadow:0 0 36px rgba(255,255,255,.9)}}
+@keyframes godGlow{0%,100%{box-shadow:0 0 40px rgba(255,215,0,.85)}50%{box-shadow:0 0 55px rgba(255,255,100,1)}}
 .sellBtn{position:absolute;top:6px;right:6px;background:rgba(255,215,80,.15);border:1px solid #ffd76a;color:#ffd76a;font-size:10px;padding:3px 8px;border-radius:5px;font-weight:800;cursor:pointer;z-index:2}
 #screen-case{background:rgba(5,6,8,.96);z-index:40}
 .reelWrap{width:100vw;height:170px;overflow:hidden;position:relative;border-top:2px solid #333;border-bottom:2px solid #333;background:#0e1114}
@@ -167,20 +174,21 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .skinCard.owned{border-color:#5aff8a;box-shadow:0 0 12px rgba(90,255,138,.2)}
 .skinCard .iname{font-size:11px;line-height:1.25}
 .skinBadge{position:absolute;top:6px;left:6px;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;background:rgba(90,255,138,.15);color:#5aff8a;letter-spacing:1px}
-/* Индикатор HP */
 #hpBarWrap{position:absolute;top:80px;left:50%;transform:translateX(-50%);width:240px;height:8px;background:rgba(0,0,0,.6);border:1px solid #2c3138;border-radius:4px;overflow:hidden}
 #hpBarFill{height:100%;background:#5aff8a;transition:width .2s, background .3s;width:100%}
 #hpBarWrap.low #hpBarFill{background:#ff6b6b;animation:hpPulse 0.8s infinite}
 @keyframes hpPulse{0%,100%{opacity:1}50%{opacity:.4}}
-/* Кровь на экране */
-#bloodOverlay{position:absolute;inset:0;pointer-events:none;z-index:12;opacity:0;transition:opacity .3s;
-  background:radial-gradient(ellipse at center, rgba(180,0,0,0) 30%, rgba(140,0,0,.55) 100%);}
+#bloodOverlay{position:absolute;inset:0;pointer-events:none;z-index:12;opacity:0;transition:opacity .3s;background:radial-gradient(ellipse at center, rgba(180,0,0,0) 30%, rgba(140,0,0,.55) 100%);}
+#coinToast{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:48px;font-weight:900;color:#ffd700;text-shadow:0 0 30px rgba(255,215,0,.9),0 0 60px rgba(255,215,0,.5);pointer-events:none;z-index:20;opacity:0;transition:opacity .4s;letter-spacing:4px}
+#coinToast.show{opacity:1;animation:coinBounce 1.5s ease-out}
+@keyframes coinBounce{0%{transform:translate(-50%,-50%) scale(0.3)}30%{transform:translate(-50%,-50%) scale(1.3)}50%{transform:translate(-50%,-50%) scale(1)}100%{transform:translate(-50%,-80%) scale(1);opacity:0}}
 </style>
 </head>
 <body>
 <canvas id="cv3d"></canvas>
 <canvas id="cv2d"></canvas>
 <div id="bloodOverlay"></div>
+<div id="coinToast"></div>
 
 <div id="screen-menu" class="screen">
   <div class="coins">🪙 <span id="coinCount">0</span></div>
@@ -284,6 +292,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
     <div class="filterBtn" data-f="epic">ЭПИЧЕСКИЕ</div>
     <div class="filterBtn" data-f="legendary">ЛЕГЕНДАРНЫЕ</div>
     <div class="filterBtn" data-f="chroma">ХРОМА</div>
+    <div class="filterBtn" data-f="god">БОЖЕСТВЕННЫЕ</div>
     <div class="filterBtn" data-f="knife">НОЖИ</div>
   </div>
   <div class="invGrid skinsGrid" id="skinsGrid"></div>
@@ -332,7 +341,8 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 
 <script>
 /* ============================================================
-   CS:KOZEL — FPS Edition v6
+   CS:KOZEL — FPS Edition v7
+   Фикс мерцания + декор карты + золотая монета
    ============================================================ */
 const $ = id => document.getElementById(id);
 const cv3d = $('cv3d'), cv2d = $('cv2d');
@@ -385,6 +395,7 @@ function sfxShot(w, pan, vol){
 const sfxStep = (pan, vol) => { noiseBurst(0.09, 380, vol*0.7, pan, 'lowpass', 1.6); tone(70, 0.05, vol*0.25, pan, 'sine', 50); };
 const sfxHit = (pan, vol) => noiseBurst(0.08, 3500, vol*0.7, pan, 'highpass');
 const sfxKill = (pan, vol) => { tone(880, 0.12, vol, pan, 'triangle', 440); tone(1320, 0.15, vol*0.6, pan, 'sine', 660); };
+const sfxCoin = () => { tone(880, 0.1, 0.5, 0, 'triangle', 1320); tone(1320, 0.15, 0.4, 0, 'triangle', 1760); tone(1760, 0.2, 0.3, 0, 'triangle', 2200); };
 function sfxRoundEnd(win){
   if (win){ tone(660,0.15,0.5,0,'sine'); tone(990,0.18,0.5,0,'sine'); tone(1320,0.25,0.5,0,'sine'); }
   else { tone(440,0.2,0.5,0,'sine'); tone(330,0.25,0.5,0,'sine'); tone(220,0.3,0.5,0,'sine'); }
@@ -456,7 +467,7 @@ const SKINS = [
   {id:'awp_sofi',name:'AWP | SOFI MICHELLE',type:'weapon',weapon:'awp',color:'#ff1493',rarity:'legendary'},
   {id:'ch_sofi',name:'Персонаж | Кицунэ',type:'char',color:'#ff69b4',rarity:'legendary'},
   {id:'awp_dragonlore',name:'AWP | Dragon Lore',type:'weapon',weapon:'awp',color:'#c9a227',rarity:'chroma'},
-  {id:'ak_case_hard',name:'AK-47 | Case Hardened',type:'weapon',weapon:'ak',color:'#4169e1',rarity:'chroma'},
+  {id:'ak_case_hard',name:'AK-47 | Поверхностная закалка',type:'weapon',weapon:'ak',color:'#4169e1',rarity:'god'},
   {id:'dg_vertugun',name:'Deagle | Вертугун',type:'weapon',weapon:'deagle',color:'#8e44ad',rarity:'chroma'},
   {id:'m4_howl',name:'M4A4 | Howl',type:'weapon',weapon:'m4a4',color:'#d35400',rarity:'chroma'},
 ];
@@ -507,17 +518,18 @@ PATRIOT_KNIVES.forEach(s => SKINS.push(s));
 PATRIOT_SKINS.forEach(s => SKINS.push(s));
 
 const CASES = {
-  poor:     { name:'БЕДНЯК',        icon:'💰', cls:'poor',      price:10,  sub:'Всегда скины 15+', odds:{common:0.70, rare:0.22, epic:0.06, legendary:0.015, chroma:0.005} },
-  trash:    { name:'МУСОР ДРОП',    icon:'🗑️', cls:'trash',     price:5,   sub:'Всегда +монеты!', odds:{} },
-  um8a:     { name:'УМ 8А КЛАССА',  icon:'📕', cls:'basic',     price:25,  sub:'Почти всё обычное', odds:{common:0.88, rare:0.11, epic:0.01, legendary:0, chroma:0} },
-  sand:     { name:'SAND CASE',     icon:'📦', cls:'sand',      price:50,  sub:'Базовые скины', odds:{common:0.60, rare:0.25, epic:0.12, legendary:0.03, chroma:0} },
-  premium:  { name:'PREMIUM CASE',  icon:'💎', cls:'premium',   price:200, sub:'Больше редких + шанс ножа', odds:{common:0.15, rare:0.40, epic:0.32, legendary:0.13, chroma:0} },
-  patriot:  { name:'ПАТРИОТ',       icon:'🇧🇾', cls:'patriot',  price:250, sub:'Только красный/зелёный/белый', odds:{} },
-  operation:{ name:'КЕЙС ОПЕРАЦИИ', icon:'🎖️', cls:'operation', price:400, sub:'Только дроп 500+ монет', odds:{chroma:0.55, knife:0.45} }
+  poor:     { name:'БЕДНЯК',        icon:'💰', cls:'poor',      price:10,   sub:'Всегда скины 15+', odds:{common:0.70, rare:0.22, epic:0.06, legendary:0.015, chroma:0.005} },
+  trash:    { name:'МУСОР ДРОП',    icon:'🗑️', cls:'trash',     price:5,    sub:'Всегда +монеты!', odds:{} },
+  um8a:     { name:'УМ 8А КЛАССА',  icon:'📕', cls:'basic',     price:25,   sub:'Почти всё обычное', odds:{common:0.88, rare:0.11, epic:0.01, legendary:0, chroma:0} },
+  sand:     { name:'SAND CASE',     icon:'📦', cls:'sand',      price:50,   sub:'Базовые скины', odds:{common:0.60, rare:0.25, epic:0.12, legendary:0.03, chroma:0} },
+  premium:  { name:'PREMIUM CASE',  icon:'💎', cls:'premium',   price:200,  sub:'Больше редких + шанс ножа', odds:{common:0.15, rare:0.40, epic:0.32, legendary:0.13, chroma:0} },
+  patriot:  { name:'ПАТРИОТ',       icon:'🇧🇾', cls:'patriot',  price:250,  sub:'Только красный/зелёный/белый', odds:{} },
+  fear:     { name:'ТВОЙ СТРАХ',    icon:'😱', cls:'fear',      price:666,  sub:'Скины норм, шанс — нет', odds:{common:0.82, rare:0.145, epic:0.03, legendary:0.005, chroma:0} },
+  operation:{ name:'КЕЙС ОПЕРАЦИИ', icon:'🎖️', cls:'operation', price:1200, sub:'Хрома + Ножи + Божественный', odds:{chroma:0.50, knife:0.40, god:0.10} }
 };
-const SELL_PRICE = {common:15, rare:35, epic:80, legendary:200, chroma:800, knife:1500};
-const RARITY_RU = {common:'ОБЫЧНЫЙ',rare:'РЕДКИЙ',epic:'ЭПИЧЕСКИЙ',legendary:'ЛЕГЕНДАРНЫЙ',chroma:'ХРОМАТИЧЕСКИЙ',knife:'НОЖ ★'};
-const RARITY_CLS = {common:'rc',rare:'rr',epic:'re',legendary:'rl',chroma:'rch',knife:'r-knife'};
+const SELL_PRICE = {common:15, rare:35, epic:80, legendary:200, chroma:800, knife:1500, god:2500};
+const RARITY_RU = {common:'ОБЫЧНЫЙ',rare:'РЕДКИЙ',epic:'ЭПИЧЕСКИЙ',legendary:'ЛЕГЕНДАРНЫЙ',chroma:'ХРОМАТИЧЕСКИЙ',knife:'НОЖ ★',god:'БОЖЕСТВЕННЫЙ'};
+const RARITY_CLS = {common:'rc',rare:'rr',epic:'re',legendary:'rl',chroma:'rch',knife:'r-knife',god:'rgod'};
 
 let coins = +(localStorage.getItem('kozel_coins') || 500);
 let inv = JSON.parse(localStorage.getItem('kozel_inv') || '[]');
@@ -557,17 +569,11 @@ function weaponIconSVG(weaponType, color, skinId){
     else if (k === 'kn_bowie' || k === 'kn_huntsman') shape = 'bowie';
     else if (k === 'kn_falchion') shape = 'falchion';
     if (shape === 'karambit')
-      return `<svg viewBox="0 0 70 120" xmlns="http://www.w3.org/2000/svg">
-        <path d="M 36 8 Q 62 30 58 70 Q 52 95 42 105 L 36 105 Q 45 90 50 68 Q 53 32 36 12 Z" fill="${c}" stroke="${cd}" stroke-width="1.5"/>
-        <path d="M 36 10 Q 58 30 54 68 Q 49 90 40 102 L 42 102 Q 52 90 56 68 Q 60 32 38 12 Z" fill="${cl}"/>
-        <path d="M 32 100 Q 30 110 34 118 Q 40 122 46 118 Q 44 108 42 100 Z" fill="#2a1a0a" stroke="#150d05" stroke-width="1"/>
-        <path d="M 34 104 Q 33 110 36 116 L 43 116 Q 43 108 42 104 Z" fill="${c}" opacity="0.7"/>
-        <circle cx="38" cy="118" r="5" fill="none" stroke="#555" stroke-width="2.2"/>
-      </svg>`;
+      return `<svg viewBox="0 0 70 120" xmlns="http://www.w3.org/2000/svg"><path d="M 36 8 Q 62 30 58 70 Q 52 95 42 105 L 36 105 Q 45 90 50 68 Q 53 32 36 12 Z" fill="${c}" stroke="${cd}" stroke-width="1.5"/><path d="M 36 10 Q 58 30 54 68 Q 49 90 40 102 L 42 102 Q 52 90 56 68 Q 60 32 38 12 Z" fill="${cl}"/><path d="M 32 100 Q 30 110 34 118 Q 40 122 46 118 Q 44 108 42 100 Z" fill="#2a1a0a" stroke="#150d05" stroke-width="1"/><circle cx="38" cy="118" r="5" fill="none" stroke="#555" stroke-width="2.2"/></svg>`;
     if (shape === 'butterfly')
-      return `<svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg"><polygon points="30,10 36,14 36,55 30,60 24,55 24,14" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="12" y="60" width="12" height="35" fill="#333" rx="2"/><rect x="36" y="60" width="12" height="35" fill="#333" rx="2"/><rect x="13" y="65" width="10" height="3" fill="${c}"/><rect x="37" y="65" width="10" height="3" fill="${c}"/></svg>`;
+      return `<svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg"><polygon points="30,10 36,14 36,55 30,60 24,55 24,14" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="12" y="60" width="12" height="35" fill="#333" rx="2"/><rect x="36" y="60" width="12" height="35" fill="#333" rx="2"/></svg>`;
     if (shape === 'bayonet')
-      return `<svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg"><polygon points="30,6 36,12 36,72 30,80 24,72 24,12" fill="${cl}" stroke="${cd}" stroke-width="1"/><rect x="20" y="72" width="20" height="5" fill="#333"/><rect x="26" y="80" width="8" height="16" fill="#2a1a0a" rx="2"/></svg>`;
+      return `<svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg"><polygon points="30,6 36,12 36,72 30,80 24,72 24,12" fill="${cl}" stroke="${cd}" stroke-width="1"/><rect x="26" y="80" width="8" height="16" fill="#2a1a0a" rx="2"/></svg>`;
     if (shape === 'tanto')
       return `<svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg"><polygon points="30,6 40,20 40,70 30,80 24,72 24,20" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="24" y="80" width="12" height="16" fill="#2a1a0a" rx="2"/></svg>`;
     if (shape === 'bowie')
@@ -582,6 +588,8 @@ function weaponIconSVG(weaponType, color, skinId){
     return `<svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="18" width="96" height="6" fill="#111"/><rect x="10" y="14" width="80" height="10" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="30" y="10" width="30" height="6" fill="#0a0a0a"/><rect x="62" y="20" width="14" height="12" fill="${cd}"/><rect x="78" y="12" width="4" height="8" fill="${cl}"/><polygon points="4,28 22,28 20,32 6,32" fill="${cd}"/></svg>`;
   if (weaponType === 'shotgun')
     return `<svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="18" width="96" height="5" fill="#111"/><rect x="2" y="21" width="96" height="5" fill="#0a0a0a"/><rect x="40" y="16" width="36" height="12" fill="#3a2a1a"/><rect x="6" y="14" width="36" height="12" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="76" y="14" width="20" height="10" fill="${c}" stroke="${cd}" stroke-width="1"/></svg>`;
+  if (skinId === 'ak_case_hard')
+    return `<svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="20" width="92" height="4" fill="#111"/><rect x="8" y="14" width="70" height="12" fill="#5a6a7a"/><path d="M 8 14 L 22 14 L 16 26 L 8 26 Z" fill="#4169e1"/><path d="M 26 14 L 38 14 L 34 26 L 24 26 Z" fill="#1e90ff"/><path d="M 42 14 L 50 14 L 48 26 L 40 26 Z" fill="#4169e1"/><path d="M 54 14 L 62 14 L 60 26 L 52 26 Z" fill="#2962ff"/><path d="M 66 14 L 78 14 L 76 26 L 64 26 Z" fill="#4169e1"/><rect x="20" y="10" width="30" height="5" fill="#2a3a4a"/><rect x="60" y="18" width="14" height="16" fill="#0a0a0a"/><polygon points="76,26 96,26 94,32 78,32" fill="#2a3a4a"/><rect x="50" y="16" width="6" height="6" fill="#5a7abf"/></svg>`;
   if (weaponType === 'ak' || weaponType === 'm4a4' || weaponType === 'galil')
     return `<svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="20" width="92" height="4" fill="#111"/><rect x="8" y="14" width="70" height="12" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="20" y="10" width="30" height="5" fill="${cd}"/><rect x="60" y="18" width="14" height="16" fill="#0a0a0a"/><polygon points="76,26 96,26 94,32 78,32" fill="${cd}"/><rect x="50" y="16" width="6" height="6" fill="${cl}"/></svg>`;
   return `<svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="18" width="60" height="10" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="80" y="20" width="14" height="5" fill="#111"/><polygon points="30,18 50,18 44,42 28,42" fill="${cd}"/><rect x="32" y="28" width="18" height="14" fill="#1a1a1a"/></svg>`;
@@ -598,6 +606,8 @@ const VERT_SRC = `attribute vec3 aPos; attribute vec3 aNormal; attribute vec3 aC
 uniform mat4 uProj; uniform mat4 uView; uniform mat4 uModel;
 varying vec3 vNormal; varying vec3 vWorldPos; varying vec3 vColor;
 void main(){ vec4 w = uModel * vec4(aPos, 1.0); vWorldPos = w.xyz; vNormal = mat3(uModel) * aNormal; vColor = aColor; gl_Position = uProj * uView * w; }`;
+
+// ДОБАВЛЕНЫ ДЕКОРАЦИИ НА СТЕНАХ (граффити, пятна)
 const FRAG_SRC = `precision highp float;
 varying vec3 vNormal; varying vec3 vWorldPos; varying vec3 vColor;
 uniform vec3 uCamPos; uniform int uType;
@@ -607,11 +617,13 @@ void main(){
   vec3 lightDir = normalize(vec3(0.35,0.5,0.8));
   float diff = max(dot(normalize(vNormal), lightDir), 0.0)*0.7 + 0.35;
   vec3 baseColor = vColor;
+
   if (uType == 0){
     vec2 uv;
     if (abs(vNormal.x) > 0.7) uv = vec2(vWorldPos.y, vWorldPos.z) / 22.0;
     else if (abs(vNormal.y) > 0.7) uv = vec2(vWorldPos.x, vWorldPos.z) / 22.0;
     else uv = vec2(vWorldPos.x, vWorldPos.y) / 22.0;
+
     float row = floor(uv.y);
     float offs = mod(row, 2.0) * 0.5;
     float bx = fract(uv.x + offs), by = fract(uv.y);
@@ -624,6 +636,26 @@ void main(){
     vec3 mortarCol = vec3(0.72,0.66,0.54);
     baseColor = mix(brickUse, mortarCol, mortar);
     baseColor *= mix(0.85, 1.0, smoothstep(0.0,0.1,bx) * smoothstep(1.0,0.9,bx));
+
+    // ДЕКОР: граффити и пятна
+    vec2 decoUV = uv * 3.0;
+    float decoHash = hash(floor(decoUV));
+    if (decoHash > 0.94 && decoHash < 0.97){
+      // Тёмное пятно (старение/копоть)
+      float spot = smoothstep(0.3, 0.7, noise(decoUV * 3.0 + 5.0));
+      baseColor = mix(baseColor, vec3(0.2, 0.15, 0.1), spot * 0.65);
+    } else if (decoHash > 0.97){
+      // Цветное граффити
+      vec2 gUV = fract(decoUV) - 0.5;
+      float shape = step(0.35, length(gUV) * (0.6 + hash(floor(decoUV) + 7.0)));
+      vec3 tagColors[3];
+      tagColors[0] = vec3(0.9, 0.15, 0.35);
+      tagColors[1] = vec3(0.15, 0.5, 0.9);
+      tagColors[2] = vec3(0.9, 0.85, 0.1);
+      int idx = int(floor(hash(floor(decoUV) + 11.0) * 3.0));
+      vec3 tagCol = tagColors[idx == 0 ? 0 : (idx == 1 ? 1 : 2)];
+      baseColor = mix(baseColor, tagCol, shape * 0.7);
+    }
   } else if (uType == 1){
     vec2 uv = vWorldPos.xy / 16.0;
     float n1 = hash(uv*40.0), n2 = hash(uv*90.0+13.0), n3 = noise(uv*1.5);
@@ -631,13 +663,37 @@ void main(){
     baseColor = mix(mix(sandA, sandB, n3), sandC, step(0.7, n3));
     baseColor += ((n1+n2)*0.5 - 0.5) * 0.06;
     baseColor += vec3(step(0.94, n1) * 0.08);
+
+    // Трещины на полу
+    float crack = smoothstep(0.48, 0.5, abs(noise(uv * 2.5) - 0.5));
+    crack *= step(0.6, hash(floor(uv * 1.5)));
+    baseColor *= mix(1.0, 0.55, crack * 0.8);
   } else if (uType == 2){
     baseColor = vColor;
     baseColor *= 0.9 + noise(vWorldPos.xy * 0.5) * 0.15;
+  } else if (uType == 3){
+    // Ящики (коричневое дерево)
+    vec2 uv = vWorldPos.xy / 8.0;
+    if (abs(vNormal.z) > 0.7) uv = vWorldPos.xy / 8.0;
+    else uv = vWorldPos.xz / 8.0;
+    float grain = noise(uv * 4.0);
+    vec3 wood1 = vec3(0.55, 0.38, 0.22);
+    vec3 wood2 = vec3(0.42, 0.28, 0.15);
+    baseColor = mix(wood1, wood2, grain);
+    float plank = step(0.5, fract(uv.x * 3.0 + 0.25));
+    baseColor *= 0.85 + plank * 0.2;
+  } else if (uType == 4){
+    // Золотая монета
+    baseColor = vec3(1.0, 0.85, 0.15);
+    float shine = noise(vWorldPos.xy * 20.0) * 0.3 + 0.7;
+    baseColor *= shine;
   }
+
   float dist = length(vWorldPos - uCamPos);
   float fog = clamp(1.0 - dist / 1900.0, 0.15, 1.0);
   if (uType == 0) diff *= 0.8 + 0.2 * diff;
+  // Монетка светится сквозь туман
+  if (uType == 4) fog = mix(fog, 1.0, 0.6);
   gl_FragColor = vec4(baseColor * diff * fog, 1.0);
 }`;
 
@@ -666,7 +722,10 @@ const loc = {
 let wallBuffer = null, wallVerts = 0;
 let floorBuffer = null, floorVerts = 0;
 let playerBuffer = null;
+let crateBuffer = null, crateVerts = 0;
+let coinBuffer = null;
 const WALL_H = 90;
+const FLOOR_Z = -0.3; // Слегка ниже стен чтобы не было мерцания
 
 function pushCube(arr, x0, y0, z0, sx, sy, sz, r, g, b){
   const x1 = x0+sx, y1 = y0+sy, z1 = z0+sz;
@@ -684,31 +743,81 @@ function pushCube(arr, x0, y0, z0, sx, sy, sz, r, g, b){
   V(x0,y1,z0,0,1,0);V(x1,y1,z1,0,1,0);V(x1,y1,z0,0,1,0);
   V(x0,y1,z0,0,1,0);V(x0,y1,z1,0,1,0);V(x1,y1,z1,0,1,0);
 }
+
 function buildWallBuffer(MAP, MW, MH, TILE){
   const arr = [];
   for (let ty=0; ty<MH; ty++)
     for (let tx=0; tx<MW; tx++)
-      if (MAP[ty][tx] === 1) pushCube(arr, tx*TILE, ty*TILE, 0, TILE, TILE, WALL_H, 1, 1, 1);
+      if (MAP[ty][tx] === 1) pushCube(arr, tx*TILE, ty*TILE, FLOOR_Z, TILE, TILE, WALL_H - FLOOR_Z, 1, 1, 1);
   wallVerts = arr.length/9;
   wallBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, wallBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arr), gl.STATIC_DRAW);
 }
+
 function buildFloorBuffer(MW, MH, TILE){
   const arr = [];
   const W = MW*TILE, H = MH*TILE;
-  const verts = [[0,0,0],[W,0,0],[W,H,0],[0,0,0],[W,H,0],[0,H,0]];
+  const verts = [[0,0,FLOOR_Z],[W,0,FLOOR_Z],[W,H,FLOOR_Z],[0,0,FLOOR_Z],[W,H,FLOOR_Z],[0,H,FLOOR_Z]];
   for (const [x,y,z] of verts) arr.push(x,y,z,0,0,1,1,1,1);
   floorVerts = 6;
   floorBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, floorBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arr), gl.STATIC_DRAW);
 }
+
+// ЯЩИКИ-ДЕКОРАЦИИ на карте
+function buildCrateBuffer(MAP, MW, MH, TILE){
+  const arr = [];
+  const placed = [];
+  for (let ty=1; ty<MH-1; ty++){
+    for (let tx=1; tx<MW-1; tx++){
+      if (MAP[ty][tx] !== 0) continue;
+      // Только у стен
+      const nearWall = MAP[ty-1][tx]===1 || MAP[ty+1][tx]===1 || MAP[ty][tx-1]===1 || MAP[ty][tx+1]===1;
+      if (!nearWall) continue;
+      // Детерминированный рандом
+      const h = Math.abs(Math.sin(tx*12.9898 + ty*78.233) * 43758.5453) % 1;
+      if (h > 0.88){
+        // Не ставим на пути спавна
+        const isSpawnZoneA = (ty >= 24 && ty <= 28 && tx >= 8 && tx <= 20);
+        const isSpawnZoneB = (ty >= 1 && ty <= 5 && tx >= 8 && tx <= 20);
+        if (isSpawnZoneA || isSpawnZoneB) continue;
+        // Смещение внутри клетки
+        const offX = (h*13) % 1 * 20 + 10;
+        const offY = (h*17) % 1 * 20 + 10;
+        const cx = tx*TILE + offX;
+        const cy = ty*TILE + offY;
+        const size = 18 + ((h*7) % 1) * 8;
+        const h2 = Math.abs(Math.sin(cx*0.5 + cy*0.3) * 43758.5453) % 1;
+        const height = 16 + h2 * 10;
+        pushCube(arr, cx, cy, FLOOR_Z, size, size, height, 1, 1, 1);
+        placed.push({x:cx, y:cy, size});
+      }
+    }
+  }
+  crateVerts = arr.length / 9;
+  crateBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, crateBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arr), gl.STATIC_DRAW);
+  return placed;
+}
+
 function initPlayerBuffer(){
   playerBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, playerBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, 200*9*4, gl.DYNAMIC_DRAW);
 }
+
+function initCoinBuffer(){
+  const arr = [];
+  // Маленький кубик-монетка
+  pushCube(arr, -6, -6, 4, 12, 12, 4, 1, 1, 1);
+  coinBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, coinBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arr), gl.STATIC_DRAW);
+}
+
 function drawMesh(buffer, vertCount, model, type){
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
   const stride = 9*4;
@@ -749,6 +858,10 @@ const EYE_HEIGHT = 32, PLAYER_H = 46;
 
 let bloodTimer = 0;
 
+// Пасхалка — золотая монета
+let goldenCoin = null;
+let crates = [];
+
 const show = id => {
   ['screen-menu','screen-lobby','screen-game','screen-shop','screen-inv','screen-case','screen-casino','screen-settings','screen-skins','screen-pause']
     .forEach(s => $(s).classList.toggle('hidden', s !== id));
@@ -776,7 +889,9 @@ function handleMsg(m){
       MAP = m.grid; MW = m.mw; MH = m.mh; TILE = m.tile; myId = m.id;
       buildWallBuffer(MAP, MW, MH, TILE);
       buildFloorBuffer(MW, MH, TILE);
+      crates = buildCrateBuffer(MAP, MW, MH, TILE);
       initPlayerBuffer();
+      initCoinBuffer();
       break;
     case 'joined':
       myId = m.id; lobbyCode = m.code;
@@ -788,11 +903,27 @@ function handleMsg(m){
   }
 }
 
+function spawnGoldenCoin(){
+  if (!MAP) return;
+  for (let i = 0; i < 50; i++){
+    const tx = 2 + Math.floor(Math.random() * (MW - 4));
+    const ty = 2 + Math.floor(Math.random() * (MH - 4));
+    if (MAP[ty][tx] !== 0) continue;
+    goldenCoin = {x: tx*TILE + TILE/2, y: ty*TILE + TILE/2, t: performance.now()};
+    return;
+  }
+}
+
 function onState(s){
   gameState = s;
   const me = s.players.find(p => p.id === myId);
   if (me) myTeam = me.tm;
   if (!myInit && me){ myX = me.x; myY = me.y; myYaw = me.a || 0; myInit = true; }
+
+  // Спавн монетки при старте раунда
+  if (s.phase === 'buy' && s.round !== lastAutoOpenRound && !goldenCoin){
+    setTimeout(spawnGoldenCoin, 5000);
+  }
 
   for (const ev of (s.ev || [])){
     if (ev.type === 'shot'){
@@ -855,12 +986,10 @@ function onState(s){
     $('hudWeapon').textContent = (WEAPONS[me.w] || WEAPONS.pistol).name.toUpperCase();
     $('hudSlot').textContent = me.cs || 2;
 
-    // HP-бар
     const hpPct = Math.max(0, Math.min(100, me.hp));
     $('hpBarFill').style.width = hpPct + '%';
     $('hpBarWrap').classList.toggle('low', hpPct < 35);
 
-    // Кровь на экране если ранен
     if (me.hp < 40){
       const intensity = (40 - me.hp) / 40;
       $('bloodOverlay').style.opacity = String(Math.min(0.8, intensity));
@@ -868,7 +997,6 @@ function onState(s){
       $('bloodOverlay').style.opacity = '0';
     }
 
-    // Патроны
     const ammoBox = $('ammoBox');
     if (me.magMax > 0){
       $('ammoMag').innerHTML = `${me.mag}<small>/${me.magMax}</small>`;
@@ -1026,7 +1154,7 @@ $('crossInput').oninput = e => {
 
 function renderShop(){
   const wrap = $('casesWrap'); wrap.innerHTML = '';
-  const order = ['poor','trash','um8a','sand','premium','patriot','operation'];
+  const order = ['poor','trash','um8a','sand','premium','patriot','fear','operation'];
   for (const id of order){
     const c = CASES[id];
     const d = document.createElement('div');
@@ -1061,7 +1189,6 @@ function renderInv(){
       if (equip[slot] === s.id) delete equip[slot]; else equip[slot] = s.id;
       saveLS(); renderInv(); pushCosmetics();
     };
-    // Продажа без confirm
     d.querySelector('.sellBtn').onclick = (ev) => {
       ev.stopPropagation();
       coins += sellPrice;
@@ -1084,7 +1211,7 @@ function renderSkins(){
   let list = SKINS.slice();
   if (skinsFilter === 'owned') list = list.filter(s => owned.has(s.id));
   else if (skinsFilter !== 'all') list = list.filter(s => s.rarity === skinsFilter);
-  const order = {knife:0, chroma:1, legendary:2, epic:3, rare:4, common:5};
+  const order = {god:0, knife:1, chroma:2, legendary:3, epic:4, rare:5, common:6};
   list.sort((a,b) => (order[a.rarity]||9) - (order[b.rarity]||9));
   if (!list.length){ g.innerHTML = '<div class="hint" style="grid-column:1/-1">Пусто</div>'; return; }
   for (const s of list){
@@ -1131,7 +1258,6 @@ function rollItem(caseId){
     return PATRIOT_SKINS[Math.floor(Math.random() * PATRIOT_SKINS.length)];
   }
   if (caseId === 'premium' && Math.random() < 0.03) return KNIFE_SKINS[Math.floor(Math.random()*KNIFE_SKINS.length)];
-  // Operation кейс — только хрома/ножи (обрабатывается через odds ниже)
   const odds = CASES[caseId].odds;
   const r = Math.random();
   let acc = 0, rarity = 'common';
@@ -1140,7 +1266,6 @@ function rollItem(caseId){
     acc += p;
     if (r < acc){ rarity = rar; break; }
   }
-  // Если операция дала "knife" — возвращаем случайный нож
   if (rarity === 'knife') return KNIFE_SKINS[Math.floor(Math.random()*KNIFE_SKINS.length)];
   const pool = SKINS.filter(s => s.rarity === rarity);
   return pool.length ? pool[Math.floor(Math.random() * pool.length)] : SKINS[0];
@@ -1418,13 +1543,13 @@ function resolveCollision(px, py, r){
       const d2 = dx*dx + dy*dy;
       if (d2 < r*r){
         if (d2 > 0.0001){
-          const d = Math.sqrt(d2), push = r - d;
+          const d = Math.sqrt(d2), push = r - d + 0.1;
           nx += (dx/d) * push; ny += (dy/d) * push;
         } else {
           const ccx = tx0+TILE/2, ccy = ty0+TILE/2;
           const dcx = nx - ccx, dcy = ny - ccy;
-          if (Math.abs(dcx) > Math.abs(dcy)) nx += Math.sign(dcx||1)*(TILE/2+r);
-          else ny += Math.sign(dcy||1)*(TILE/2+r);
+          if (Math.abs(dcx) > Math.abs(dcy)) nx += Math.sign(dcx||1)*(TILE/2+r+0.5);
+          else ny += Math.sign(dcy||1)*(TILE/2+r+0.5);
         }
       }
     }
@@ -1458,17 +1583,33 @@ function localMove(dt){
     const fx = moveF * c + moveR * s;
     const fy = moveF * s - moveR * c;
     const spd = (myCrouch ? 110 : 220) * dt;
-    const r = 13;
+    const r = 14;
     let nx = myX + fx * spd, ny = myY + fy * spd;
     [nx, ny] = resolveCollision(nx, ny, r);
     myX = nx; myY = ny;
   } else {
-    const r = 13;
+    const r = 14;
     const [nx, ny] = resolveCollision(myX, myY, r);
     myX = nx; myY = ny;
   }
   if (Math.abs(myX - me.d.x) > 80) myX = me.d.x;
   if (Math.abs(myY - me.d.y) > 80) myY = me.d.y;
+
+  // Проверка подбора монетки
+  if (goldenCoin){
+    const d = Math.hypot(myX - goldenCoin.x, myY - goldenCoin.y);
+    if (d < 30 && performance.now() - goldenCoin.t > 3000){
+      coins += 50; saveLS(); updateCoinUI(); sfxCoin();
+      const toast = $('coinToast');
+      toast.textContent = '+50 🪙';
+      toast.classList.remove('show');
+      void toast.offsetWidth;
+      toast.classList.add('show');
+      goldenCoin = null;
+      // Респавн через 45 сек
+      setTimeout(() => { if (!goldenCoin) spawnGoldenCoin(); }, 45000);
+    }
+  }
 }
 
 function viewMatrix(px, py, pz, yaw, pitch){
@@ -1491,7 +1632,8 @@ function render3D(){
   }
   const aspect = cv3d.width / cv3d.height;
   const fovRad = (scopeActive ? 22 : settings.fov) * Math.PI / 180;
-  const proj = mat4Perspective(fovRad, aspect, 1, 3000);
+  // ФИКС МЕРЦАНИЯ: near = 3 (был 1)
+  const proj = mat4Perspective(fovRad, aspect, 3, 2500);
   const eyeZ = (myCrouch ? 22 : EYE_HEIGHT) + myZ;
   const view = viewMatrix(myX, myY, eyeZ, myYaw, myPitch);
 
@@ -1507,6 +1649,15 @@ function render3D(){
   const model = mat4Identity();
   drawMesh(floorBuffer, floorVerts, model, 1);
   drawMesh(wallBuffer, wallVerts, model, 0);
+  if (crateBuffer && crateVerts > 0) drawMesh(crateBuffer, crateVerts, model, 3);
+
+  // Золотая монета (пасхалка)
+  if (goldenCoin && coinBuffer){
+    const t = (performance.now() - goldenCoin.t) / 1000;
+    const bob = Math.sin(t * 3) * 6 + 15;
+    const coinModel = new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, goldenCoin.x, goldenCoin.y, bob, 1]);
+    drawMesh(coinBuffer, 36, coinModel, 4);
+  }
 
   const pArr = [];
   for (const [id, e] of pMap){
@@ -1559,13 +1710,9 @@ function drawImpacts(){
     if (!hasLOS(myX, myY, imp.x, imp.y)) continue;
     const size = Math.max(2, Math.min(10, 400 / p.dist));
     ctx.fillStyle = 'rgba(15, 10, 5, 0.9)';
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, size, 0, Math.PI*2);
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(p.x, p.y, size, 0, Math.PI*2); ctx.fill();
     ctx.fillStyle = 'rgba(0, 0, 0, 0.95)';
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, size * 0.55, 0, Math.PI*2);
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(p.x, p.y, size * 0.55, 0, Math.PI*2); ctx.fill();
   }
 }
 
@@ -1647,40 +1794,33 @@ function drawViewModel(){
     const edgeCol = wc ? darkCol : '#555';
     const handleCol = '#2a1a0a';
     if (shape === 'karambit'){
-      // Клинок — кривой серп
       ctx.fillStyle = bladeCol;
       ctx.beginPath();
       ctx.moveTo(bx + 20*K, by - 210*K);
       ctx.quadraticCurveTo(bx + 130*K, by - 130*K, bx + 80*K, by - 20*K);
       ctx.lineTo(bx + 65*K, by - 25*K);
       ctx.quadraticCurveTo(bx + 100*K, by - 120*K, bx + 25*K, by - 200*K);
-      ctx.closePath();
-      ctx.fill();
+      ctx.closePath(); ctx.fill();
       ctx.strokeStyle = edgeCol; ctx.lineWidth = 1.8*S; ctx.stroke();
-      // Тёмная спинка
       ctx.strokeStyle = edgeCol; ctx.lineWidth = 3*S;
       ctx.beginPath();
       ctx.moveTo(bx + 20*K, by - 210*K);
       ctx.quadraticCurveTo(bx + 130*K, by - 130*K, bx + 80*K, by - 20*K);
       ctx.stroke();
-      // Светлая кромка
       ctx.strokeStyle = wc ? lightCol : '#fff';
       ctx.lineWidth = 1.5*S;
       ctx.beginPath();
       ctx.moveTo(bx + 22*K, by - 205*K);
       ctx.quadraticCurveTo(bx + 125*K, by - 128*K, bx + 78*K, by - 24*K);
       ctx.stroke();
-      // Рукоять пистолетная
       ctx.fillStyle = handleCol;
       ctx.beginPath();
       ctx.moveTo(bx + 55*K, by - 25*K);
       ctx.quadraticCurveTo(bx + 45*K, by + 10*K, bx + 50*K, by + 45*K);
       ctx.lineTo(bx + 80*K, by + 45*K);
       ctx.quadraticCurveTo(bx + 78*K, by + 10*K, bx + 72*K, by - 25*K);
-      ctx.closePath();
-      ctx.fill();
+      ctx.closePath(); ctx.fill();
       ctx.strokeStyle = '#150d05'; ctx.lineWidth = 1.5*S; ctx.stroke();
-      // Накладка на рукоять
       if (wc){
         ctx.fillStyle = baseCol;
         ctx.beginPath();
@@ -1688,19 +1828,10 @@ function drawViewModel(){
         ctx.quadraticCurveTo(bx + 52*K, by + 10*K, bx + 55*K, by + 38*K);
         ctx.lineTo(bx + 76*K, by + 38*K);
         ctx.quadraticCurveTo(bx + 74*K, by + 10*K, bx + 70*K, by - 18*K);
-        ctx.closePath();
-        ctx.fill();
+        ctx.closePath(); ctx.fill();
       }
-      // Кольцо для пальца
       ctx.strokeStyle = edgeCol; ctx.lineWidth = 3.5*S;
-      ctx.beginPath();
-      ctx.arc(bx + 65*K, by + 60*K, 18*K, 0, Math.PI*2);
-      ctx.stroke();
-      ctx.strokeStyle = wc ? lightCol : '#aaa';
-      ctx.lineWidth = 1.2*S;
-      ctx.beginPath();
-      ctx.arc(bx + 65*K, by + 60*K, 18*K, Math.PI*1.1, Math.PI*1.6);
-      ctx.stroke();
+      ctx.beginPath(); ctx.arc(bx + 65*K, by + 60*K, 18*K, 0, Math.PI*2); ctx.stroke();
     } else if (shape === 'butterfly'){
       ctx.fillStyle = bladeCol;
       ctx.beginPath();
@@ -1779,15 +1910,32 @@ function drawViewModel(){
     ctx.fillRect(cx + 120*K, cy - 100*K, 60*K, 40*K);
     if (wc){ ctx.fillStyle = lightCol; ctx.fillRect(cx + 20*K, cy - 130*K, 320*K, 4*K); }
   } else if (myW === 'ak' || myW === 'm4a4' || myW === 'galil'){
-    ctx.fillStyle = wc ? baseCol : '#2a2a2a';
-    ctx.fillRect(cx + 15*K, cy - 95*K, 300*K, 30*K);
-    ctx.fillStyle = '#111'; ctx.fillRect(cx + 280*K, cy - 88*K, 80*K, 14*K);
-    ctx.fillStyle = wc ? darkCol : '#1a1a1a';
-    ctx.fillRect(cx + 180*K, cy - 92*K, 70*K, 22*K);
-    ctx.fillRect(cx + 40*K, cy - 115*K, 60*K, 22*K);
-    ctx.fillStyle = '#0a0a0a'; ctx.fillRect(cx + 100*K, cy - 70*K, 40*K, 35*K);
-    if (wc){ ctx.fillStyle = lightCol; ctx.fillRect(cx + 15*K, cy - 95*K, 300*K, 3*K); }
-    ctx.fillStyle = '#3a2a1a'; ctx.fillRect(cx + 60*K, cy - 65*K, 55*K, 45*K);
+    if (mySkinId === 'ak_case_hard'){
+      ctx.fillStyle = '#5a6a7a';
+      ctx.fillRect(cx + 15*K, cy - 95*K, 300*K, 30*K);
+      ctx.fillStyle = '#4169e1';
+      ctx.fillRect(cx + 20*K, cy - 93*K, 40*K, 26*K);
+      ctx.fillRect(cx + 145*K, cy - 91*K, 35*K, 22*K);
+      ctx.fillRect(cx + 255*K, cy - 93*K, 45*K, 24*K);
+      ctx.fillStyle = '#1e90ff';
+      ctx.fillRect(cx + 75*K, cy - 92*K, 55*K, 26*K);
+      ctx.fillStyle = '#2962ff';
+      ctx.fillRect(cx + 195*K, cy - 90*K, 50*K, 20*K);
+      ctx.fillStyle = '#111'; ctx.fillRect(cx + 280*K, cy - 88*K, 80*K, 14*K);
+      ctx.fillStyle = '#2a3a4a'; ctx.fillRect(cx + 40*K, cy - 115*K, 60*K, 22*K);
+      ctx.fillStyle = '#0a0a0a'; ctx.fillRect(cx + 100*K, cy - 70*K, 40*K, 35*K);
+      ctx.fillStyle = '#3a2a1a'; ctx.fillRect(cx + 60*K, cy - 65*K, 55*K, 45*K);
+    } else {
+      ctx.fillStyle = wc ? baseCol : '#2a2a2a';
+      ctx.fillRect(cx + 15*K, cy - 95*K, 300*K, 30*K);
+      ctx.fillStyle = '#111'; ctx.fillRect(cx + 280*K, cy - 88*K, 80*K, 14*K);
+      ctx.fillStyle = wc ? darkCol : '#1a1a1a';
+      ctx.fillRect(cx + 180*K, cy - 92*K, 70*K, 22*K);
+      ctx.fillRect(cx + 40*K, cy - 115*K, 60*K, 22*K);
+      ctx.fillStyle = '#0a0a0a'; ctx.fillRect(cx + 100*K, cy - 70*K, 40*K, 35*K);
+      if (wc){ ctx.fillStyle = lightCol; ctx.fillRect(cx + 15*K, cy - 95*K, 300*K, 3*K); }
+      ctx.fillStyle = '#3a2a1a'; ctx.fillRect(cx + 60*K, cy - 65*K, 55*K, 45*K);
+    }
   } else if (myW === 'shotgun'){
     ctx.fillStyle = wc ? baseCol : '#3a3a3a';
     ctx.fillRect(cx + 10*K, cy - 90*K, 320*K, 26*K);
@@ -1822,11 +1970,30 @@ function drawMiniMap(){
     for (let tx=0; tx<MW; tx++)
       if (MAP[ty][tx] === 1)
         ctx.fillRect(mmX + tx*TILE*sx, mmY + ty*TILE*sy, Math.ceil(TILE*sx), Math.ceil(TILE*sy));
+
+  // Ящики на миникарте
+  ctx.fillStyle = 'rgba(180,130,80,.8)';
+  for (const c of crates){
+    ctx.fillRect(mmX + (c.x - c.size/2)*sx, mmY + (c.y - c.size/2)*sy, Math.max(2, c.size*sx), Math.max(2, c.size*sy));
+  }
+
   ctx.fillStyle = 'rgba(62,224,208,.25)';
   ctx.beginPath();
   ctx.moveTo(mmX + myX*sx, mmY + myY*sy);
   ctx.arc(mmX + myX*sx, mmY + myY*sy, 16, myYaw - Math.PI/4, myYaw + Math.PI/4);
   ctx.closePath(); ctx.fill();
+
+  // Золотая монета
+  if (goldenCoin){
+    ctx.fillStyle = '#ffd700';
+    ctx.beginPath();
+    ctx.arc(mmX + goldenCoin.x*sx, mmY + goldenCoin.y*sy, 3, 0, 7);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,215,0,.7)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
   for (const [id, e] of pMap){
     const p = e.d; if (!p || !p.al) continue;
     const isMe = id === myId;
