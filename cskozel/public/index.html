@@ -69,7 +69,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .buyItem .bn{font-size:14px;font-weight:800;color:#fff}
 .buyItem .bp{font-size:13px;color:#ffd76a;margin-top:4px}
 .buyCat{font-size:12px;color:#7d848d;letter-spacing:3px;margin-top:8px}
-#screen-shop,#screen-inv,#screen-settings{background:radial-gradient(circle at 50% 30%,#241d14,#0b0d10 70%);z-index:30}
+#screen-shop,#screen-inv,#screen-settings,#screen-skins{background:radial-gradient(circle at 50% 30%,#241d14,#0b0d10 70%);z-index:30}
 .casesWrap{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;padding:10px;max-width:1200px}
 .caseCard{background:linear-gradient(160deg,#2a2118,#14171c);border:1px solid #4a3a22;border-radius:14px;padding:18px 14px;width:200px;text-align:center;cursor:pointer;transition:.2s;position:relative}
 .caseCard:hover{transform:translateY(-4px)}
@@ -92,12 +92,12 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .caseCard.patriot .caseName{color:#ff4d4d}
 .caseCard.patriot .casePrice{color:#5aff8a}
 .caseCard.patriot:hover{border-color:#5aff8a;box-shadow:0 0 26px rgba(90,255,138,.4)}
-.invGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;width:min(900px,94vw);max-height:58vh;overflow-y:auto;padding:4px}
-.invItem{background:#161a1f;border:1px solid #333941;border-radius:10px;padding:12px;text-align:center;transition:.15s;position:relative}
+.invGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;width:min(960px,94vw);max-height:58vh;overflow-y:auto;padding:4px}
+.invItem{background:#161a1f;border:1px solid #333941;border-radius:10px;padding:10px;text-align:center;transition:.15s;position:relative}
 .invItem:hover{border-color:#3ee0d0}
 .invItem.eq{border-color:#5aff8a;box-shadow:0 0 16px rgba(90,255,138,.3)}
 .invItem .clickArea{cursor:pointer}
-.swatch{width:100%;height:44px;border-radius:8px;margin-bottom:8px;border:1px solid rgba(255,255,255,.15)}
+.swatch{width:100%;height:26px;border-radius:6px;margin-bottom:8px;border:1px solid rgba(255,255,255,.15)}
 .iname{font-size:12px;color:#dfe4ea;line-height:1.3}
 .irar{font-size:10px;letter-spacing:2px;margin-top:5px;font-weight:800}
 .rc{color:#b0c3d9}.rr{color:#4b69ff}.re{color:#8847ff}.rl{color:#d32ce6}.rch{color:#3ee0d0}
@@ -145,6 +145,19 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 .settingRow{display:flex;flex-direction:column;gap:6px}
 .settingRow label{font-size:13px;color:#cfd4da;letter-spacing:1px;display:flex;justify-content:space-between}
 .settingRow label b{color:#3ee0d0}
+.weaponIconWrap{width:100%;height:60px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.1));border-radius:8px;margin-bottom:8px;border:1px solid rgba(255,255,255,.08);position:relative;overflow:hidden}
+.weaponIconWrap svg{max-width:90%;max-height:80%;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
+.skinsFilter{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;max-width:900px;margin-bottom:4px}
+.filterBtn{background:#161a1f;border:1px solid #333941;color:#9aa1aa;padding:6px 12px;border-radius:6px;font-size:11px;font-weight:800;letter-spacing:1px;cursor:pointer;transition:.15s}
+.filterBtn:hover{border-color:#3ee0d0;color:#cfd4da}
+.filterBtn.sel{background:rgba(62,224,208,.15);border-color:#3ee0d0;color:#3ee0d0}
+.skinsGrid{max-height:60vh}
+.skinCard{background:#161a1f;border:1px solid #333941;border-radius:10px;padding:10px;text-align:center;transition:.15s;position:relative}
+.skinCard.locked{opacity:.42;filter:grayscale(.65)}
+.skinCard.locked::after{content:'🔒';position:absolute;top:8px;right:8px;font-size:14px}
+.skinCard.owned{border-color:#5aff8a;box-shadow:0 0 12px rgba(90,255,138,.2)}
+.skinCard .iname{font-size:11px;line-height:1.25}
+.skinBadge{position:absolute;top:6px;left:6px;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;background:rgba(90,255,138,.15);color:#5aff8a;letter-spacing:1px}
 </style>
 </head>
 <body>
@@ -170,6 +183,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
     <button id="btnInventory" class="ghost">ИНВЕНТАРЬ</button>
     <button id="btnShop" class="ghost">МАГАЗИН</button>
     <button id="btnCasino" class="ghost">КАЗИНО</button>
+    <button id="btnSkins" class="ghost">СКИНЫ</button>
     <button id="btnSettings" class="ghost">НАСТРОЙКИ</button>
   </div>
   <div class="hint">Матч до 10 побед • Против одного — бот</div>
@@ -226,6 +240,23 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
   <div class="hint">Клик — надеть/снять • 💰 — продать</div>
   <div class="invGrid" id="invGrid"></div>
   <button class="ghost" id="btnInvBack">НАЗАД</button>
+</div>
+
+<div id="screen-skins" class="screen hidden">
+  <h2>ВСЕ СКИНЫ</h2>
+  <div class="hint" id="skinsStat">Собрано: 0 / 0</div>
+  <div class="skinsFilter" id="skinsFilter">
+    <div class="filterBtn sel" data-f="all">ВСЕ</div>
+    <div class="filterBtn" data-f="owned">ЕСТЬ У МЕНЯ</div>
+    <div class="filterBtn" data-f="common">ОБЫЧНЫЕ</div>
+    <div class="filterBtn" data-f="rare">РЕДКИЕ</div>
+    <div class="filterBtn" data-f="epic">ЭПИЧЕСКИЕ</div>
+    <div class="filterBtn" data-f="legendary">ЛЕГЕНДАРНЫЕ</div>
+    <div class="filterBtn" data-f="chroma">ХРОМА</div>
+    <div class="filterBtn" data-f="knife">НОЖИ</div>
+  </div>
+  <div class="invGrid skinsGrid" id="skinsGrid"></div>
+  <button class="ghost" id="btnSkinsBack">НАЗАД</button>
 </div>
 
 <div id="screen-settings" class="screen hidden">
@@ -285,7 +316,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 
 <script>
 /* ============================================================
-   CS:KOZEL — WebGL FPS Edition v3
+   CS:KOZEL — WebGL FPS Edition v4
    ============================================================ */
 const $ = id => document.getElementById(id);
 const cv3d = $('cv3d');
@@ -294,12 +325,7 @@ const gl = cv3d.getContext('webgl', {antialias: true}) || cv3d.getContext('exper
 const ctx = cv2d.getContext('2d');
 
 /* ---------- НАСТРОЙКИ ---------- */
-const settings = {
-  sens: 1.0,
-  fov: 75,
-  invY: false,
-  crossColor: '#3ee0d0',
-};
+const settings = { sens: 1.0, fov: 75, invY: false, crossColor: '#3ee0d0' };
 Object.assign(settings, JSON.parse(localStorage.getItem('kozel_settings') || '{}'));
 const CROSS_COLORS = ['#3ee0d0', '#5aff8a', '#ff4d4d', '#ffd76a'];
 const CROSS_NAMES = ['БИРЮЗА', 'ЗЕЛЁНЫЙ', 'КРАСНЫЙ', 'ЗОЛОТО'];
@@ -480,6 +506,83 @@ function addItem(skin){
   saveLS(); renderInv();
 }
 const skinById = id => SKINS.find(s => s.id === id);
+
+/* ---------- SVG-иконки оружия ---------- */
+function shadeColor(hex, amt){
+  if (!hex) return '#000';
+  if (hex[0] === '#') hex = hex.slice(1);
+  if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+  let r = parseInt(hex.slice(0,2),16);
+  let g = parseInt(hex.slice(2,4),16);
+  let b = parseInt(hex.slice(4,6),16);
+  r = Math.max(0, Math.min(255, r + amt * 255));
+  g = Math.max(0, Math.min(255, g + amt * 255));
+  b = Math.max(0, Math.min(255, b + amt * 255));
+  return '#' + [r,g,b].map(v => Math.round(v).toString(16).padStart(2,'0')).join('');
+}
+
+function weaponIconSVG(weaponType, color){
+  const c = color || '#666';
+  const cd = shadeColor(c, -0.35);
+  const cl = shadeColor(c, 0.25);
+  if (weaponType === 'knife'){
+    return `<svg viewBox="0 0 40 100" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="20,4 26,8 26,72 20,76 14,72 14,8" fill="${cl}" stroke="${cd}" stroke-width="1"/>
+      <polygon points="20,4 26,8 26,20 20,16 14,20 14,8" fill="${c}"/>
+      <rect x="15" y="76" width="10" height="20" fill="#2a1a0a" stroke="#1a0e05" stroke-width="1"/>
+      <rect x="16" y="80" width="8" height="3" fill="${c}"/>
+      <rect x="16" y="86" width="8" height="3" fill="${c}"/>
+    </svg>`;
+  }
+  if (weaponType === 'char'){
+    return `<svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="30" cy="22" r="14" fill="${c}" stroke="${cd}" stroke-width="1.5"/>
+      <path d="M 12 45 Q 30 38 48 45 L 52 90 Q 30 95 8 90 Z" fill="${c}" stroke="${cd}" stroke-width="1.5"/>
+    </svg>`;
+  }
+  if (weaponType === 'awp'){
+    return `<svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="18" width="96" height="6" fill="#111"/>
+      <rect x="10" y="14" width="80" height="10" fill="${c}" stroke="${cd}" stroke-width="1"/>
+      <rect x="30" y="10" width="30" height="6" fill="#0a0a0a" stroke="#000" stroke-width="1"/>
+      <rect x="30" y="8" width="6" height="3" fill="#222"/>
+      <rect x="50" y="8" width="6" height="3" fill="#222"/>
+      <rect x="62" y="20" width="14" height="12" fill="${cd}" stroke="${cd}" stroke-width="1"/>
+      <rect x="78" y="12" width="4" height="8" fill="${cl}"/>
+      <polygon points="4,28 22,28 20,32 6,32" fill="${cd}"/>
+    </svg>`;
+  }
+  if (weaponType === 'shotgun'){
+    return `<svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="18" width="96" height="5" fill="#111"/>
+      <rect x="2" y="21" width="96" height="5" fill="#0a0a0a"/>
+      <rect x="40" y="16" width="36" height="12" fill="#3a2a1a" stroke="#221a0e" stroke-width="1"/>
+      <rect x="6" y="14" width="36" height="12" fill="${c}" stroke="${cd}" stroke-width="1"/>
+      <rect x="76" y="14" width="20" height="10" fill="${c}" stroke="${cd}" stroke-width="1"/>
+    </svg>`;
+  }
+  if (weaponType === 'ak' || weaponType === 'm4a4' || weaponType === 'galil'){
+    return `<svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="20" width="92" height="4" fill="#111"/>
+      <rect x="8" y="14" width="70" height="12" fill="${c}" stroke="${cd}" stroke-width="1"/>
+      <rect x="20" y="10" width="30" height="5" fill="${cd}"/>
+      <rect x="60" y="18" width="14" height="16" fill="#0a0a0a" stroke="${cd}" stroke-width="1"/>
+      <polygon points="76,26 96,26 94,32 78,32" fill="${cd}"/>
+      <rect x="50" y="16" width="6" height="6" fill="${cl}"/>
+    </svg>`;
+  }
+  if (weaponType === 'deagle' || weaponType === 'usp' || weaponType === 'p250' || weaponType === 'pistol'){
+    return `<svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
+      <rect x="30" y="18" width="60" height="10" fill="${c}" stroke="${cd}" stroke-width="1"/>
+      <rect x="80" y="20" width="14" height="5" fill="#111"/>
+      <polygon points="30,18 50,18 44,42 28,42" fill="${cd}" stroke="${cd}" stroke-width="1"/>
+      <rect x="32" y="28" width="18" height="14" fill="#1a1a1a"/>
+      <rect x="34" y="34" width="14" height="3" fill="${c}"/>
+      <rect x="34" y="40" width="14" height="3" fill="${c}"/>
+    </svg>`;
+  }
+  return `<svg viewBox="0 0 100 40"><rect x="10" y="15" width="80" height="14" fill="${c}"/></svg>`;
+}
 
 /* ============================================================
    WEBGL
@@ -708,7 +811,7 @@ const EYE_HEIGHT = 32;
 const PLAYER_H = 46;
 
 const show = id => {
-  ['screen-menu','screen-lobby','screen-game','screen-shop','screen-inv','screen-case','screen-casino','screen-settings']
+  ['screen-menu','screen-lobby','screen-game','screen-shop','screen-inv','screen-case','screen-casino','screen-settings','screen-skins']
     .forEach(s => $(s).classList.toggle('hidden', s !== id));
   if (id === 'screen-game') $('lockHint').classList.remove('hidden');
   else if (document.pointerLockElement === cv3d) document.exitPointerLock();
@@ -897,10 +1000,12 @@ $('btnCasino').onclick    = () => {
   $('rouletteReel').innerHTML = '';
   show('screen-casino');
 };
+$('btnSkins').onclick     = () => { renderSkins(); show('screen-skins'); };
 $('btnSettings').onclick  = () => { loadSettingsUI(); show('screen-settings'); };
 $('btnShopBack').onclick  = () => show('screen-menu');
 $('btnInvBack').onclick   = () => show('screen-menu');
 $('btnCasinoBack').onclick = () => show('screen-menu');
+$('btnSkinsBack').onclick = () => show('screen-menu');
 $('btnSettingsBack').onclick = () => show('screen-menu');
 
 function loadSettingsUI(){
@@ -947,11 +1052,13 @@ function renderInv(){
     const slot = s.type === 'char' ? 'char' : s.weapon;
     const isEq = equip[slot] === s.id;
     const sellPrice = SELL_PRICE[s.rarity] || 10;
+    const iconType = s.type === 'char' ? 'char' : s.weapon;
     const d = document.createElement('div');
     d.className = 'invItem r-' + s.rarity + (isEq ? ' eq' : '');
     d.innerHTML = `
       <div class="sellBtn">💰 ${sellPrice}</div>
       <div class="clickArea">
+        <div class="weaponIconWrap">${weaponIconSVG(iconType, s.color)}</div>
         <div class="swatch" style="background:${s.color}"></div>
         <div class="iname">${esc(s.name)}${entry.count > 1 ? ' ×' + entry.count : ''}</div>
         <div class="irar ${RARITY_CLS[s.rarity] || 'rc'}">${RARITY_RU[s.rarity] || s.rarity}</div>
@@ -972,6 +1079,53 @@ function renderInv(){
     g.appendChild(d);
   }
 }
+
+/* ---------- Вкладка ВСЕ СКИНЫ ---------- */
+let skinsFilter = 'all';
+
+function renderSkins(){
+  const g = $('skinsGrid'); if (!g) return;
+  g.innerHTML = '';
+  const owned = new Set(inv.map(i => i.id));
+  const total = SKINS.length;
+  const ownedCount = SKINS.filter(s => owned.has(s.id)).length;
+  $('skinsStat').textContent = `Собрано: ${ownedCount} / ${total}`;
+
+  let list = SKINS.slice();
+  if (skinsFilter === 'owned') list = list.filter(s => owned.has(s.id));
+  else if (skinsFilter !== 'all') list = list.filter(s => s.rarity === skinsFilter);
+
+  const order = {knife:0, chroma:1, legendary:2, epic:3, rare:4, common:5};
+  list.sort((a,b) => (order[a.rarity]||9) - (order[b.rarity]||9));
+
+  if (!list.length){
+    g.innerHTML = '<div class="hint" style="grid-column:1/-1">Пусто</div>';
+    return;
+  }
+  for (const s of list){
+    const has = owned.has(s.id);
+    const iconType = s.type === 'char' ? 'char' : s.weapon;
+    const d = document.createElement('div');
+    d.className = 'skinCard r-' + s.rarity + (has ? ' owned' : ' locked');
+    d.innerHTML = `
+      ${has ? '<div class="skinBadge">ЕСТЬ</div>' : ''}
+      <div class="weaponIconWrap">${weaponIconSVG(iconType, s.color)}</div>
+      <div class="swatch" style="background:${s.color}"></div>
+      <div class="iname">${esc(s.name)}</div>
+      <div class="irar ${RARITY_CLS[s.rarity] || 'rc'}">${RARITY_RU[s.rarity] || s.rarity}</div>`;
+    g.appendChild(d);
+  }
+}
+
+document.querySelectorAll('.filterBtn').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.filterBtn').forEach(x => x.classList.remove('sel'));
+    b.classList.add('sel');
+    skinsFilter = b.dataset.f;
+    renderSkins();
+  });
+});
+
 function pushCosmetics(){
   const weaponColors = {};
   for (const [slot, id] of Object.entries(equip)){
@@ -1318,29 +1472,27 @@ function localMove(dt){
 /* ============================================================
    3D РЕНДЕР
    ============================================================ */
+/* ИСПРАВЛЕННАЯ viewMatrix — питч не влияет на позицию */
 function viewMatrix(px, py, pz, yaw, pitch){
-  const s = Math.sin(yaw), c = Math.cos(yaw);
-  const V = new Float32Array([
-    s, 0, -c, 0,
-    -c, 0, -s, 0,
-    0, 1, 0, 0,
-    -s*px + c*py, -pz, c*px + s*py, 1
-  ]);
+  const cy = Math.cos(yaw), sy = Math.sin(yaw);
   const cp = Math.cos(pitch), sp = Math.sin(pitch);
-  const R = new Float32Array([
-    1, 0, 0, 0,
-    0, cp, -sp, 0,
-    0, sp, cp, 0,
-    0, 0, 0, 1
+
+  // Ортонормированный базис камеры
+  const rx = sy,         ry = -cy,        rz = 0;
+  const ux = -cy * sp,   uy = -sy * sp,   uz = cp;
+  const fx = cy * cp,    fy = sy * cp,    fz = sp;
+
+  // Сдвиг — только позиция, БЕЗ влияния питча
+  const tx = -(rx*px + ry*py + rz*pz);
+  const ty = -(ux*px + uy*py + uz*pz);
+  const tz =  (fx*px + fy*py + fz*pz);
+
+  return new Float32Array([
+    rx, ux, -fx, 0,
+    ry, uy, -fy, 0,
+    rz, uz, -fz, 0,
+    tx, ty, tz,  1
   ]);
-  const out = new Float32Array(16);
-  for (let i = 0; i < 4; i++)
-    for (let j = 0; j < 4; j++){
-      let sum = 0;
-      for (let k = 0; k < 4; k++) sum += V[k*4 + j] * R[i*4 + k];
-      out[i*4 + j] = sum;
-    }
-  return out;
 }
 
 function render3D(){
@@ -1539,18 +1691,6 @@ function drawViewModel(){
     }
   }
   ctx.restore();
-}
-function shadeColor(hex, amt){
-  if (!hex) return '#000';
-  if (hex[0] === '#') hex = hex.slice(1);
-  if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
-  let r = parseInt(hex.slice(0,2),16);
-  let g = parseInt(hex.slice(2,4),16);
-  let b = parseInt(hex.slice(4,6),16);
-  r = Math.max(0, Math.min(255, r + amt * 255));
-  g = Math.max(0, Math.min(255, g + amt * 255));
-  b = Math.max(0, Math.min(255, b + amt * 255));
-  return '#' + [r,g,b].map(v => Math.round(v).toString(16).padStart(2,'0')).join('');
 }
 
 function drawMiniMap(){
