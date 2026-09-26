@@ -18,7 +18,6 @@ const GRAVITY = 1100;
 const JUMP_V = 280;
 const MAX_DROPS = 40;
 
-// Скорости по оружию
 const SPEED_KNIFE   = 250;
 const SPEED_PISTOL  = 230;
 const SPEED_PRIMARY = 200;
@@ -38,6 +37,7 @@ const WEAPONS = {
   awp:     { name:'AWP',          price:4750, dmg:120,rate:1500, spread:0.006, range:2200, pellets:1, slot:1, mag:5,  reload:3500 },
   armor:   { name:'Броня',        price:950,  type:'armor' },
 };
+
 function defaultWeaponColor(w){
   if (w === 'awp') return '#2d5a3d';
   if (w === 'ak') return '#8b5a3c';
@@ -51,7 +51,8 @@ function isPistolWeapon(w){
   return w === 'pistol' || w === 'usp' || w === 'p250' || w === 'deagle';
 }
 
-function buildMap(){
+// ======== SANDBOOM ========
+function buildMapSandboom(){
   const g = Array.from({length: MAP_H}, () => Array(MAP_W).fill(0));
   const rect = (x,y,w,h) => { for (let j=y;j<y+h;j++) for (let i=x;i<x+w;i++) if (j>=0&&j<MAP_H&&i>=0&&i<MAP_W) g[j][i]=1; };
   rect(0,0,MAP_W,1); rect(0,MAP_H-1,MAP_W,1); rect(0,0,1,MAP_H); rect(MAP_W-1,0,1,MAP_H);
@@ -73,30 +74,84 @@ function buildMap(){
   for (const [x,y,w,h] of north){ rect(x,y,w,h); rect(x, MAP_H-y-h, w, h); }
   return g;
 }
-const GRID = buildMap();
 
-function isWall(x,y){
+// ======== CHRISTMAS ========
+function buildMapChristmas(){
+  const g = Array.from({length: MAP_H}, () => Array(MAP_W).fill(0));
+  const rect = (x,y,w,h) => { for (let j=y;j<y+h;j++) for (let i=x;i<x+w;i++) if (j>=0&&j<MAP_H&&i>=0&&i<MAP_W) g[j][i]=1; };
+  rect(0,0,MAP_W,1); rect(0,MAP_H-1,MAP_W,1); rect(0,0,1,MAP_H); rect(MAP_W-1,0,1,MAP_H);
+
+  const tree = (cx, ty) => {
+    rect(cx-2, ty, 5, 1);
+    rect(cx-1, ty+1, 3, 1);
+    rect(cx, ty+2, 1, 1);
+    rect(cx-1, ty+3, 3, 1);
+    rect(cx-2, ty+4, 5, 1);
+  };
+  tree(6, 3);
+  tree(33, 3);
+  tree(6, 22);
+  tree(33, 22);
+  tree(19, 3);
+  tree(20, 24);
+
+  rect(11, 11, 3, 1); rect(11, 11, 1, 3);
+  rect(26, 11, 3, 1); rect(28, 11, 1, 3);
+  rect(11, 17, 1, 3); rect(11, 19, 3, 1);
+  rect(26, 19, 3, 1); rect(28, 17, 1, 3);
+
+  rect(19, 12, 2, 1);
+  rect(19, 17, 2, 1);
+  rect(18, 13, 1, 4);
+  rect(21, 13, 1, 4);
+  rect(19, 14, 2, 2);
+
+  rect(4, 12, 2, 2); rect(34, 12, 2, 2);
+  rect(4, 17, 2, 2); rect(34, 17, 2, 2);
+
+  rect(15, 8, 1, 1); rect(16, 9, 1, 1);
+  rect(23, 20, 1, 1); rect(24, 21, 1, 1);
+  rect(7, 8, 1, 1); rect(32, 8, 1, 1);
+  rect(7, 21, 1, 1); rect(32, 21, 1, 1);
+
+  rect(2, 6, 2, 1); rect(2, 8, 2, 1); rect(2, 10, 2, 1);
+  rect(2, 19, 2, 1); rect(2, 21, 2, 1); rect(2, 23, 2, 1);
+  rect(36, 6, 2, 1); rect(36, 8, 2, 1); rect(36, 10, 2, 1);
+  rect(36, 19, 2, 1); rect(36, 21, 2, 1); rect(36, 23, 2, 1);
+
+  rect(15, 15, 2, 1); rect(23, 15, 2, 1);
+  rect(15, 14, 1, 1); rect(24, 14, 1, 1);
+
+  return g;
+}
+
+const GRIDS = {
+  sandboom: buildMapSandboom(),
+  christmas: buildMapChristmas(),
+};
+
+function isWall(x,y, grid){
   const tx = Math.floor(x/TILE), ty = Math.floor(y/TILE);
   if (tx<0||ty<0||tx>=MAP_W||ty>=MAP_H) return true;
-  return GRID[ty][tx] === 1;
+  return grid[ty][tx] === 1;
 }
-function collide(x,y,r){
+function collide(x,y,r, grid){
   const minX = Math.floor((x-r)/TILE), maxX = Math.floor((x+r)/TILE);
   const minY = Math.floor((y-r)/TILE), maxY = Math.floor((y+r)/TILE);
   for (let ty=minY; ty<=maxY; ty++)
     for (let tx=minX; tx<=maxX; tx++){
       if (ty<0||ty>=MAP_H||tx<0||tx>=MAP_W) return true;
-      if (GRID[ty][tx] === 1) return true;
+      if (grid[ty][tx] === 1) return true;
     }
   return false;
 }
-function hasLOS(x1, y1, x2, y2){
+function hasLOS(x1, y1, x2, y2, grid){
   const dx = x2-x1, dy = y2-y1;
   const dist = Math.hypot(dx, dy);
   const steps = Math.ceil(dist / 16);
   for (let i = 1; i < steps; i++){
     const t = i/steps;
-    if (isWall(x1+dx*t, y1+dy*t)) return false;
+    if (isWall(x1+dx*t, y1+dy*t, grid)) return false;
   }
   return true;
 }
@@ -136,20 +191,23 @@ const getCurrentWeapon = p => p.currentSlot === 1 ? (p.slot1 || 'knife') : p.cur
 const makeDropId = () => 'd_' + Math.random().toString(36).slice(2, 8);
 
 class Lobby {
-  constructor(code, name, pass){
+  constructor(code, name, pass, mapId){
     this.code = code; this.name = name; this.pass = pass || '';
+    this.mapId = GRIDS[mapId] ? mapId : 'sandboom';
     this.players = []; this.phase = 'waiting'; this.phaseTimer = 0;
     this.round = 0; this.score = {A:0, B:0}; this.winner = null;
     this.events = []; this.matchOver = false;
     this.droppedWeapons = [];
   }
   realCount(){ return this.players.filter(p => !p.isBot).length; }
-  info(){ return { code:this.code, name:this.name, players:this.realCount(), max:MAX_PLAYERS, locked:!!this.pass }; }
+  info(){ return { code:this.code, name:this.name, players:this.realCount(), max:MAX_PLAYERS, locked:!!this.pass, mapId:this.mapId }; }
+  getGrid(){ return GRIDS[this.mapId]; }
   stateMsg(){
     const now = Date.now();
     return {
       t:'state', phase:this.phase, timer:Math.ceil(this.phaseTimer), round:this.round,
       score:this.score, winner:this.winner, matchOver:this.matchOver,
+      mapId: this.mapId,
       drops: this.droppedWeapons.map(d => ({
         id:d.id, w:d.w, x:Math.round(d.x), y:Math.round(d.y), mag:d.mag|0, color:d.color
       })),
@@ -221,13 +279,8 @@ class Lobby {
 
 function dropWeapon(lobby, w, x, y, mag, color){
   if (!w || w === 'knife') return;
-  if (lobby.droppedWeapons.length >= MAX_DROPS){
-    lobby.droppedWeapons.shift();
-  }
-  lobby.droppedWeapons.push({
-    id: makeDropId(),
-    w, x, y, mag: mag|0, color: color || defaultWeaponColor(w),
-  });
+  if (lobby.droppedWeapons.length >= MAX_DROPS) lobby.droppedWeapons.shift();
+  lobby.droppedWeapons.push({ id: makeDropId(), w, x, y, mag: mag|0, color: color || defaultWeaponColor(w) });
   lobby.events.push({type:'drop', x, y});
 }
 function dropAllOnDeath(lobby, player){
@@ -285,7 +338,6 @@ function endRound(lobby, winner){
   lobby.phase = 'end';
   lobby.phaseTimer = 5;
   lobby.winner = winner;
-
   for (const p of lobby.players){
     p.survived = p.alive;
     if (winner === 'A' || winner === 'B'){
@@ -325,12 +377,13 @@ function getPlayerSpeed(p){
 
 function shoot(lobby, shooter, weaponId){
   const weapon = WEAPONS[weaponId] || WEAPONS.pistol;
+  const grid = lobby.getGrid();
   const dx = Math.cos(shooter.ang);
   const dy = Math.sin(shooter.ang);
 
   let tracerDist = weapon.range;
   for (let t=0; t<weapon.range; t+=6){
-    if (isWall(shooter.x + dx*t, shooter.y + dy*t)){ tracerDist = t; break; }
+    if (isWall(shooter.x + dx*t, shooter.y + dy*t, grid)){ tracerDist = t; break; }
   }
   lobby.events.push({
     type:'shot', x:shooter.x, y:shooter.y, ang:shooter.ang, len:tracerDist,
@@ -345,7 +398,7 @@ function shoot(lobby, shooter, weaponId){
     const py = dx*si + dy*ca;
     let wallDist = weapon.range, hitWall = false;
     for (let t=0; t<weapon.range; t+=6){
-      if (isWall(shooter.x + px*t, shooter.y + py*t)){ wallDist = t; hitWall = true; break; }
+      if (isWall(shooter.x + px*t, shooter.y + py*t, grid)){ wallDist = t; hitWall = true; break; }
     }
     let hitPlayer = null, hitDist = wallDist;
     for (const other of lobby.players){
@@ -399,6 +452,7 @@ function botBuy(bot, lobby){
 
 function botThink(lobby, bot, dt){
   if (!bot.alive) return;
+  const grid = lobby.getGrid();
   if (lobby.phase === 'buy') botBuy(bot, lobby);
 
   if (bot.lastSeenAt === undefined) bot.lastSeenAt = 0;
@@ -425,7 +479,7 @@ function botThink(lobby, bot, dt){
   if (!target){ bot.input.mx = 0; bot.input.my = 0; bot.input.sh = 0; bot.lastSeenAt = 0; return; }
 
   const dx = target.x - bot.x, dy = target.y - bot.y;
-  const canSee = hasLOS(bot.x, bot.y, target.x, target.y);
+  const canSee = hasLOS(bot.x, bot.y, target.x, target.y, grid);
   if (canSee && tDist < 1500){ if (!bot.lastSeenAt) bot.lastSeenAt = Date.now(); }
   else bot.lastSeenAt = 0;
   const reactOK = bot.lastSeenAt && (Date.now() - bot.lastSeenAt > 700);
@@ -451,12 +505,13 @@ function botThink(lobby, bot, dt){
     const l = tDist || 1;
     bot.input.mx = dx/l; bot.input.my = dy/l;
     const nx = bot.x + bot.input.mx*20, ny = bot.y + bot.input.my*20;
-    if (collide(nx, bot.y, PLAYER_RADIUS)){ bot.input.mx = 0; bot.input.my = dy>0?1:-1; }
-    if (collide(bot.x, ny, PLAYER_RADIUS)){ bot.input.my = 0; bot.input.mx = dx>0?1:-1; }
+    if (collide(nx, bot.y, PLAYER_RADIUS, grid)){ bot.input.mx = 0; bot.input.my = dy>0?1:-1; }
+    if (collide(bot.x, ny, PLAYER_RADIUS, grid)){ bot.input.my = 0; bot.input.mx = dx>0?1:-1; }
   }
 }
 
 function movePlayers(lobby, dt){
+  const grid = lobby.getGrid();
   for (const p of lobby.players){
     if (!p.alive) continue;
     p.crouch = p.input.cr ? true : false;
@@ -473,8 +528,8 @@ function movePlayers(lobby, dt){
       const spd = getPlayerSpeed(p);
       const r = getPlayerRadius(p);
       const nx = p.x + mx*spd*dt, ny = p.y + my*spd*dt;
-      if (!collide(nx, p.y, r)) p.x = nx;
-      if (!collide(p.x, ny, r)) p.y = ny;
+      if (!collide(nx, p.y, r, grid)) p.x = nx;
+      if (!collide(p.x, ny, r, grid)) p.y = ny;
     }
     if (!p.isBot) p.ang = p.input.a || 0;
 
@@ -549,7 +604,10 @@ wss.on('connection', (ws) => {
   const playerId = nextId++;
   let lobby = null, player = null;
 
-  ws.send(JSON.stringify({t:'init', id:playerId, grid:GRID, mw:MAP_W, mh:MAP_H, tile:TILE}));
+  ws.send(JSON.stringify({
+    t:'init', id:playerId,
+    grids: GRIDS, mw: MAP_W, mh: MAP_H, tile: TILE
+  }));
 
   ws.on('message', (raw) => {
     let msg;
@@ -561,7 +619,7 @@ wss.on('connection', (ws) => {
     }
     if (msg.t === 'create'){
       const code = makeCode();
-      lobby = new Lobby(code, msg.name||'Игрок', msg.pass||'');
+      lobby = new Lobby(code, msg.name||'Игрок', msg.pass||'', msg.mapId || 'sandboom');
       lobbies.set(code, lobby);
       player = lobby.addPlayer(ws, msg.name||'Игрок', playerId);
       lobby.ensureBot();
@@ -635,14 +693,12 @@ wss.on('connection', (ws) => {
         if (player.boughtWeapon) return;
         player.money -= w.price;
         if (w.slot === 1){
-          // При покупке основного — выбрасываем старое
           if (player.slot1){
             const oldCol = player.weaponColors[player.slot1] || defaultWeaponColor(player.slot1);
             dropWeapon(lobby, player.slot1, player.x, player.y, player.mag1, oldCol);
           }
           player.slot1 = msg.w; player.mag1 = w.mag; player.currentSlot = 1;
         } else {
-          // При покупке пистолета — выбрасываем старый (кроме базового pistol)
           if (player.slot2 && player.slot2 !== 'pistol'){
             const oldCol = player.weaponColors[player.slot2] || defaultWeaponColor(player.slot2);
             dropWeapon(lobby, player.slot2, player.x, player.y, player.mag2, oldCol);
@@ -693,7 +749,6 @@ wss.on('connection', (ws) => {
         player.slot1 = drop.w;
         player.mag1 = magVal;
         player.currentSlot = 1;
-        // Скин с поднятого оружия
         if (col) player.weaponColors[drop.w] = col;
       } else {
         if (player.slot2){
