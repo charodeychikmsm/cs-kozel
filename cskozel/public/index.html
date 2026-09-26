@@ -545,7 +545,7 @@ const SKINS = [
   {id:'m4_asiimov',name:'M4A4 | Азимов',type:'weapon',weapon:'m4a4',color:'#ff7700',rarity:'epic'},
   {id:'gl_neon',name:'Galil | Неон',type:'weapon',weapon:'galil',color:'#00ff99',rarity:'epic'},
   {id:'usp_orion',name:'USP | Орион',type:'weapon',weapon:'usp',color:'#5a4a3a',rarity:'epic'},
-  {id:'m4_sofi',name:'M4A4 | SOFI MICHELLE',type:'weapon',weapon:'m4a4',color:'#ff5ec4',rarity:'epic'},
+  {id:'m4_sofi',name:'M4A4 | SOFI MICHELLE',type:'weapon',weapon:'m4a4',color:'#ff5ec4',rarity:'god'},
   {id:'ak_sofi',name:'AK-47 | Киберпанк',type:'weapon',weapon:'ak',color:'#00f0ff',rarity:'epic'},
   {id:'m4_neon',name:'M4A4 | Неоновый',type:'weapon',weapon:'m4a4',color:'#00ff88',rarity:'epic'},
   {id:'ak_phantom',name:'AK-47 | Призрак',type:'weapon',weapon:'ak',color:'#9b59b6',rarity:'epic'},
@@ -557,7 +557,7 @@ const SKINS = [
   {id:'ch_ghost',name:'Персонаж | Призрак',type:'char',color:'#e0e0e0',rarity:'legendary'},
   {id:'ak_hyper',name:'AK-47 | Гипербист',type:'weapon',weapon:'ak',color:'#ff00ff',rarity:'legendary'},
   {id:'m4_hyper',name:'M4A4 | Гипербист',type:'weapon',weapon:'m4a4',color:'#ff00aa',rarity:'legendary'},
-  {id:'awp_sofi',name:'AWP | SOFI MICHELLE',type:'weapon',weapon:'awp',color:'#ff1493',rarity:'legendary'},
+  {id:'awp_sofi',name:'AWP | SOFI MICHELLE',type:'weapon',weapon:'awp',color:'#ff1493',rarity:'god'},
   {id:'ch_sofi',name:'Персонаж | Кицунэ',type:'char',color:'#ff69b4',rarity:'legendary'},
   {id:'awp_dragonlore',name:'AWP | Dragon Lore',type:'weapon',weapon:'awp',color:'#c9a227',rarity:'chroma'},
   {id:'ak_case_hard',name:'AK-47 | Поверхностная закалка',type:'weapon',weapon:'ak',color:'#4169e1',rarity:'god'},
@@ -628,18 +628,17 @@ const PATRIOT_SKINS = [
 KNIFE_SKINS.forEach(s => SKINS.push(s));
 PATRIOT_KNIVES.forEach(s => SKINS.push(s));
 PATRIOT_SKINS.forEach(s => SKINS.push(s));
-// FROST НЕ пушим в SKINS — чтобы не падали из других кейсов
 
 const CASES = {
-  poor:     { name:'БЕДНЯК',        icon:'💰', cls:'poor',      price:10,   sub:'Всегда скины 15+', odds:{common:0.70, rare:0.22, epic:0.06, legendary:0.015, chroma:0.005} },
+  poor:     { name:'БЕДНЯК',        icon:'💰', cls:'poor',      price:10,   sub:'Всегда скины 15+', odds:{common:0.55, rare:0.28, epic:0.12, legendary:0.04, chroma:0.01} },
   trash:    { name:'МУСОР ДРОП',    icon:'🗑️', cls:'trash',     price:5,    sub:'Всегда +монеты!', odds:{} },
-  um8a:     { name:'УМ 8А КЛАССА',  icon:'📕', cls:'basic',     price:25,   sub:'Почти всё обычное', odds:{common:0.88, rare:0.11, epic:0.01, legendary:0, chroma:0} },
-  sand:     { name:'SAND CASE',     icon:'📦', cls:'sand',      price:50,   sub:'Базовые скины', odds:{common:0.60, rare:0.25, epic:0.12, legendary:0.03, chroma:0} },
-  premium:  { name:'PREMIUM CASE',  icon:'💎', cls:'premium',   price:200,  sub:'Больше редких', odds:{common:0.15, rare:0.40, epic:0.32, legendary:0.13, chroma:0} },
+  um8a:     { name:'УМ 8А КЛАССА',  icon:'📕', cls:'basic',     price:25,   sub:'Почти всё обычное', odds:{common:0.80, rare:0.15, epic:0.04, legendary:0.01, chroma:0} },
+  sand:     { name:'SAND CASE',     icon:'📦', cls:'sand',      price:50,   sub:'Базовые скины', odds:{common:0.45, rare:0.30, epic:0.18, legendary:0.06, chroma:0.01} },
+  premium:  { name:'PREMIUM CASE',  icon:'💎', cls:'premium',   price:200,  sub:'Больше редких', odds:{common:0.10, rare:0.30, epic:0.35, legendary:0.21, chroma:0.04} },
   patriot:  { name:'ПАТРИОТ',       icon:'🇧🇾', cls:'patriot',  price:250,  sub:'Только R/G/W', odds:{} },
   frost:    { name:'МОРОЗ',         icon:'❄️', cls:'frost',     price:750,  sub:'Подарки от Деда Мороза', odds:{} },
-  fear:     { name:'ТВОЙ СТРАХ',    icon:'😱', cls:'fear',      price:666,  sub:'Скины норм, шанс — нет', odds:{common:0.82, rare:0.145, epic:0.03, legendary:0.005, chroma:0} },
-  operation:{ name:'КЕЙС ОПЕРАЦИИ', icon:'🎖️', cls:'operation', price:1200, sub:'Хрома + Ножи', odds:{chroma:0.50, knife:0.40, god:0.10} }
+  fear:     { name:'ТВОЙ СТРАХ',    icon:'😱', cls:'fear',      price:666,  sub:'Скины норм, шанс — нет', odds:{common:0.65, rare:0.22, epic:0.10, legendary:0.025, chroma:0.005} },
+  operation:{ name:'КЕЙС ОПЕРАЦИИ', icon:'🎖️', cls:'operation', price:1200, sub:'Хрома + Ножи', odds:{chroma:0.35, knife:0.40, god:0.25} }
 };
 const SELL_PRICE = {junk:1, common:15, rare:35, epic:80, legendary:200, chroma:800, knife:1500, god:2500};
 const RARITY_RU = {junk:'МУСОР',common:'ОБЫЧНЫЙ',rare:'РЕДКИЙ',epic:'ЭПИЧЕСКИЙ',legendary:'ЛЕГЕНДАРНЫЙ',chroma:'ХРОМАТИЧЕСКИЙ',knife:'НОЖ ★',god:'БОЖЕСТВЕННЫЙ'};
@@ -1018,13 +1017,13 @@ function buildCrateBuffer(MAP, MW, MH, TILE){
 function initPlayerBuffer(){
   playerBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, playerBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, 600*9*4, gl.DYNAMIC_DRAW);
+  gl.bufferData(gl.ARRAY_BUFFER, 3000*9*4, gl.DYNAMIC_DRAW);
   shadowDynBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, shadowDynBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, 200*9*4, gl.DYNAMIC_DRAW);
+  gl.bufferData(gl.ARRAY_BUFFER, 400*9*4, gl.DYNAMIC_DRAW);
   dropsBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, dropsBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, 100*36*9*4, gl.DYNAMIC_DRAW);
+  gl.bufferData(gl.ARRAY_BUFFER, 200*90*9*4, gl.DYNAMIC_DRAW);
 }
 function initCoinBuffer(){
   const arr = [];
@@ -1575,26 +1574,26 @@ $('btnCaseOk').onclick = () => { $('screen-case').classList.add('hidden'); show(
 function rollItem(caseId){
   if (caseId === 'frost'){
     const r = Math.random();
-    if (r < 0.02) return FROST_KNIFE;
-    if (r < 0.05) return FROST_CHARS[Math.floor(Math.random() * FROST_CHARS.length)];
+    if (r < 0.05) return FROST_KNIFE;
+    if (r < 0.12) return FROST_CHARS[Math.floor(Math.random() * FROST_CHARS.length)];
     const r2 = Math.random();
     const leg = FROST_SKINS.filter(s => s.rarity === 'legendary');
-    const ep = FROST_SKINS.filter(s => s.rarity === 'epic');
-    const ra = FROST_SKINS.filter(s => s.rarity === 'rare');
-    const jk = FROST_SKINS.filter(s => s.rarity === 'junk');
-    if (r2 < 0.10) return leg[Math.floor(Math.random()*leg.length)];
-    if (r2 < 0.35) return ep[Math.floor(Math.random()*ep.length)];
-    if (r2 < 0.65) return ra[Math.floor(Math.random()*ra.length)];
+    const ep  = FROST_SKINS.filter(s => s.rarity === 'epic');
+    const ra  = FROST_SKINS.filter(s => s.rarity === 'rare');
+    const jk  = FROST_SKINS.filter(s => s.rarity === 'junk');
+    if (r2 < 0.20) return leg[Math.floor(Math.random()*leg.length)];
+    if (r2 < 0.45) return ep[Math.floor(Math.random()*ep.length)];
+    if (r2 < 0.70) return ra[Math.floor(Math.random()*ra.length)];
     return jk[Math.floor(Math.random()*jk.length)];
   }
   if (caseId === 'patriot'){
     const r = Math.random();
-    if (r < 0.05) return PATRIOT_KNIVES[0];
-    if (r < 0.10) return PATRIOT_KNIVES[1];
-    if (r < 0.15) return PATRIOT_KNIVES[2];
+    if (r < 0.10) return PATRIOT_KNIVES[0];
+    if (r < 0.20) return PATRIOT_KNIVES[1];
+    if (r < 0.30) return PATRIOT_KNIVES[2];
     return PATRIOT_SKINS[Math.floor(Math.random() * PATRIOT_SKINS.length)];
   }
-  if (caseId === 'premium' && Math.random() < 0.03) return KNIFE_SKINS[Math.floor(Math.random()*KNIFE_SKINS.length)];
+  if (caseId === 'premium' && Math.random() < 0.08) return KNIFE_SKINS[Math.floor(Math.random()*KNIFE_SKINS.length)];
   const odds = CASES[caseId].odds;
   const r = Math.random();
   let acc = 0, rarity = 'common';
@@ -2082,10 +2081,28 @@ function buildDropsBuffer(){
   const arr = [];
   const time = performance.now() / 1000;
   for (const d of drops){
-    const bob = Math.sin(time * 2 + d.x * 0.05 + d.y * 0.03) * 4 + 8;
+    const bob = Math.sin(time * 2 + d.x * 0.05 + d.y * 0.03) * 4 + 10;
     const rgb = hex2rgb(d.color || '#666666');
-    pushCube(arr, d.x - 6, d.y - 6, bob - 3, 12, 12, 6, rgb[0], rgb[1], rgb[2]);
-    pushCube(arr, d.x - 2, d.y - 8, bob + 3, 4, 4, 8, rgb[0]*0.6, rgb[1]*0.6, rgb[2]*0.6);
+    const w = d.w;
+    pushCube(arr, d.x - 9, d.y - 9, 1, 18, 18, 1.5, rgb[0]*0.4, rgb[1]*0.4, rgb[2]*0.4);
+    if (w === 'awp'){
+      pushCube(arr, d.x - 22, d.y - 3, bob, 44, 6, 4, rgb[0], rgb[1], rgb[2]);
+      pushCube(arr, d.x - 10, d.y - 5, bob+2, 12, 10, 3, rgb[0]*0.65, rgb[1]*0.65, rgb[2]*0.65);
+      pushCube(arr, d.x + 12, d.y - 2, bob+2, 8, 4, 2, 0.1, 0.1, 0.1);
+    } else if (w === 'ak' || w === 'm4a4' || w === 'galil'){
+      pushCube(arr, d.x - 18, d.y - 3, bob, 36, 6, 4, rgb[0], rgb[1], rgb[2]);
+      pushCube(arr, d.x - 6, d.y - 4, bob+2, 10, 8, 4, rgb[0]*0.65, rgb[1]*0.65, rgb[2]*0.65);
+      pushCube(arr, d.x - 2, d.y - 2, bob-3, 4, 4, 4, 0.15, 0.1, 0.05);
+    } else if (w === 'shotgun'){
+      pushCube(arr, d.x - 16, d.y - 4, bob, 32, 8, 5, rgb[0], rgb[1], rgb[2]);
+      pushCube(arr, d.x - 6, d.y - 5, bob+2, 8, 10, 4, rgb[0]*0.7, rgb[1]*0.7, rgb[2]*0.7);
+    } else if (w === 'knife'){
+      pushCube(arr, d.x - 2, d.y - 12, bob, 4, 22, 4, rgb[0], rgb[1], rgb[2]);
+      pushCube(arr, d.x - 3, d.y - 4, bob+4, 6, 8, 3, 0.15, 0.1, 0.05);
+    } else {
+      pushCube(arr, d.x - 9, d.y - 4, bob, 16, 8, 5, rgb[0], rgb[1], rgb[2]);
+      pushCube(arr, d.x - 4, d.y - 3, bob-4, 6, 6, 5, rgb[0]*0.65, rgb[1]*0.65, rgb[2]*0.65);
+    }
   }
   gl.bindBuffer(gl.ARRAY_BUFFER, dropsBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arr), gl.DYNAMIC_DRAW);
@@ -2213,24 +2230,65 @@ function render3D(){
     const rgb = hex2rgb(bodyColor);
     const z = e.z || 0;
     const h = p.cr ? 32 : PLAYER_H;
-    pushCube(pArr, e.x-10, e.y-10, z, 20, 20, h*0.7, rgb[0]*0.9, rgb[1]*0.9, rgb[2]*0.9);
-    pushCube(pArr, e.x-8, e.y-8, z + h*0.7, 16, 16, h*0.3, rgb[0], rgb[1], rgb[2]);
     const wdx = Math.cos(e.a), wdy = Math.sin(e.a);
-    const wpx = e.x + wdx * 14, wpy = e.y + wdy * 14;
+    const perpX = -wdy, perpY = wdx;
+
+    // === НОГИ ===
+    const legH = h * 0.42;
+    const legCol = [rgb[0]*0.5, rgb[1]*0.5, rgb[2]*0.5];
+    pushCube(pArr, e.x - 9, e.y - 8, z, 7, 16, legH, legCol[0], legCol[1], legCol[2]);
+    pushCube(pArr, e.x + 2, e.y - 8, z, 7, 16, legH, legCol[0], legCol[1], legCol[2]);
+
+    // === ТЕЛО ===
+    const torsoZ = z + legH;
+    const torsoH = h * 0.33;
+    pushCube(pArr, e.x - 11, e.y - 9, torsoZ, 22, 18, torsoH, rgb[0]*0.9, rgb[1]*0.9, rgb[2]*0.9);
+
+    // === ГОЛОВА + КАСКА ===
+    const headZ = torsoZ + torsoH;
+    const headH = h - legH - torsoH;
+    pushCube(pArr, e.x - 7, e.y - 7, headZ, 14, 14, headH, rgb[0]*1.08, rgb[1]*1.08, rgb[2]*1.08);
+    pushCube(pArr, e.x - 7, e.y - 7, headZ + headH*0.75, 14, 14, headH*0.25,
+             rgb[0]*0.5, rgb[1]*0.5, rgb[2]*0.5);
+
+    // === РУКИ ОТ ПЛЕЧ ===
+    const shoulderZ = torsoZ + torsoH * 0.65;
+    const armCol = [rgb[0]*0.85, rgb[1]*0.85, rgb[2]*0.85];
+    pushCube(pArr,
+      e.x + perpX*10 + wdx*7 - 4,
+      e.y + perpY*10 + wdy*7 - 4,
+      shoulderZ - 5, 8, 8, torsoH*0.85,
+      armCol[0], armCol[1], armCol[2]);
+    pushCube(pArr,
+      e.x - perpX*10 + wdx*7 - 4,
+      e.y - perpY*10 + wdy*7 - 4,
+      shoulderZ - 5, 8, 8, torsoH*0.85,
+      armCol[0], armCol[1], armCol[2]);
+
+    // === ОРУЖИЕ ===
+    const wpx = e.x + wdx * 16, wpy = e.y + wdy * 16;
     const wcol = hex2rgb(p.wc || '#3a3a3a');
     const wType = p.w;
     const wZBase = z + h * 0.42;
     if (wType === 'awp'){
-      pushCube(pArr, wpx - Math.abs(wdx)*12 + wdx*2, wpy - Math.abs(wdy)*12 + wdy*2, wZBase, Math.abs(wdx)*24 + 3, Math.abs(wdy)*24 + 3, 4, wcol[0], wcol[1], wcol[2]);
+      pushCube(pArr, wpx - Math.abs(wdx)*20 + wdx*2, wpy - Math.abs(wdy)*20 + wdy*2, wZBase, Math.abs(wdx)*40 + 3, Math.abs(wdy)*40 + 3, 4, wcol[0], wcol[1], wcol[2]);
+      pushCube(pArr, wpx - Math.abs(wdx)*4, wpy - Math.abs(wdy)*4, wZBase+4, Math.abs(wdx)*12+2, Math.abs(wdy)*12+2, 4, wcol[0]*0.7, wcol[1]*0.7, wcol[2]*0.7);
     } else if (wType === 'ak' || wType === 'm4a4' || wType === 'galil'){
-      pushCube(pArr, wpx - Math.abs(wdx)*9 + wdx*2, wpy - Math.abs(wdy)*9 + wdy*2, wZBase, Math.abs(wdx)*18 + 3, Math.abs(wdy)*18 + 3, 4, wcol[0], wcol[1], wcol[2]);
+      pushCube(pArr, wpx - Math.abs(wdx)*16 + wdx*2, wpy - Math.abs(wdy)*16 + wdy*2, wZBase, Math.abs(wdx)*32 + 3, Math.abs(wdy)*32 + 3, 4, wcol[0], wcol[1], wcol[2]);
+      pushCube(pArr, wpx - Math.abs(wdx)*4, wpy - Math.abs(wdy)*4, wZBase-5, 5, 5, 5, 0.15, 0.1, 0.05);
     } else if (wType === 'shotgun'){
-      pushCube(pArr, wpx - Math.abs(wdx)*10 + wdx*2, wpy - Math.abs(wdy)*10 + wdy*2, wZBase, Math.abs(wdx)*20 + 3, Math.abs(wdy)*20 + 3, 4, wcol[0], wcol[1], wcol[2]);
+      pushCube(pArr, wpx - Math.abs(wdx)*14 + wdx*2, wpy - Math.abs(wdy)*14 + wdy*2, wZBase, Math.abs(wdx)*28 + 3, Math.abs(wdy)*28 + 3, 4, wcol[0], wcol[1], wcol[2]);
     } else if (wType === 'knife'){
       pushCube(pArr, wpx + wdx*4, wpy + wdy*4, wZBase, 3, 3, 3, wcol[0], wcol[1], wcol[2]);
     } else {
       pushCube(pArr, wpx + wdx*3, wpy + wdy*3, wZBase, 4, 4, 3, wcol[0], wcol[1], wcol[2]);
     }
+
+    // === КИСТИ РУК ===
+    const handColor = [0.86, 0.68, 0.5];
+    const hx = e.x + wdx * 14, hy = e.y + wdy * 14;
+    pushCube(pArr, hx + wdx*6 - 3 + perpX*2, hy + wdy*6 - 3 + perpY*2, shoulderZ, 6, 6, 6, handColor[0], handColor[1], handColor[2]);
+    pushCube(pArr, hx - 3 - perpX*3, hy - 3 - perpY*3, shoulderZ, 6, 6, 6, handColor[0], handColor[1], handColor[2]);
   }
   if (pArr.length > 0){
     gl.bindBuffer(gl.ARRAY_BUFFER, playerBuffer);
@@ -2454,6 +2512,28 @@ function updateWeaponAnim(dt){
   }
 }
 
+function drawFPHand(x, y, w, h, angle, tone){
+  const c1 = tone || '#cf9a72';
+  const c2 = shadeColor(c1, -0.15);
+  const c3 = shadeColor(c1, -0.3);
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle || 0);
+  ctx.fillStyle = c1;
+  ctx.fillRect(-w*0.5, -h*0.5, w, h);
+  ctx.fillStyle = c2;
+  for (let i = 0; i < 3; i++){
+    ctx.beginPath();
+    ctx.arc(w*(i-1)*0.28, h*0.5, w*0.18, 0, Math.PI*2);
+    ctx.fill();
+  }
+  ctx.fillStyle = c3;
+  ctx.beginPath();
+  ctx.arc(w*0.5, 0, w*0.22, 0, Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+}
+
 function drawViewModel(){
   const me = pMap.get(myId);
   const myW = me && me.d ? me.d.w : 'pistol';
@@ -2499,52 +2579,46 @@ function drawViewModel(){
       );
       if (inspType === 'karambit'){
         ctx.translate(pivotX, pivotY);
-        ctx.rotate(ease * 2 * Math.PI);
+        ctx.rotate(ease * 3 * Math.PI);
         ctx.translate(-pivotX, -pivotY);
-        ctx.translate(0, -Math.sin(ease * Math.PI) * 30 * K);
+        ctx.translate(Math.sin(ease * Math.PI * 2) * 20*K, -Math.sin(ease * Math.PI) * 90*K);
       } else if (inspType === 'butterfly'){
-        const spinAngle = ease * 6 * Math.PI;
-        const cx2 = cx + cv2d.width * 0.08 + 200*K;
-        const cy2 = cy - 200*K;
-        ctx.translate(cx2, cy2);
-        ctx.rotate(spinAngle);
-        ctx.translate(-cx2, -cy2);
+        const a1 = ease * 4 * Math.PI;
+        const bx = cx + 240*K, by = cy - 200*K;
+        ctx.translate(bx + Math.sin(a1)*40*K, by + Math.cos(a1*2)*30*K);
+        ctx.rotate(a1);
+        ctx.translate(-bx, -by);
       } else if (inspType === 'bayonet'){
         const ang = ease * Math.PI * 2;
-        const fy = -Math.sin(ease * Math.PI) * 180 * K;
-        ctx.translate(pivotX, pivotY);
-        ctx.rotate(ang);
-        ctx.translate(-pivotX, -pivotY);
+        const fy  = -Math.sin(ease * Math.PI) * 220*K;
+        ctx.translate(pivotX, pivotY); ctx.rotate(ang); ctx.translate(-pivotX, -pivotY);
         ctx.translate(0, fy);
       } else if (inspType === 'tanto'){
         const ang = ease * Math.PI * 2.5;
-        const up = -Math.sin(ease * Math.PI) * 200 * K;
-        ctx.translate(pivotX, pivotY);
-        ctx.rotate(ang);
-        ctx.translate(-pivotX, -pivotY);
-        ctx.translate(0, up);
+        const up  = -Math.sin(ease * Math.PI) * 240*K;
+        const dx2 = Math.sin(ease * Math.PI * 3) * 30*K;
+        ctx.translate(pivotX, pivotY); ctx.rotate(ang); ctx.translate(-pivotX, -pivotY);
+        ctx.translate(dx2, up);
       } else if (inspType === 'bowie'){
-        ctx.translate(pivotX, pivotY);
-        ctx.rotate(ease * Math.PI * 1.5);
-        ctx.translate(-pivotX, -pivotY);
-        ctx.translate(0, -Math.sin(ease * Math.PI) * 60 * K);
+        ctx.translate(pivotX, pivotY); ctx.rotate(ease * Math.PI * 1.6); ctx.translate(-pivotX, -pivotY);
+        ctx.translate(Math.sin(ease * Math.PI) * 80*K, -Math.sin(ease * Math.PI) * 70*K);
       } else if (inspType === 'falchion'){
-        const ang = ease * Math.PI * 3;
-        const dx2 = Math.sin(ease * Math.PI) * 80 * K;
-        ctx.translate(pivotX, pivotY);
-        ctx.rotate(ang);
-        ctx.translate(-pivotX, -pivotY);
-        ctx.translate(dx2, 0);
+        const ang = ease * Math.PI * 3.2;
+        const dx2 = Math.sin(ease * Math.PI) * 110*K;
+        const dy2 = -Math.sin(ease * Math.PI * 2) * 40*K;
+        ctx.translate(pivotX, pivotY); ctx.rotate(ang); ctx.translate(-pivotX, -pivotY);
+        ctx.translate(dx2, dy2);
       } else if (inspType === 'lollipop'){
-        const bob = Math.sin(ease * Math.PI * 2) * 40 * K;
-        ctx.translate(bob, -ease * 60 * K);
+        const bob = Math.sin(ease * Math.PI * 2) * 50*K;
+        ctx.translate(bob, -ease * 80*K);
         ctx.translate(pivotX, pivotY);
-        ctx.rotate(Math.sin(ease * Math.PI * 3) * 0.5);
+        ctx.rotate(Math.sin(ease * Math.PI * 4) * 0.7);
         ctx.translate(-pivotX, -pivotY);
       } else {
         ctx.translate(pivotX, pivotY);
-        ctx.rotate(ease * 4 * Math.PI);
+        ctx.rotate(ease * 5 * Math.PI);
         ctx.translate(-pivotX, -pivotY);
+        ctx.translate(0, -Math.sin(ease * Math.PI) * 40*K);
       }
     }
     if (atkT < 1){
@@ -2562,41 +2636,27 @@ function drawViewModel(){
       );
       const apx = cx + 60*K, apy = cy - 40*K;
       if (type === 'karambit'){
-        ctx.translate(apx, apy);
-        ctx.rotate(-swing * 1.5);
-        ctx.translate(-apx, -apy);
+        ctx.translate(apx, apy); ctx.rotate(-swing * 1.5); ctx.translate(-apx, -apy);
         ctx.translate(-swing * 110*K, swing * 25*K);
       } else if (type === 'butterfly'){
-        ctx.translate(apx, apy);
-        ctx.rotate(swing * 2.6 * Math.PI);
-        ctx.translate(-apx, -apy);
+        ctx.translate(apx, apy); ctx.rotate(swing * 2.6 * Math.PI); ctx.translate(-apx, -apy);
         ctx.translate(-swing * 20*K, -swing * 40*K);
       } else if (type === 'bayonet'){
         ctx.translate(-swing * 140*K, -swing * 45*K);
       } else if (type === 'tanto'){
-        ctx.translate(apx, apy);
-        ctx.rotate(swing * 1.2);
-        ctx.translate(-apx, -apy);
+        ctx.translate(apx, apy); ctx.rotate(swing * 1.2); ctx.translate(-apx, -apy);
         ctx.translate(-swing * 70*K, -swing * 80*K);
       } else if (type === 'bowie'){
-        ctx.translate(apx, apy);
-        ctx.rotate(-swing * 1.9);
-        ctx.translate(-apx, -apy);
+        ctx.translate(apx, apy); ctx.rotate(-swing * 1.9); ctx.translate(-apx, -apy);
         ctx.translate(-swing * 30*K, swing * 100*K);
       } else if (type === 'falchion'){
-        ctx.translate(apx, apy);
-        ctx.rotate(swing * 1.7);
-        ctx.translate(-apx, -apy);
+        ctx.translate(apx, apy); ctx.rotate(swing * 1.7); ctx.translate(-apx, -apy);
         ctx.translate(-swing * 50*K, -swing * 30*K);
       } else if (type === 'lollipop'){
-        ctx.translate(apx, apy);
-        ctx.rotate(swing * 2.5);
-        ctx.translate(-apx, -apy);
+        ctx.translate(apx, apy); ctx.rotate(swing * 2.5); ctx.translate(-apx, -apy);
       } else {
         ctx.translate(-swing * 90*K, -swing * 35*K);
-        ctx.translate(apx, apy);
-        ctx.rotate(swing * 0.65);
-        ctx.translate(-apx, -apy);
+        ctx.translate(apx, apy); ctx.rotate(swing * 0.65); ctx.translate(-apx, -apy);
       }
     }
     if (mySkinId === 'kn_lollipop'){
@@ -2754,6 +2814,24 @@ function drawViewModel(){
     ctx.fillStyle = '#3a2a1a'; ctx.fillRect(cx + 40*K, cy - 55*K, 55*K, 45*K);
     if (wc){ ctx.fillStyle = lightCol; ctx.fillRect(cx + 30*K, cy - 105*K, 90*K, 3*K); }
   }
+
+  // ==== КИСТИ РУК ОТ ПЕРВОГО ЛИЦА ====
+  if (myW === 'ak' || myW === 'm4a4' || myW === 'galil'){
+    drawFPHand(cx + 235*K, cy - 78*K, 42*K, 58*K, -0.25);
+    drawFPHand(cx + 118*K, cy - 60*K, 46*K, 62*K,  0.35);
+  } else if (myW === 'shotgun'){
+    drawFPHand(cx + 210*K, cy - 75*K, 42*K, 58*K, -0.2);
+    drawFPHand(cx + 100*K, cy - 60*K, 46*K, 60*K,  0.35);
+  } else if (myW === 'awp'){
+    drawFPHand(cx + 250*K, cy - 110*K, 42*K, 58*K, -0.15);
+    drawFPHand(cx + 110*K, cy - 95*K,  46*K, 62*K,  0.3);
+  } else if (myW !== 'knife'){
+    drawFPHand(cx + 70*K, cy - 60*K, 50*K, 68*K, 0.35);
+  }
+  if (myW === 'knife' && mySkinId !== 'kn_lollipop'){
+    drawFPHand(cx + 85*K, cy - 15*K, 40*K, 56*K, 0.1);
+  }
+
   ctx.restore();
 }
 
