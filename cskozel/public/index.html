@@ -13,16 +13,16 @@ canvas{position:absolute;inset:0;display:block}
 .screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:5}
 .hidden{display:none!important}
 #screen-menu{background:radial-gradient(circle at 50% 25%,#2e2418,#0b0d10 70%)}
-.logo{font-size:62px;font-weight:900;letter-spacing:8px;color:#ffb347;text-shadow:0 0 34px rgba(255,140,0,.45)}
+.logo{font-size:62px;font-weight:900;letter-spacing:8px;color:#ffb347}
 .logo span{color:#e04b2a}
-.sub{color:#a855f7;letter-spacing:3px;font-size:12px;margin-top:-8px;text-shadow:0 0 16px rgba(168,85,247,.7);font-weight:800}
-.panel{background:rgba(18,20,24,.94);border:1px solid #31363d;border-radius:12px;padding:18px;width:420px;display:flex;flex-direction:column;gap:10px;box-shadow:0 18px 60px rgba(0,0,0,.6)}
-input{background:#14171c;border:1px solid #3a3f47;color:#eee;padding:11px;border-radius:8px;outline:none;font-size:14px;width:100%}
-input:focus{border-color:#3ee0d0}
-select{background:#14171c;border:1px solid #3a3f47;color:#eee;padding:9px;border-radius:8px;outline:none;font-size:13px;width:100%;cursor:pointer}
-button{background:linear-gradient(#3ee0d0,#17b6ac);border:none;color:#06211f;font-weight:800;padding:12px;border-radius:8px;cursor:pointer;letter-spacing:1.5px;font-size:13px;transition:.15s;box-shadow:0 0 12px rgba(62,224,208,.25)}
+.sub{color:#a855f7;letter-spacing:3px;font-size:12px;margin-top:-8px;font-weight:800}
+.panel{background:rgba(18,20,24,.94);border:1px solid #31363d;border-radius:12px;padding:18px;width:420px;display:flex;flex-direction:column;gap:10px}
+input,select{background:#14171c;border:1px solid #3a3f47;color:#eee;padding:11px;border-radius:8px;outline:none;font-size:14px;width:100%}
+input:focus,select:focus{border-color:#3ee0d0}
+select{cursor:pointer;font-size:13px;padding:9px}
+button{background:linear-gradient(#3ee0d0,#17b6ac);border:none;color:#06211f;font-weight:800;padding:12px;border-radius:8px;cursor:pointer;letter-spacing:1.5px;font-size:13px;transition:.15s}
 button:hover{filter:brightness(1.15)}
-button.ghost{background:transparent;border:1px solid #4a5058;color:#cfd4da;box-shadow:none}
+button.ghost{background:transparent;border:1px solid #4a5058;color:#cfd4da}
 .row{display:flex;gap:8px}
 .row2{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 .lobby-list{max-height:170px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
@@ -34,8 +34,8 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;text-align:center}
 .teamBox{flex:1;background:rgba(18,20,24,.94);border:1px solid #31363d;border-radius:12px;padding:14px;min-height:250px}
 .teamBox h3{text-align:center;margin-bottom:10px}
 .teamBox.a h3{color:#5aa9ff}.teamBox.b h3{color:#ffb347}
-.teamBox.a.sel{border-color:#5aa9ff;box-shadow:0 0 22px rgba(90,169,255,.35)}
-.teamBox.b.sel{border-color:#ffb347;box-shadow:0 0 22px rgba(255,179,71,.35)}
+.teamBox.a.sel{border-color:#5aa9ff}
+.teamBox.b.sel{border-color:#ffb347}
 .pl{font-size:13px;padding:6px 8px;border-radius:6px;background:#191d22;margin-bottom:4px;display:flex;justify-content:space-between}
 .pl.bot{color:#b8a3e8}
 .code{font-size:34px;letter-spacing:10px;color:#fff;font-weight:900}
@@ -54,7 +54,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;text-align:center}
 #ammoBox .lbl{font-size:10px;color:#7d848d}
 #ammoBox.reload .big{color:#ff6b6b}
 .reloadBar{width:100%;height:4px;background:#2b3037;border-radius:2px;margin-top:6px;overflow:hidden}
-.reloadBar .fill{height:100%;background:#3ee0d0;width:0%;transition:width .05s linear}
+.reloadBar .fill{height:100%;background:#3ee0d0;width:0%}
 #killfeed{position:absolute;top:14px;right:16px;display:flex;flex-direction:column;gap:5px;align-items:flex-end}
 .kf{background:rgba(10,12,15,.85);border:1px solid #2c3138;border-radius:6px;padding:5px 10px;font-size:12px;animation:fade 5s forwards}
 @keyframes fade{0%{opacity:0}10%{opacity:1}80%{opacity:1}100%{opacity:0}}
@@ -587,10 +587,6 @@ const FROST_CHARS = [
 ];
 const FROST_KNIFE = {id:'kn_lollipop', name:'Леденец', type:'weapon', weapon:'knife', color:'#ff2d5e', rarity:'knife'};
 
-FROST_SKINS.forEach(s => SKINS.push(s));
-FROST_CHARS.forEach(s => SKINS.push(s));
-SKINS.push(FROST_KNIFE);
-
 const KNIFE_SKINS = [
   {id:'kn_karambit',name:'Керамбит',type:'weapon',weapon:'knife',color:'#e0d0a0',rarity:'knife'},
   {id:'kn_bayonet',name:'Штык-нож',type:'weapon',weapon:'knife',color:'#a0c0ff',rarity:'knife'},
@@ -632,6 +628,7 @@ const PATRIOT_SKINS = [
 KNIFE_SKINS.forEach(s => SKINS.push(s));
 PATRIOT_KNIVES.forEach(s => SKINS.push(s));
 PATRIOT_SKINS.forEach(s => SKINS.push(s));
+// FROST НЕ пушим в SKINS — чтобы не падали из других кейсов
 
 const CASES = {
   poor:     { name:'БЕДНЯК',        icon:'💰', cls:'poor',      price:10,   sub:'Всегда скины 15+', odds:{common:0.70, rare:0.22, epic:0.06, legendary:0.015, chroma:0.005} },
@@ -661,7 +658,19 @@ function addItem(skin){
   if (e) e.count++; else inv.push({id:skin.id, count:1});
   saveLS(); renderInv();
 }
-const skinById = id => SKINS.find(s => s.id === id);
+function skinById(id){
+  return SKINS.find(s => s.id === id)
+      || FROST_SKINS.find(s => s.id === id)
+      || FROST_CHARS.find(s => s.id === id)
+      || (id === FROST_KNIFE.id ? FROST_KNIFE : null)
+      || KNIFE_SKINS.find(s => s.id === id)
+      || PATRIOT_KNIVES.find(s => s.id === id)
+      || PATRIOT_SKINS.find(s => s.id === id)
+      || null;
+}
+function allSkins(){
+  return [...SKINS, ...FROST_SKINS, ...FROST_CHARS, FROST_KNIFE];
+}
 
 function shadeColor(hex, amt){
   if (!hex) return '#000';
@@ -1518,10 +1527,11 @@ function renderSkins(){
   const g = $('skinsGrid'); if (!g) return;
   g.innerHTML = '';
   const owned = new Set(inv.map(i => i.id));
-  const total = SKINS.length;
-  const ownedCount = SKINS.filter(s => owned.has(s.id)).length;
+  const LIST = allSkins();
+  const total = LIST.length;
+  const ownedCount = LIST.filter(s => owned.has(s.id)).length;
   $('skinsStat').textContent = `Собрано: ${ownedCount} / ${total}`;
-  let list = SKINS.slice();
+  let list = LIST.slice();
   if (skinsFilter === 'owned') list = list.filter(s => owned.has(s.id));
   else if (skinsFilter !== 'all') list = list.filter(s => s.rarity === skinsFilter);
   const order = {god:0, knife:1, chroma:2, legendary:3, epic:4, rare:5, common:6, junk:7};
@@ -2477,10 +2487,65 @@ function drawViewModel(){
     const pivotY = cy - 40*K;
     if (spinT < 1){
       const ease = (1 - Math.cos(spinT * Math.PI)) / 2;
-      const angle = ease * 4 * Math.PI;
-      ctx.translate(pivotX, pivotY);
-      ctx.rotate(angle);
-      ctx.translate(-pivotX, -pivotY);
+      const kk2 = mySkinId || '';
+      const inspType = (
+        kk2 === 'kn_lollipop' ? 'lollipop' :
+        kk2.includes('karambit') || kk2 === 'kn_doppler' || kk2 === 'kn_tiger' || kk2 === 'kn_karambit_emis' || kk2 === 'kn_claw' ? 'karambit' :
+        kk2 === 'kn_butterfly' || kk2 === 'kn_butterfly_fade' ? 'butterfly' :
+        kk2 === 'kn_bayonet' || kk2 === 'kn_marble' || kk2 === 'kn_stiletto' ? 'bayonet' :
+        kk2 === 'kn_tanto' ? 'tanto' :
+        kk2 === 'kn_bowie' || kk2 === 'kn_huntsman' ? 'bowie' :
+        kk2 === 'kn_falchion' ? 'falchion' : 'default'
+      );
+      if (inspType === 'karambit'){
+        ctx.translate(pivotX, pivotY);
+        ctx.rotate(ease * 2 * Math.PI);
+        ctx.translate(-pivotX, -pivotY);
+        ctx.translate(0, -Math.sin(ease * Math.PI) * 30 * K);
+      } else if (inspType === 'butterfly'){
+        const spinAngle = ease * 6 * Math.PI;
+        const cx2 = cx + cv2d.width * 0.08 + 200*K;
+        const cy2 = cy - 200*K;
+        ctx.translate(cx2, cy2);
+        ctx.rotate(spinAngle);
+        ctx.translate(-cx2, -cy2);
+      } else if (inspType === 'bayonet'){
+        const ang = ease * Math.PI * 2;
+        const fy = -Math.sin(ease * Math.PI) * 180 * K;
+        ctx.translate(pivotX, pivotY);
+        ctx.rotate(ang);
+        ctx.translate(-pivotX, -pivotY);
+        ctx.translate(0, fy);
+      } else if (inspType === 'tanto'){
+        const ang = ease * Math.PI * 2.5;
+        const up = -Math.sin(ease * Math.PI) * 200 * K;
+        ctx.translate(pivotX, pivotY);
+        ctx.rotate(ang);
+        ctx.translate(-pivotX, -pivotY);
+        ctx.translate(0, up);
+      } else if (inspType === 'bowie'){
+        ctx.translate(pivotX, pivotY);
+        ctx.rotate(ease * Math.PI * 1.5);
+        ctx.translate(-pivotX, -pivotY);
+        ctx.translate(0, -Math.sin(ease * Math.PI) * 60 * K);
+      } else if (inspType === 'falchion'){
+        const ang = ease * Math.PI * 3;
+        const dx2 = Math.sin(ease * Math.PI) * 80 * K;
+        ctx.translate(pivotX, pivotY);
+        ctx.rotate(ang);
+        ctx.translate(-pivotX, -pivotY);
+        ctx.translate(dx2, 0);
+      } else if (inspType === 'lollipop'){
+        const bob = Math.sin(ease * Math.PI * 2) * 40 * K;
+        ctx.translate(bob, -ease * 60 * K);
+        ctx.translate(pivotX, pivotY);
+        ctx.rotate(Math.sin(ease * Math.PI * 3) * 0.5);
+        ctx.translate(-pivotX, -pivotY);
+      } else {
+        ctx.translate(pivotX, pivotY);
+        ctx.rotate(ease * 4 * Math.PI);
+        ctx.translate(-pivotX, -pivotY);
+      }
     }
     if (atkT < 1){
       const ae = 1 - Math.pow(1 - atkT, 2.2);
