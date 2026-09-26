@@ -37,7 +37,6 @@ const WEAPONS = {
   awp:     { name:'AWP',          price:4750, dmg:120,rate:1500, spread:0.006, range:2200, pellets:1, slot:1, mag:5,  reload:3500 },
   armor:   { name:'Броня',        price:950,  type:'armor' },
 };
-
 function defaultWeaponColor(w){
   if (w === 'awp') return '#2d5a3d';
   if (w === 'ak') return '#8b5a3c';
@@ -51,7 +50,6 @@ function isPistolWeapon(w){
   return w === 'pistol' || w === 'usp' || w === 'p250' || w === 'deagle';
 }
 
-// ======== SANDBOOM ========
 function buildMapSandboom(){
   const g = Array.from({length: MAP_H}, () => Array(MAP_W).fill(0));
   const rect = (x,y,w,h) => { for (let j=y;j<y+h;j++) for (let i=x;i<x+w;i++) if (j>=0&&j<MAP_H&&i>=0&&i<MAP_W) g[j][i]=1; };
@@ -74,13 +72,10 @@ function buildMapSandboom(){
   for (const [x,y,w,h] of north){ rect(x,y,w,h); rect(x, MAP_H-y-h, w, h); }
   return g;
 }
-
-// ======== CHRISTMAS ========
 function buildMapChristmas(){
   const g = Array.from({length: MAP_H}, () => Array(MAP_W).fill(0));
   const rect = (x,y,w,h) => { for (let j=y;j<y+h;j++) for (let i=x;i<x+w;i++) if (j>=0&&j<MAP_H&&i>=0&&i<MAP_W) g[j][i]=1; };
   rect(0,0,MAP_W,1); rect(0,MAP_H-1,MAP_W,1); rect(0,0,1,MAP_H); rect(MAP_W-1,0,1,MAP_H);
-
   const tree = (cx, ty) => {
     rect(cx-2, ty, 5, 1);
     rect(cx-1, ty+1, 3, 1);
@@ -88,40 +83,26 @@ function buildMapChristmas(){
     rect(cx-1, ty+3, 3, 1);
     rect(cx-2, ty+4, 5, 1);
   };
-  tree(6, 3);
-  tree(33, 3);
-  tree(6, 22);
-  tree(33, 22);
-  tree(19, 3);
-  tree(20, 24);
-
+  tree(6, 3); tree(33, 3); tree(6, 22); tree(33, 22); tree(19, 3); tree(20, 24);
   rect(11, 11, 3, 1); rect(11, 11, 1, 3);
   rect(26, 11, 3, 1); rect(28, 11, 1, 3);
   rect(11, 17, 1, 3); rect(11, 19, 3, 1);
   rect(26, 19, 3, 1); rect(28, 17, 1, 3);
-
-  rect(19, 12, 2, 1);
-  rect(19, 17, 2, 1);
-  rect(18, 13, 1, 4);
-  rect(21, 13, 1, 4);
+  rect(19, 12, 2, 1); rect(19, 17, 2, 1);
+  rect(18, 13, 1, 4); rect(21, 13, 1, 4);
   rect(19, 14, 2, 2);
-
   rect(4, 12, 2, 2); rect(34, 12, 2, 2);
   rect(4, 17, 2, 2); rect(34, 17, 2, 2);
-
   rect(15, 8, 1, 1); rect(16, 9, 1, 1);
   rect(23, 20, 1, 1); rect(24, 21, 1, 1);
   rect(7, 8, 1, 1); rect(32, 8, 1, 1);
   rect(7, 21, 1, 1); rect(32, 21, 1, 1);
-
   rect(2, 6, 2, 1); rect(2, 8, 2, 1); rect(2, 10, 2, 1);
   rect(2, 19, 2, 1); rect(2, 21, 2, 1); rect(2, 23, 2, 1);
   rect(36, 6, 2, 1); rect(36, 8, 2, 1); rect(36, 10, 2, 1);
   rect(36, 19, 2, 1); rect(36, 21, 2, 1); rect(36, 23, 2, 1);
-
   rect(15, 15, 2, 1); rect(23, 15, 2, 1);
   rect(15, 14, 1, 1); rect(24, 14, 1, 1);
-
   return g;
 }
 
@@ -208,9 +189,7 @@ class Lobby {
       t:'state', phase:this.phase, timer:Math.ceil(this.phaseTimer), round:this.round,
       score:this.score, winner:this.winner, matchOver:this.matchOver,
       mapId: this.mapId,
-      drops: this.droppedWeapons.map(d => ({
-        id:d.id, w:d.w, x:Math.round(d.x), y:Math.round(d.y), mag:d.mag|0, color:d.color
-      })),
+      drops: this.droppedWeapons.map(d => ({ id:d.id, w:d.w, x:Math.round(d.x), y:Math.round(d.y), mag:d.mag|0, color:d.color })),
       players: this.players.map(p => {
         const w = WEAPONS[getCurrentWeapon(p)];
         const magField = p.currentSlot === 1 ? 'mag1' : p.currentSlot === 2 ? 'mag2' : null;
@@ -261,8 +240,7 @@ class Lobby {
         x:0, y:0, z:0, vz:0, ang:0, hp:100, armor:0, money:2700,
         slot1:null, slot2:'pistol', currentSlot:2,
         mag1:0, mag2:12, reloading:false, reloadEndAt:0, reloadTotal:0, reloadSlot:0, reloadWeapon:null,
-        survived:false,
-        boughtWeapon:false, boughtArmor:false, crouch:false,
+        survived:false, boughtWeapon:false, boughtArmor:false, crouch:false,
         alive:false, kills:0, deaths:0,
         input:{mx:0,my:0,a:0,sh:0,jump:0,cr:0,reload:0,walk:0},
         lastShot:0, charColor:null, weaponColors:{},
@@ -300,12 +278,10 @@ function startRound(lobby){
   lobby.phaseTimer = BUY_TIME;
   lobby.winner = null;
   lobby.droppedWeapons = [];
-
   const cA = lobby.players.filter(p => p.team==='A').length;
   const cB = lobby.players.filter(p => p.team==='B').length;
   let a=cA, b=cB;
   for (const p of lobby.players){ if (p.team) continue; if (a<=b){p.team='A';a++;} else {p.team='B';b++;} }
-
   let ai=0, bi=0;
   for (const p of lobby.players){
     p.hp = 100; p.alive = true;
@@ -314,7 +290,6 @@ function startRound(lobby){
     p.lastShot = 0; p.reloading = false; p.reloadEndAt = 0; p.reloadTotal = 0;
     p.input.sh = 0; p.input.mx = 0; p.input.my = 0;
     p.input.jump = 0; p.input.cr = 0; p.input.reload = 0; p.input.walk = 0;
-
     if (!p.survived){
       p.slot1 = null; p.slot2 = 'pistol'; p.currentSlot = 2;
       p.armor = 0;
@@ -323,7 +298,6 @@ function startRound(lobby){
     const w2 = p.slot2 ? WEAPONS[p.slot2] : null;
     p.mag1 = w1 ? w1.mag : 0;
     p.mag2 = w2 ? w2.mag : 0;
-
     if (p.team === 'A'){
       p.x = (10 + (ai%10)) * TILE; p.y = (MAP_H-2.5)*TILE; p.ang = -Math.PI/2; ai++;
     } else {
@@ -380,7 +354,6 @@ function shoot(lobby, shooter, weaponId){
   const grid = lobby.getGrid();
   const dx = Math.cos(shooter.ang);
   const dy = Math.sin(shooter.ang);
-
   let tracerDist = weapon.range;
   for (let t=0; t<weapon.range; t+=6){
     if (isWall(shooter.x + dx*t, shooter.y + dy*t, grid)){ tracerDist = t; break; }
@@ -390,7 +363,6 @@ function shoot(lobby, shooter, weaponId){
     color: shooter.team==='A' ? '#88ccff' : '#ffcc88',
     weapon:weaponId, byId:shooter.id,
   });
-
   for (let i=0; i<weapon.pellets; i++){
     const sa = (Math.random()-0.5)*weapon.spread*2;
     const ca = Math.cos(sa), si = Math.sin(sa);
@@ -454,11 +426,9 @@ function botThink(lobby, bot, dt){
   if (!bot.alive) return;
   const grid = lobby.getGrid();
   if (lobby.phase === 'buy') botBuy(bot, lobby);
-
   if (bot.lastSeenAt === undefined) bot.lastSeenAt = 0;
   if (bot.aimWobble === undefined) bot.aimWobble = 0;
   if (bot.nextShotAt === undefined) bot.nextShotAt = 0;
-
   const wid = getCurrentWeapon(bot);
   const w = WEAPONS[wid];
   const magField = bot.currentSlot === 1 ? 'mag1' : bot.currentSlot === 2 ? 'mag2' : null;
@@ -469,7 +439,6 @@ function botThink(lobby, bot, dt){
     bot.reloadSlot = bot.currentSlot;
     bot.reloadWeapon = wid;
   }
-
   let target = null, tDist = Infinity;
   for (const p of lobby.players){
     if (p === bot || p.isBot || !p.alive || p.team === bot.team) continue;
@@ -477,13 +446,11 @@ function botThink(lobby, bot, dt){
     if (d < tDist){ tDist = d; target = p; }
   }
   if (!target){ bot.input.mx = 0; bot.input.my = 0; bot.input.sh = 0; bot.lastSeenAt = 0; return; }
-
   const dx = target.x - bot.x, dy = target.y - bot.y;
   const canSee = hasLOS(bot.x, bot.y, target.x, target.y, grid);
   if (canSee && tDist < 1500){ if (!bot.lastSeenAt) bot.lastSeenAt = Date.now(); }
   else bot.lastSeenAt = 0;
   const reactOK = bot.lastSeenAt && (Date.now() - bot.lastSeenAt > 700);
-
   bot.aimWobble += (Math.random()-0.5) * 0.35 * dt;
   bot.aimWobble = Math.max(-0.25, Math.min(0.25, bot.aimWobble));
   const aimAng = Math.atan2(dy, dx) + bot.aimWobble;
@@ -492,7 +459,6 @@ function botThink(lobby, bot, dt){
   while (diff < -Math.PI) diff += Math.PI*2;
   bot.ang += diff * Math.min(1, dt*3.5);
   const aimed = Math.abs(diff) < 0.20;
-
   if (canSee && tDist < 1400 && reactOK && !bot.reloading){
     if (Date.now() > bot.nextShotAt){
       if (aimed && Math.random() > 0.22){ bot.input.sh = 1; bot.nextShotAt = Date.now() + 280; }
@@ -520,7 +486,6 @@ function movePlayers(lobby, dt){
     p.z += p.vz * dt;
     if (p.z <= 0){ p.z = 0; p.vz = 0; }
     if (p.z > 200){ p.z = 200; p.vz = 0; }
-
     let mx = p.input.mx||0, my = p.input.my||0;
     const len = Math.hypot(mx, my);
     if (len > 0.01){
@@ -532,7 +497,6 @@ function movePlayers(lobby, dt){
       if (!collide(p.x, ny, r, grid)) p.y = ny;
     }
     if (!p.isBot) p.ang = p.input.a || 0;
-
     if (p.reloading && Date.now() >= p.reloadEndAt){
       const w = WEAPONS[p.reloadWeapon];
       if (w && w.mag){
@@ -603,20 +567,11 @@ const wss = new WebSocketServer({ server });
 wss.on('connection', (ws) => {
   const playerId = nextId++;
   let lobby = null, player = null;
-
-  ws.send(JSON.stringify({
-    t:'init', id:playerId,
-    grids: GRIDS, mw: MAP_W, mh: MAP_H, tile: TILE
-  }));
-
+  ws.send(JSON.stringify({ t:'init', id:playerId, grids: GRIDS, mw: MAP_W, mh: MAP_H, tile: TILE }));
   ws.on('message', (raw) => {
     let msg;
     try { msg = JSON.parse(raw); } catch { return; }
-
-    if (msg.t === 'list'){
-      ws.send(JSON.stringify({t:'lobbies', list:[...lobbies.values()].map(l => l.info())}));
-      return;
-    }
+    if (msg.t === 'list'){ ws.send(JSON.stringify({t:'lobbies', list:[...lobbies.values()].map(l => l.info())})); return; }
     if (msg.t === 'create'){
       const code = makeCode();
       lobby = new Lobby(code, msg.name||'Игрок', msg.pass||'', msg.mapId || 'sandboom');
@@ -639,7 +594,6 @@ wss.on('connection', (ws) => {
       return;
     }
     if (!lobby || !player) return;
-
     if (msg.t === 'team'){
       if (lobby.phase !== 'waiting') return;
       if (msg.team !== 'A' && msg.team !== 'B') return;
@@ -769,7 +723,6 @@ wss.on('connection', (ws) => {
       return;
     }
   });
-
   ws.on('close', () => {
     if (!lobby) return;
     lobby.removePlayer(playerId);
