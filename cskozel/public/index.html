@@ -1064,7 +1064,7 @@ const muzzleSmoke = [];
 let drops = [];
 const keys = {};
 let mouseDown = false, rightDown = false;
-let lastSend = 0, lastAutoOpenRound = -1, buyMenuOpen = false;
+let lastSend = 0, lastCosmeticSend = 0, lastAutoOpenRound = -1, buyMenuOpen = false;
 let pointerLocked = false;
 
 let myX = 0, myY = 0, myYaw = 0, myPitch = 0, myZ = 0, myVz = 0, myCrouch = false;
@@ -1121,6 +1121,7 @@ function handleMsg(m){
       buildSkyBuffer();
       initPlayerBuffer();
       initCoinBuffer();
+      setTimeout(() => { if (ws && ws.readyState === 1) pushCosmetics(); }, 400);
       break;
     case 'joined':
       myId = m.id; lobbyCode = m.code;
@@ -2806,13 +2807,15 @@ function drawViewModel(){
     ctx.fillRect(cx + 130*K, cy - 86*K, 100*K, 20*K);
     ctx.fillRect(cx + 30*K, cy - 105*K, 60*K, 22*K);
   } else {
+    // === ПИСТОЛЕТ (приподнят) ===
+    const pShift = 60*K;
     ctx.fillStyle = wc ? baseCol : '#333';
-    ctx.fillRect(cx + 30*K, cy - 105*K, 90*K, 28*K);
-    ctx.fillStyle = '#111'; ctx.fillRect(cx + 100*K, cy - 100*K, 25*K, 14*K);
+    ctx.fillRect(cx + 30*K, cy - 105*K - pShift, 90*K, 28*K);
+    ctx.fillStyle = '#111'; ctx.fillRect(cx + 100*K, cy - 100*K - pShift, 25*K, 14*K);
     ctx.fillStyle = wc ? darkCol : '#1e1e1e';
-    ctx.fillRect(cx + 42*K, cy - 77*K, 50*K, 45*K);
-    ctx.fillStyle = '#3a2a1a'; ctx.fillRect(cx + 40*K, cy - 55*K, 55*K, 45*K);
-    if (wc){ ctx.fillStyle = lightCol; ctx.fillRect(cx + 30*K, cy - 105*K, 90*K, 3*K); }
+    ctx.fillRect(cx + 42*K, cy - 77*K - pShift, 50*K, 45*K);
+    ctx.fillStyle = '#3a2a1a'; ctx.fillRect(cx + 40*K, cy - 55*K - pShift, 55*K, 45*K);
+    if (wc){ ctx.fillStyle = lightCol; ctx.fillRect(cx + 30*K, cy - 105*K - pShift, 90*K, 3*K); }
   }
 
   // ==== КИСТИ РУК ОТ ПЕРВОГО ЛИЦА ====
@@ -2826,7 +2829,8 @@ function drawViewModel(){
     drawFPHand(cx + 250*K, cy - 110*K, 42*K, 58*K, -0.15);
     drawFPHand(cx + 110*K, cy - 95*K,  46*K, 62*K,  0.3);
   } else if (myW !== 'knife'){
-    drawFPHand(cx + 70*K, cy - 60*K, 50*K, 68*K, 0.35);
+    // рука на пистолете — тоже приподнята
+    drawFPHand(cx + 70*K, cy - 120*K, 50*K, 68*K, 0.35);
   }
   if (myW === 'knife' && mySkinId !== 'kn_lollipop'){
     drawFPHand(cx + 85*K, cy - 15*K, 40*K, 56*K, 0.1);
@@ -3022,6 +3026,10 @@ function loop(){
   localMove(dt);
   updateWeaponAnim(dt);
   if (now - lastSend > 33){ lastSend = now; sendInput(); }
+  if (now - lastCosmeticSend > 2000 && ws && ws.readyState === 1 && myInit){
+    lastCosmeticSend = now;
+    pushCosmetics();
+  }
   updateFootsteps();
   const me = pMap.get(myId);
   const w = me && me.d ? me.d.w : '';
