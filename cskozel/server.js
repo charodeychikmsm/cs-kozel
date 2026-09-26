@@ -18,6 +18,7 @@ const LOSE_MONEY = 1400;
 const ROUND_BONUS = 1000;
 const GRAVITY = 1100;
 const JUMP_V = 280;
+const MAX_DROPS = 40;
 
 const WEAPONS = {
   knife:   { name:'Нож',          price:0,    dmg:55, rate:400,  spread:0,     range:70,   pellets:1, slot:3, mag:0 },
@@ -32,6 +33,15 @@ const WEAPONS = {
   awp:     { name:'AWP',          price:4750, dmg:120,rate:1500, spread:0.006, range:2200, pellets:1, slot:1, mag:5,  reload:3500 },
   armor:   { name:'Броня',        price:950,  type:'armor' },
 };
+function defaultWeaponColor(w){
+  if (w === 'awp') return '#2d5a3d';
+  if (w === 'ak') return '#8b5a3c';
+  if (w === 'm4a4') return '#3a4a5a';
+  if (w === 'galil') return '#a08050';
+  if (w === 'shotgun') return '#7a5a3a';
+  if (w === 'deagle') return '#5a5a5a';
+  return '#555555';
+}
 
 function buildMap(){
   const g = Array.from({length: MAP_H}, () => Array(MAP_W).fill(0));
@@ -115,6 +125,7 @@ const lobbies = new Map();
 let nextId = 1;
 const makeCode = () => { let c; do { c = Math.random().toString(36).slice(2,6).toUpperCase(); } while (lobbies.has(c)); return c; };
 const getCurrentWeapon = p => p.currentSlot === 1 ? (p.slot1 || 'knife') : p.currentSlot === 2 ? (p.slot2 || 'knife') : 'knife';
+const makeDropId = () => 'd_' + Math.random().toString(36).slice(2, 8);
 
 class Lobby {
   constructor(code, name, pass){
@@ -122,6 +133,7 @@ class Lobby {
     this.players = []; this.phase = 'waiting'; this.phaseTimer = 0;
     this.round = 0; this.score = {A:0, B:0}; this.winner = null;
     this.events = []; this.matchOver = false;
+    this.droppedWeapons = [];
   }
   realCount(){ return this.players.filter(p => !p.isBot).length; }
   info(){ return { code:this.code, name:this.name, players:this.realCount(), max:MAX_PLAYERS, locked:!!this.pass }; }
@@ -130,6 +142,9 @@ class Lobby {
     return {
       t:'state', phase:this.phase, timer:Math.ceil(this.phaseTimer), round:this.round,
       score:this.score, winner:this.winner, matchOver:this.matchOver,
+      drops: this.droppedWeapons.map(d => ({
+        id:d.id, w:d.w, x:Math.round(d.x), y:Math.round(d.y), mag:d.mag|0, color:d.color
+      })),
       players: this.players.map(p => {
         const w = WEAPONS[getCurrentWeapon(p)];
         const magField = p.currentSlot === 1 ? 'mag1' : p.currentSlot === 2 ? 'mag2' : null;
@@ -195,11 +210,34 @@ class Lobby {
   }
 }
 
+function dropWeapon(lobby, w, x, y, mag, color){
+  if (!w || w === 'knife') return;
+  if (lobby.droppedWeapons.length >= MAX_DROPS){
+    lobby.droppedWeapons.shift();
+  }
+  lobby.droppedWeapons.push({
+    id: makeDropId(),
+    w, x, y, mag: mag|0, color: color || defaultWeaponColor(w),
+  });
+  lobby.events.push({type:'drop', x, y});
+}
+function dropAllOnDeath(lobby, player){
+  if (player.slot1){
+    const col = player.weaponColors[player.slot1] || defaultWeaponColor(player.slot1);
+    dropWeapon(lobby, player.slot1, player.x + (Math.random()-0.5)*16, player.y + (Math.random()-0.5)*16, player.mag1, col);
+  }
+  if (player.slot2 && player.slot2 !== 'pistol'){
+    const col = player.weaponColors[player.slot2] || defaultWeaponColor(player.slot2);
+    dropWeapon(lobby, player.slot2, player.x + (Math.random()-0.5)*16, player.y + (Math.random()-0.5)*16, player.mag2, col);
+  }
+}
+
 function startRound(lobby){
   lobby.round++;
   lobby.phase = 'buy';
   lobby.phaseTimer = BUY_TIME;
   lobby.winner = null;
+  lobby.droppedWeapons = [];  // очищаем поле в начале раунда
 
   const cA = lobby.players.filter(p => p.team==='A').length;
   const cB = lobby.players.filter(p => p.team==='B').length;
@@ -208,7 +246,6 @@ function startRound(lobby){
 
   let ai=0, bi=0;
   for (const p of lobby.players){
-    // Восстановление
     p.hp = 100; p.alive = true;
     p.boughtWeapon = false; p.boughtArmor = false;
     p.crouch = false; p.z = 0; p.vz = 0;
@@ -216,18 +253,15 @@ function startRound(lobby){
     p.input.sh = 0; p.input.mx = 0; p.input.my = 0;
     p.input.jump = 0; p.input.cr = 0; p.input.reload = 0;
 
-    // Сохраняем оружие, если выжил; иначе ресет
     if (!p.survived){
       p.slot1 = null; p.slot2 = 'pistol'; p.currentSlot = 2;
       p.armor = 0;
     }
-    // Заполняем магазины
     const w1 = p.slot1 ? WEAPONS[p.slot1] : null;
     const w2 = p.slot2 ? WEAPONS[p.slot2] : null;
     p.mag1 = w1 ? w1.mag : 0;
     p.mag2 = w2 ? w2.mag : 0;
 
-    // Спавн
     if (p.team === 'A'){
       p.x = (10 + (ai%10)) * TILE; p.y = (MAP_H-2.5)*TILE; p.ang = -Math.PI/2; ai++;
     } else {
@@ -252,7 +286,6 @@ function endRound(lobby, winner){
       p.money = Math.min(p.money + ROUND_BONUS, 16000);
     }
   }
-
   if (winner === 'A' || winner === 'B'){
     lobby.score[winner]++;
     if (lobby.score[winner] >= ROUNDS_TO_WIN) lobby.matchOver = true;
@@ -298,7 +331,7 @@ function shoot(lobby, shooter, weaponId){
     let hitPlayer = null, hitDist = wallDist;
     for (const other of lobby.players){
       if (other === shooter || !other.alive || other.team === shooter.team) continue;
-      const d = rayCircle(shooter.x, shooter.y, px, py, other.x, other.y, getPlayerRadius(other));
+      const d = rayCircle(shooter.x, shooter.y, px, py, other.x, other.y, getPlayerRadius(other) + 4);
       if (d !== null && d < hitDist){ hitDist = d; hitPlayer = other; }
     }
     if (hitPlayer){
@@ -310,7 +343,9 @@ function shoot(lobby, shooter, weaponId){
       hitPlayer.hp -= dmg;
       if (hitPlayer.hp <= 0){
         hitPlayer.hp = 0; hitPlayer.alive = false; hitPlayer.deaths++; shooter.kills++;
-        lobby.events.push({type:'kill', killer:shooter.name, victim:hitPlayer.name, killerId:shooter.id, killerTeam:shooter.team});
+        // Дропаем оружие убитого
+        dropAllOnDeath(lobby, hitPlayer);
+        lobby.events.push({type:'kill', killer:shooter.name, victim:hitPlayer.name, killerId:shooter.id, killerTeam:shooter.team, weapon:weaponId});
       } else {
         lobby.events.push({type:'hit', x:shooter.x + px*hitDist, y:shooter.y + py*hitDist});
       }
@@ -352,7 +387,6 @@ function botThink(lobby, bot, dt){
   if (bot.aimWobble === undefined) bot.aimWobble = 0;
   if (bot.nextShotAt === undefined) bot.nextShotAt = 0;
 
-  // Автоперезарядка
   const wid = getCurrentWeapon(bot);
   const w = WEAPONS[wid];
   const magField = bot.currentSlot === 1 ? 'mag1' : bot.currentSlot === 2 ? 'mag2' : null;
@@ -426,7 +460,6 @@ function movePlayers(lobby, dt){
     }
     if (!p.isBot) p.ang = p.input.a || 0;
 
-    // Перезарядка
     if (p.reloading && Date.now() >= p.reloadEndAt){
       const w = WEAPONS[p.reloadWeapon];
       if (w && w.mag){
@@ -447,7 +480,6 @@ function handleShooting(lobby){
     if (p.reloading) continue;
     const wid = getCurrentWeapon(p);
     const w = WEAPONS[wid] || WEAPONS.pistol;
-    // Проверка патронов
     const magField = p.currentSlot === 1 ? 'mag1' : p.currentSlot === 2 ? 'mag2' : null;
     if (magField && w.mag && p[magField] <= 0) continue;
     if (now - p.lastShot >= w.rate){
@@ -488,11 +520,7 @@ function gameTick(lobby, dt){
     lobby.phaseTimer -= dt;
     movePlayers(lobby, dt);
     if (lobby.phaseTimer <= 0){
-      if (lobby.matchOver){
-        // Матч окончен — не начинаем новый раунд, ждём пока игроки выйдут
-      } else {
-        startRound(lobby);
-      }
+      if (lobby.matchOver){ /* ждём */ } else startRound(lobby);
     }
   }
 }
@@ -594,6 +622,63 @@ wss.on('connection', (ws) => {
       }
       return;
     }
+    // ВЫКИНУТЬ текущее оружие
+    if (msg.t === 'drop'){
+      if (!player.alive) return;
+      const cur = getCurrentWeapon(player);
+      if (cur === 'knife') return;
+      if (player.currentSlot === 1 && player.slot1){
+        const col = player.weaponColors[player.slot1] || defaultWeaponColor(player.slot1);
+        dropWeapon(lobby, player.slot1, player.x, player.y, player.mag1, col);
+        player.slot1 = null; player.mag1 = 0;
+        player.currentSlot = player.slot2 ? 2 : 3;
+        player.reloading = false;
+      } else if (player.currentSlot === 2 && player.slot2){
+        const col = player.weaponColors[player.slot2] || defaultWeaponColor(player.slot2);
+        dropWeapon(lobby, player.slot2, player.x, player.y, player.mag2, col);
+        player.slot2 = null; player.mag2 = 0;
+        player.currentSlot = player.slot1 ? 1 : 3;
+        player.reloading = false;
+      }
+      return;
+    }
+    // ПОДОБРАТЬ оружие с земли
+    if (msg.t === 'pickup'){
+      if (!player.alive) return;
+      const idx = lobby.droppedWeapons.findIndex(d => d.id === msg.id);
+      if (idx < 0) return;
+      const drop = lobby.droppedWeapons[idx];
+      const dist = Math.hypot(drop.x - player.x, drop.y - player.y);
+      if (dist > 60) return;
+      const wInfo = WEAPONS[drop.w];
+      if (!wInfo || wInfo.type === 'armor') return;
+      lobby.droppedWeapons.splice(idx, 1);
+      const magVal = drop.mag || wInfo.mag || 0;
+      const col = drop.color;
+      if (wInfo.slot === 1){
+        // Меняем основное оружие
+        if (player.slot1){
+          const oldCol = player.weaponColors[player.slot1] || defaultWeaponColor(player.slot1);
+          dropWeapon(lobby, player.slot1, player.x, player.y, player.mag1, oldCol);
+        }
+        player.slot1 = drop.w;
+        player.mag1 = magVal;
+        player.currentSlot = 1;
+        if (col) player.weaponColors[drop.w] = col;
+      } else {
+        // Меняем пистолет
+        if (player.slot2){
+          const oldCol = player.weaponColors[player.slot2] || defaultWeaponColor(player.slot2);
+          dropWeapon(lobby, player.slot2, player.x, player.y, player.mag2, oldCol);
+        }
+        player.slot2 = drop.w;
+        player.mag2 = magVal;
+        player.currentSlot = 2;
+        if (col) player.weaponColors[drop.w] = col;
+      }
+      player.reloading = false;
+      return;
+    }
     if (msg.t === 'cosmetic'){
       if (msg.charColor === null || typeof msg.charColor === 'string') player.charColor = msg.charColor;
       if (msg.weaponColors && typeof msg.weaponColors === 'object') player.weaponColors = msg.weaponColors;
@@ -611,6 +696,7 @@ wss.on('connection', (ws) => {
       if (lobby.realCount() < 2 && lobby.phase !== 'waiting'){
         lobby.phase = 'waiting'; lobby.phaseTimer = 0; lobby.round = 0;
         lobby.score = {A:0, B:0}; lobby.winner = null; lobby.matchOver = false;
+        lobby.droppedWeapons = [];
       }
     }
   });
