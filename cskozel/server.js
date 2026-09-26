@@ -6,8 +6,6 @@ const { WebSocketServer } = require('ws');
 const PORT = process.env.PORT || 3000;
 const TILE = 48;
 const MAP_W = 40, MAP_H = 30;
-const SPEED = 220;
-const SPEED_CROUCH = 110;
 const PLAYER_RADIUS = 14;
 const PLAYER_RADIUS_CROUCH = 10;
 const MAX_PLAYERS = 10;
@@ -19,6 +17,13 @@ const ROUND_BONUS = 1000;
 const GRAVITY = 1100;
 const JUMP_V = 280;
 const MAX_DROPS = 40;
+
+// Скорости по оружию
+const SPEED_KNIFE   = 250;
+const SPEED_PISTOL  = 230;
+const SPEED_PRIMARY = 200;
+const SPEED_CROUCH_MULT = 0.42;
+const SPEED_WALK_MULT   = 0.5;
 
 const WEAPONS = {
   knife:   { name:'Нож',          price:0,    dmg:55, rate:400,  spread:0,     range:70,   pellets:1, slot:3, mag:0 },
@@ -41,6 +46,9 @@ function defaultWeaponColor(w){
   if (w === 'shotgun') return '#7a5a3a';
   if (w === 'deagle') return '#5a5a5a';
   return '#555555';
+}
+function isPistolWeapon(w){
+  return w === 'pistol' || w === 'usp' || w === 'p250' || w === 'deagle';
 }
 
 function buildMap(){
@@ -157,6 +165,7 @@ class Lobby {
           s1:p.slot1, s2:p.slot2, cs:p.currentSlot,
           c:p.charColor, al:p.alive, k:p.kills, d:p.deaths,
           bought:p.boughtWeapon, boughtAr:p.boughtArmor, cr:p.crouch?1:0,
+          wk: p.input.walk ? 1 : 0,
           mag, magMax:(w&&w.mag)||0, reloading:p.reloading?1:0,
           reloadT: p.reloading ? Math.max(0, p.reloadEndAt - now) : 0,
           reloadTotal: p.reloading ? (p.reloadTotal||2000) : 0,
@@ -176,7 +185,7 @@ class Lobby {
       survived:false,
       boughtWeapon:false, boughtArmor:false, crouch:false,
       alive:false, kills:0, deaths:0,
-      input:{mx:0,my:0,a:0,sh:0,jump:0,cr:0,reload:0},
+      input:{mx:0,my:0,a:0,sh:0,jump:0,cr:0,reload:0,walk:0},
       lastShot:0, charColor:null, weaponColors:{},
     };
     this.players.push(p); return p;
@@ -197,7 +206,7 @@ class Lobby {
         survived:false,
         boughtWeapon:false, boughtArmor:false, crouch:false,
         alive:false, kills:0, deaths:0,
-        input:{mx:0,my:0,a:0,sh:0,jump:0,cr:0,reload:0},
+        input:{mx:0,my:0,a:0,sh:0,jump:0,cr:0,reload:0,walk:0},
         lastShot:0, charColor:null, weaponColors:{},
         aiNextThink:0, aiAimError:0, lastSeenAt:0, aimWobble:0, nextShotAt:0,
       };
@@ -237,7 +246,7 @@ function startRound(lobby){
   lobby.phase = 'buy';
   lobby.phaseTimer = BUY_TIME;
   lobby.winner = null;
-  lobby.droppedWeapons = [];  // очищаем поле в начале раунда
+  lobby.droppedWeapons = [];
 
   const cA = lobby.players.filter(p => p.team==='A').length;
   const cB = lobby.players.filter(p => p.team==='B').length;
@@ -251,7 +260,7 @@ function startRound(lobby){
     p.crouch = false; p.z = 0; p.vz = 0;
     p.lastShot = 0; p.reloading = false; p.reloadEndAt = 0; p.reloadTotal = 0;
     p.input.sh = 0; p.input.mx = 0; p.input.my = 0;
-    p.input.jump = 0; p.input.cr = 0; p.input.reload = 0;
+    p.input.jump = 0; p.input.cr = 0; p.input.reload = 0; p.input.walk = 0;
 
     if (!p.survived){
       p.slot1 = null; p.slot2 = 'pistol'; p.currentSlot = 2;
@@ -303,6 +312,16 @@ function checkRoundEnd(lobby){
 }
 
 function getPlayerRadius(p){ return p.crouch ? PLAYER_RADIUS_CROUCH : PLAYER_RADIUS; }
+function getPlayerSpeed(p){
+  const wid = getCurrentWeapon(p);
+  let base;
+  if (wid === 'knife') base = SPEED_KNIFE;
+  else if (isPistolWeapon(wid)) base = SPEED_PISTOL;
+  else base = SPEED_PRIMARY;
+  if (p.crouch) base *= SPEED_CROUCH_MULT;
+  if (p.input.walk && !p.crouch) base *= SPEED_WALK_MULT;
+  return base;
+}
 
 function shoot(lobby, shooter, weaponId){
   const weapon = WEAPONS[weaponId] || WEAPONS.pistol;
@@ -343,7 +362,6 @@ function shoot(lobby, shooter, weaponId){
       hitPlayer.hp -= dmg;
       if (hitPlayer.hp <= 0){
         hitPlayer.hp = 0; hitPlayer.alive = false; hitPlayer.deaths++; shooter.kills++;
-        // Дропаем оружие убитого
         dropAllOnDeath(lobby, hitPlayer);
         lobby.events.push({type:'kill', killer:shooter.name, victim:hitPlayer.name, killerId:shooter.id, killerTeam:shooter.team, weapon:weaponId});
       } else {
@@ -452,7 +470,7 @@ function movePlayers(lobby, dt){
     const len = Math.hypot(mx, my);
     if (len > 0.01){
       mx /= len; my /= len;
-      const spd = p.crouch ? SPEED_CROUCH : SPEED;
+      const spd = getPlayerSpeed(p);
       const r = getPlayerRadius(p);
       const nx = p.x + mx*spd*dt, ny = p.y + my*spd*dt;
       if (!collide(nx, p.y, r)) p.x = nx;
@@ -581,6 +599,7 @@ wss.on('connection', (ws) => {
       player.input.sh = msg.sh | 0;
       player.input.jump = msg.jump | 0;
       player.input.cr = msg.cr | 0;
+      player.input.walk = msg.wk | 0;
       if (msg.sw){
         const s = msg.sw | 0;
         if (s === 1 && player.slot1){ player.currentSlot = 1; player.reloading = false; }
@@ -615,14 +634,26 @@ wss.on('connection', (ws) => {
       } else {
         if (player.boughtWeapon) return;
         player.money -= w.price;
-        if (w.slot === 1){ player.slot1 = msg.w; player.mag1 = w.mag; player.currentSlot = 1; }
-        else { player.slot2 = msg.w; player.mag2 = w.mag; player.currentSlot = 2; }
+        if (w.slot === 1){
+          // При покупке основного — выбрасываем старое
+          if (player.slot1){
+            const oldCol = player.weaponColors[player.slot1] || defaultWeaponColor(player.slot1);
+            dropWeapon(lobby, player.slot1, player.x, player.y, player.mag1, oldCol);
+          }
+          player.slot1 = msg.w; player.mag1 = w.mag; player.currentSlot = 1;
+        } else {
+          // При покупке пистолета — выбрасываем старый (кроме базового pistol)
+          if (player.slot2 && player.slot2 !== 'pistol'){
+            const oldCol = player.weaponColors[player.slot2] || defaultWeaponColor(player.slot2);
+            dropWeapon(lobby, player.slot2, player.x, player.y, player.mag2, oldCol);
+          }
+          player.slot2 = msg.w; player.mag2 = w.mag; player.currentSlot = 2;
+        }
         player.boughtWeapon = true;
         player.reloading = false;
       }
       return;
     }
-    // ВЫКИНУТЬ текущее оружие
     if (msg.t === 'drop'){
       if (!player.alive) return;
       const cur = getCurrentWeapon(player);
@@ -642,7 +673,6 @@ wss.on('connection', (ws) => {
       }
       return;
     }
-    // ПОДОБРАТЬ оружие с земли
     if (msg.t === 'pickup'){
       if (!player.alive) return;
       const idx = lobby.droppedWeapons.findIndex(d => d.id === msg.id);
@@ -656,7 +686,6 @@ wss.on('connection', (ws) => {
       const magVal = drop.mag || wInfo.mag || 0;
       const col = drop.color;
       if (wInfo.slot === 1){
-        // Меняем основное оружие
         if (player.slot1){
           const oldCol = player.weaponColors[player.slot1] || defaultWeaponColor(player.slot1);
           dropWeapon(lobby, player.slot1, player.x, player.y, player.mag1, oldCol);
@@ -664,9 +693,9 @@ wss.on('connection', (ws) => {
         player.slot1 = drop.w;
         player.mag1 = magVal;
         player.currentSlot = 1;
+        // Скин с поднятого оружия
         if (col) player.weaponColors[drop.w] = col;
       } else {
-        // Меняем пистолет
         if (player.slot2){
           const oldCol = player.weaponColors[player.slot2] || defaultWeaponColor(player.slot2);
           dropWeapon(lobby, player.slot2, player.x, player.y, player.mag2, oldCol);
