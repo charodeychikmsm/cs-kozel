@@ -211,6 +211,8 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 #coinToast{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:48px;font-weight:900;color:#ffd700;text-shadow:0 0 30px rgba(255,215,0,.9);pointer-events:none;z-index:20;opacity:0;transition:opacity .4s;letter-spacing:4px}
 #coinToast.show{opacity:1;animation:coinBounce 1.5s ease-out}
 @keyframes coinBounce{0%{transform:translate(-50%,-50%) scale(0.3)}30%{transform:translate(-50%,-50%) scale(1.3)}50%{transform:translate(-50%,-50%) scale(1)}100%{transform:translate(-50%,-80%) scale(1);opacity:0}}
+#walkIndicator{position:absolute;bottom:100px;left:50%;transform:translateX(-50%);font-size:12px;color:#3ee0d0;letter-spacing:3px;font-weight:800;padding:5px 12px;background:rgba(10,12,15,.7);border:1px solid rgba(62,224,208,.5);border-radius:6px;opacity:0;transition:opacity .2s;pointer-events:none}
+#walkIndicator.show{opacity:1}
 </style>
 </head>
 <body>
@@ -220,6 +222,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 <div id="coinToast"></div>
 <div id="caseFlying">📦</div>
 <div id="killMsg"></div>
+<div id="walkIndicator">🚶 МЕДЛЕННЫЙ ШАГ</div>
 
 <div id="screen-menu" class="screen">
   <div class="coins">🪙 <span id="coinCount">0</span></div>
@@ -389,7 +392,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 
 <script>
 /* ============================================================
-   CS:KOZEL — FPS Edition v12 (Weapon Drops)
+   CS:KOZEL — FPS Edition v13 (Walk + Weapon Speed + Optimized Shadows)
    ============================================================ */
 const $ = id => document.getElementById(id);
 const cv3d = $('cv3d'), cv2d = $('cv2d');
@@ -408,7 +411,7 @@ const saveSettings = () => localStorage.setItem('kozel_settings', JSON.stringify
 /* ---------- KEYBINDS ---------- */
 const DEFAULT_KEYBINDS = {
   forward:'w', back:'s', left:'a', right:'d',
-  jump:' ', crouch:'control',
+  jump:' ', crouch:'control', walk:'shift',
   reload:'r', buy:'b',
   slot1:'1', slot2:'2', slot3:'3',
   knifeSpin:'f', drop:'g', pickup:'e',
@@ -417,7 +420,7 @@ const keybinds = Object.assign({}, DEFAULT_KEYBINDS, JSON.parse(localStorage.get
 const saveKeybinds = () => localStorage.setItem('kozel_keybinds', JSON.stringify(keybinds));
 const KEYBIND_LABELS = {
   forward:'Вперёд', back:'Назад', left:'Влево', right:'Вправо',
-  jump:'Прыжок', crouch:'Присесть',
+  jump:'Прыжок', crouch:'Присесть', walk:'Медленный шаг',
   reload:'Перезарядка', buy:'Магазин',
   slot1:'Слот 1', slot2:'Слот 2', slot3:'Слот 3',
   knifeSpin:'Покрутить нож', drop:'Выкинуть оружие', pickup:'Подобрать оружие',
@@ -448,7 +451,6 @@ function renderKeybindList(){
   }
 }
 
-/* ---------- СОЛНЦЕ ---------- */
 const SUN_DIR = (() => {
   const dx = 0.55, dy = 0.55, dz = 0.62;
   const len = Math.sqrt(dx*dx + dy*dy + dz*dz);
@@ -696,7 +698,6 @@ function weaponIconSVG(weaponType, color, skinId){
   return `<svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg"><rect x="30" y="18" width="60" height="10" fill="${c}" stroke="${cd}" stroke-width="1"/><rect x="80" y="20" width="14" height="5" fill="#111"/><polygon points="30,18 50,18 44,42 28,42" fill="${cd}"/><rect x="32" y="28" width="18" height="14" fill="#1a1a1a"/></svg>`;
 }
 
-/* ---------- WEBGL ---------- */
 function mat4Perspective(fov, aspect, near, far){
   const f = 1 / Math.tan(fov/2);
   return new Float32Array([f/aspect,0,0,0, 0,f,0,0, 0,0,(far+near)/(near-far),-1, 0,0,(2*far*near)/(near-far),0]);
@@ -719,7 +720,7 @@ float noise(vec2 p){ vec2 i=floor(p),f=fract(p); f=f*f*(3.0-2.0*f); float a=hash
 float fbm(vec2 p){ float v = 0.0; float amp = 0.5; for (int i = 0; i < 5; i++){ v += amp * noise(p); p *= 2.05; amp *= 0.5; } return v; }
 void main(){
   if (uType == 6){
-    gl_FragColor = vec4(0.05, 0.03, 0.02, 0.45);
+    gl_FragColor = vec4(0.04, 0.03, 0.03, 0.35);
     return;
   }
   vec3 lightDir = normalize(uSunDir);
@@ -789,7 +790,6 @@ void main(){
     baseColor = vColor;
     float shine = noise(vWorldPos.xy * 20.0) * 0.3 + 0.7;
     baseColor *= shine;
-    // Пульсирующее свечение
     float pulse = sin(length(vWorldPos - uCamPos) * 0.1 + vWorldPos.x * 0.01) * 0.15 + 0.85;
     baseColor += vec3(pulse * 0.3);
   } else if (uType == 5){
@@ -865,6 +865,8 @@ const WALL_H = 90;
 const FLOOR_Z = -0.3;
 const SHADOW_Z = 0.02;
 
+let shadowUpdateCounter = 0;  // для оптимизации
+
 function pushCube(arr, x0, y0, z0, sx, sy, sz, r, g, b){
   const x1 = x0+sx, y1 = y0+sy, z1 = z0+sz;
   const V = (x,y,z, nx,ny,nz) => arr.push(x,y,z,nx,ny,nz,r,g,b);
@@ -881,6 +883,7 @@ function pushCube(arr, x0, y0, z0, sx, sy, sz, r, g, b){
   V(x0,y1,z0,0,1,0);V(x1,y1,z1,0,1,0);V(x1,y1,z0,0,1,0);
   V(x0,y1,z0,0,1,0);V(x0,y1,z1,0,1,0);V(x1,y1,z1,0,1,0);
 }
+// Упрощённая тень — 4 треугольника (2 больших)
 function pushShadowQuad(arr, x0,y0, x1,y1, x2,y2, x3,y3){
   arr.push(x0,y0,SHADOW_Z, 0,0,1, 0,0,0);
   arr.push(x1,y1,SHADOW_Z, 0,0,1, 0,0,0);
@@ -889,21 +892,15 @@ function pushShadowQuad(arr, x0,y0, x1,y1, x2,y2, x3,y3){
   arr.push(x2,y2,SHADOW_Z, 0,0,1, 0,0,0);
   arr.push(x3,y3,SHADOW_Z, 0,0,1, 0,0,0);
 }
+// Упрощённая тень куба: только 1 quads — база + 1 проекционный (2 quad'а всего вместо 6)
 function pushCubeShadow(arr, cx, cy, size, height){
   const s = size / 2;
   const bx0 = cx - s, by0 = cy - s, bx1 = cx + s, by1 = cy + s;
   const projX = -SUN_DIR.x / SUN_DIR.z * height;
   const projY = -SUN_DIR.y / SUN_DIR.z * height;
-  const tx0 = bx0 + projX, ty0 = by0 + projY;
-  const tx1 = bx1 + projX, ty1 = by0 + projY;
-  const tx2 = bx1 + projX, ty2 = by1 + projY;
-  const tx3 = bx0 + projX, ty3 = by1 + projY;
+  // Только 2 quad'а: база + основание проекции (без боковых)
   pushShadowQuad(arr, bx0,by0, bx1,by0, bx1,by1, bx0,by1);
-  pushShadowQuad(arr, tx0,ty0, tx1,ty1, tx2,ty2, tx3,ty3);
-  pushShadowQuad(arr, bx0,by0, bx1,by0, tx1,ty1, tx0,ty0);
-  pushShadowQuad(arr, bx1,by0, bx1,by1, tx2,ty2, tx1,ty1);
-  pushShadowQuad(arr, bx1,by1, bx0,by1, tx3,ty3, tx2,ty2);
-  pushShadowQuad(arr, bx0,by1, bx0,by0, tx0,ty0, tx3,ty3);
+  pushShadowQuad(arr, bx0+projX,by0+projY, bx1+projX,by0+projY, bx1+projX,by1+projY, bx0+projX,by1+projY);
 }
 function buildSkyBuffer(){
   const arr = [];
@@ -986,18 +983,16 @@ function buildCrateBuffer(MAP, MW, MH, TILE){
   crateBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, crateBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arr), gl.STATIC_DRAW);
-  if (shArr.length){
-    const all = [];
-    // повторно сгенерим статичные тени стен + ящиков
-    for (let ty=0; ty<MH; ty++)
-      for (let tx=0; tx<MW; tx++)
-        if (MAP[ty][tx] === 1) pushCubeShadow(all, tx*TILE + TILE/2, ty*TILE + TILE/2, TILE, WALL_H);
-    for (let i = 0; i < shArr.length; i++) all.push(shArr[i]);
-    shadowStaticBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, shadowStaticBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(all), gl.STATIC_DRAW);
-    shadowStaticVerts = all.length/9;
-  }
+  // Объединяем тени стен и ящиков
+  const all = [];
+  for (let ty=0; ty<MH; ty++)
+    for (let tx=0; tx<MW; tx++)
+      if (MAP[ty][tx] === 1) pushCubeShadow(all, tx*TILE + TILE/2, ty*TILE + TILE/2, TILE, WALL_H);
+  for (let i = 0; i < shArr.length; i++) all.push(shArr[i]);
+  shadowStaticBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, shadowStaticBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(all), gl.STATIC_DRAW);
+  shadowStaticVerts = all.length/9;
   return placed;
 }
 function initPlayerBuffer(){
@@ -1006,7 +1001,7 @@ function initPlayerBuffer(){
   gl.bufferData(gl.ARRAY_BUFFER, 600*9*4, gl.DYNAMIC_DRAW);
   shadowDynBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, shadowDynBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, 600*9*4, gl.DYNAMIC_DRAW);
+  gl.bufferData(gl.ARRAY_BUFFER, 200*9*4, gl.DYNAMIC_DRAW);
   dropsBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, dropsBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, 100*36*9*4, gl.DYNAMIC_DRAW);
@@ -1036,14 +1031,13 @@ function hex2rgb(hex){
   return [((n>>16)&255)/255, ((n>>8)&255)/255, (n&255)/255];
 }
 
-/* ---------- СОСТОЯНИЕ ---------- */
 let ws = null, myId = null, myTeam = null, lobbyCode = null;
 let gameState = null, MAP = null, MW = 40, MH = 30, TILE = 48;
 const pMap = new Map();
 const effects = [];
 const impacts = [];
-const bloodDecals = [];   // <-- капли крови на полу
-let drops = [];           // <-- брошенное оружие
+const bloodDecals = [];
+let drops = [];
 const keys = {};
 let mouseDown = false, rightDown = false;
 let lastSend = 0, lastAutoOpenRound = -1, buyMenuOpen = false;
@@ -1061,7 +1055,7 @@ const EYE_HEIGHT = 32, PLAYER_H = 46;
 let bloodTimer = 0;
 let goldenCoin = null;
 let crates = [];
-let killCounter = 0;   // <-- счётчик киллов за игру
+let killCounter = 0;
 
 const weaponAnim = {
   recoilX: 0, recoilY: 0,
@@ -1166,7 +1160,6 @@ function onState(s){
     }
     else if (ev.type === 'hit'){
       effects.push({k:'hit', x:ev.x, y:ev.y, t:performance.now()});
-      // Кровавая капля на полу
       if (Math.random() < 0.7) bloodDecals.push({x: ev.x, y: ev.y, r: 4 + Math.random()*6, t: performance.now()});
       if (bloodDecals.length > 120) bloodDecals.shift();
       const dx = ev.x - myX, dy = ev.y - myY;
@@ -1189,7 +1182,6 @@ function onState(s){
         coins += 1; saveLS(); updateCoinUI(); sfxKill(0, 0.85);
         killCounter++;
         showKillMsg('+1 KILL');
-        // Кровь на полу от смерти
         const victim = pMap.get(s.players.find(p => p.name === ev.victim)?.id);
         if (victim){
           for (let i = 0; i < 6; i++)
@@ -1833,18 +1825,22 @@ function sendInput(){
   const c = Math.cos(myYaw), s = Math.sin(myYaw);
   const fx = moveF * c + moveR * s;
   const fy = moveF * s - moveR * c;
+  const walking = keys[keybinds.walk] ? 1 : 0;
   send({
     t:'input', mx: fx, my: fy, a: myYaw,
     sh: mouseDown && !buyMenuOpen ? 1 : 0,
     jump: keys[keybinds.jump] ? 1 : 0,
     cr: keys[keybinds.crouch] ? 1 : 0,
+    wk: walking,
   });
 }
 
 function updateFootsteps(){
+  // Другие игроки
   for (const [id, e] of pMap){
     if (id === myId) continue;
     const p = e.d; if (!p || !p.al) continue;
+    if (p.wk) continue;  // тихий шаг — не издаёт звук
     let tr = stepTracker.get(id);
     if (!tr){ tr = {lastX: e.x, lastY: e.y, accum: 0}; stepTracker.set(id, tr); }
     const d = Math.hypot(e.x - tr.lastX, e.y - tr.lastY);
@@ -1862,13 +1858,16 @@ function updateFootsteps(){
       }
     }
   }
-  if (myInit && gameState && gameState.phase !== 'waiting'){
+  // Свои шаги — только если не в медленном шаге
+  const me = pMap.get(myId);
+  const walking = me && me.d && me.d.wk;
+  if (myInit && gameState && gameState.phase !== 'waiting' && !walking){
     const d = Math.hypot(myX - lastMyPos.x, myY - lastMyPos.y);
     stepAccumMine += d;
     const interval = myCrouch ? 55 : 32;
     if (stepAccumMine > interval){ stepAccumMine = 0; sfxStep(0, 0.35); }
-    lastMyPos.x = myX; lastMyPos.y = myY;
   }
+  lastMyPos.x = myX; lastMyPos.y = myY;
 }
 
 function hasLOS(x1, y1, x2, y2){
@@ -1933,6 +1932,25 @@ function resolveCollision(px, py, r){
   return [nx, ny];
 }
 
+// Локальные скорости должны совпадать с сервером!
+const SPEED_KNIFE_L = 250;
+const SPEED_PISTOL_L = 230;
+const SPEED_PRIMARY_L = 200;
+const SPEED_CROUCH_MULT_L = 0.42;
+const SPEED_WALK_MULT_L = 0.5;
+function getLocalSpeed(){
+  const me = pMap.get(myId);
+  if (!me || !me.d) return 200;
+  const w = me.d.w;
+  let base;
+  if (w === 'knife') base = SPEED_KNIFE_L;
+  else if (w === 'pistol' || w === 'usp' || w === 'p250' || w === 'deagle') base = SPEED_PISTOL_L;
+  else base = SPEED_PRIMARY_L;
+  if (myCrouch) base *= SPEED_CROUCH_MULT_L;
+  else if (keys[keybinds.walk]) base *= SPEED_WALK_MULT_L;
+  return base;
+}
+
 function localMove(dt){
   if (!gameState || !MAP || !myInit) return;
   if (gameState.phase === 'waiting') return;
@@ -1958,7 +1976,7 @@ function localMove(dt){
     const c = Math.cos(myYaw), s = Math.sin(myYaw);
     const fx = moveF * c + moveR * s;
     const fy = moveF * s - moveR * c;
-    const spd = (myCrouch ? 110 : 220) * dt;
+    const spd = getLocalSpeed() * dt;
     const r = 14;
     let nx = myX + fx * spd, ny = myY + fy * spd;
     [nx, ny] = resolveCollision(nx, ny, r);
@@ -2006,9 +2024,7 @@ function buildDropsBuffer(){
   for (const d of drops){
     const bob = Math.sin(time * 2 + d.x * 0.05 + d.y * 0.03) * 4 + 8;
     const rgb = hex2rgb(d.color || '#666666');
-    // Маленький кубик
     pushCube(arr, d.x - 6, d.y - 6, bob - 3, 12, 12, 6, rgb[0], rgb[1], rgb[2]);
-    // Полоска-рукоять
     pushCube(arr, d.x - 2, d.y - 8, bob + 3, 4, 4, 8, rgb[0]*0.6, rgb[1]*0.6, rgb[2]*0.6);
   }
   gl.bindBuffer(gl.ARRAY_BUFFER, dropsBuffer);
@@ -2052,33 +2068,40 @@ function render3D(){
 
   drawMesh(floorBuffer, floorVerts, model, 1);
 
+  // ТЕНИ — обновляем динамику раз в 3 кадра для экономии
   if (settings.shadows){
+    shadowUpdateCounter++;
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     if (shadowStaticBuffer && shadowStaticVerts > 0){
       drawMesh(shadowStaticBuffer, shadowStaticVerts, model, 6);
     }
-    const shArr = [];
-    for (const [id, e] of pMap){
-      if (id === myId) continue;
-      const p = e.d; if (!p || !p.al) continue;
-      const d = Math.hypot(e.x - myX, e.y - myY);
-      if (d > settings.viewDist + 500) continue;
-      if (!hasLOS(myX, myY, e.x, e.y)) continue;
-      const h = p.cr ? 32 : PLAYER_H;
-      pushCubeShadow(shArr, e.x, e.y, 22, h + (e.z||0));
-    }
-    if (goldenCoin){
-      const bobZ = Math.sin((performance.now() - goldenCoin.t)/1000*3) * 6 + 15 + 4;
-      pushCubeShadow(shArr, goldenCoin.x, goldenCoin.y, 12, bobZ);
-    }
-    for (const d of drops){
-      pushCubeShadow(shArr, d.x, d.y, 12, 10);
-    }
-    if (shArr.length > 0){
+    // Динамические тени — только для игроков и дропов. Монета статична, обновляем реже.
+    if (shadowUpdateCounter % 3 === 0 || !shadowDynBuffer._full){
+      const shArr = [];
+      for (const [id, e] of pMap){
+        if (id === myId) continue;
+        const p = e.d; if (!p || !p.al) continue;
+        const d = Math.hypot(e.x - myX, e.y - myY);
+        if (d > 800) continue;
+        if (!hasLOS(myX, myY, e.x, e.y)) continue;
+        const h = p.cr ? 32 : PLAYER_H;
+        pushCubeShadow(shArr, e.x, e.y, 22, h + (e.z||0));
+      }
+      if (goldenCoin){
+        const bobZ = Math.sin((performance.now() - goldenCoin.t)/1000*3) * 6 + 15 + 4;
+        pushCubeShadow(shArr, goldenCoin.x, goldenCoin.y, 12, bobZ);
+      }
+      for (const d of drops){
+        pushCubeShadow(shArr, d.x, d.y, 12, 10);
+      }
       gl.bindBuffer(gl.ARRAY_BUFFER, shadowDynBuffer);
-      gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(shArr));
-      drawMesh(shadowDynBuffer, shArr.length/9, model, 6);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(shArr), gl.DYNAMIC_DRAW);
+      shadowDynBuffer._full = true;
+      shadowDynBuffer._count = shArr.length / 9;
+    }
+    if (shadowDynBuffer._count > 0){
+      drawMesh(shadowDynBuffer, shadowDynBuffer._count, model, 6);
     }
     gl.disable(gl.BLEND);
   }
@@ -2093,7 +2116,6 @@ function render3D(){
     drawMesh(coinBuffer, 36, coinModel, 4);
   }
 
-  // Дропнутые пушки
   const dropVerts = buildDropsBuffer();
   if (dropVerts > 0) drawMesh(dropsBuffer, dropVerts, model, 4);
 
@@ -2195,7 +2217,6 @@ function drawBloodDecals(){
 }
 
 function drawDropsLabels(){
-  // Названия дропнутых пушек
   for (const d of drops){
     const dist = Math.hypot(d.x - myX, d.y - myY);
     if (dist > 500) continue;
@@ -2211,7 +2232,6 @@ function drawDropsLabels(){
     ctx.fillRect(p.x - tw/2 - 6, p.y - 24, tw + 12, 16);
     ctx.fillStyle = `rgba(255,220,120,${alpha})`;
     ctx.fillText(wname, p.x, p.y - 12);
-    // Патроны
     if (d.mag > 0){
       ctx.font = 'bold 10px Trebuchet MS';
       ctx.fillStyle = `rgba(200,200,200,${alpha})`;
@@ -2240,7 +2260,6 @@ function drawPickupHints(){
     ctx.fillStyle = '#3ee0d0';
     ctx.fillText(text, cv2d.width/2, baseY + 22);
   }
-  // Подсказка выкинуть
   if (me.d.w !== 'knife'){
     const dtext = keyLabel(keybinds.drop) + ' — ВЫКИНУТЬ';
     ctx.font = 'bold 12px Trebuchet MS';
@@ -2331,7 +2350,9 @@ function drawViewModel(){
   const myW = me && me.d ? me.d.w : 'pistol';
   const mySkinId = equip[myW] || null;
   const mySkin = mySkinId ? skinById(mySkinId) : null;
-  const wc = mySkin ? mySkin.color : ((me && me.d && me.d.wc) ? me.d.wc : null);
+  // Скин от сервера (для поднятого оружия с чужим скином)
+  const serverWc = (me && me.d && me.d.wc) ? me.d.wc : null;
+  const wc = serverWc || (mySkin ? mySkin.color : null);
   const baseCol = wc || '#3a3a3a';
   const darkCol = wc ? shadeColor(wc, -0.4) : '#1e1e1e';
   const lightCol = wc ? shadeColor(wc, 0.3) : '#555';
@@ -2541,7 +2562,6 @@ function drawMiniMap(){
   for (const c of crates){
     ctx.fillRect(mmX + (c.x - c.size/2)*sx, mmY + (c.y - c.size/2)*sy, Math.max(2, c.size*sx), Math.max(2, c.size*sy));
   }
-  // Дропы на миникарте
   ctx.fillStyle = '#ffcc44';
   for (const d of drops){
     ctx.fillRect(mmX + d.x*sx - 2, mmY + d.y*sy - 2, 4, 4);
@@ -2611,6 +2631,11 @@ function drawFps(){
   ctx.restore();
 }
 
+function drawWalkIndicator(){
+  const walking = keys[keybinds.walk] && gameState && gameState.phase !== 'waiting';
+  $('walkIndicator').classList.toggle('show', !!walking);
+}
+
 function draw2DOverlay(){
   ctx.setTransform(1,0,0,1,0,0);
   ctx.clearRect(0, 0, cv2d.width, cv2d.height);
@@ -2625,6 +2650,7 @@ function draw2DOverlay(){
   drawDamageOverlay();
   drawPickupHints();
   drawFps();
+  drawWalkIndicator();
 }
 
 let selectedColor = 'red';
