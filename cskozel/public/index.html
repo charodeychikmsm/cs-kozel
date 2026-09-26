@@ -65,6 +65,9 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 @keyframes fade{0%{opacity:0;transform:translateX(20px)}10%{opacity:1;transform:translateX(0)}80%{opacity:1}100%{opacity:0}}
 #centerMsg{position:absolute;top:34%;left:50%;transform:translateX(-50%);font-size:40px;font-weight:900;letter-spacing:6px;text-shadow:0 0 30px rgba(0,0,0,.9);text-align:center;color:#fff;transition:opacity .2s;opacity:0}
 #centerMsg.show{opacity:1}
+#killMsg{position:absolute;top:22%;left:50%;transform:translateX(-50%);font-size:24px;font-weight:900;color:#ffd76a;text-shadow:0 0 20px rgba(255,215,0,.9);opacity:0;transition:opacity .3s;letter-spacing:3px}
+#killMsg.show{opacity:1;animation:killPulse 1.4s ease-out}
+@keyframes killPulse{0%{transform:translateX(-50%) scale(0.5);opacity:0}20%{transform:translateX(-50%) scale(1.2);opacity:1}40%{transform:translateX(-50%) scale(1);opacity:1}100%{transform:translateX(-50%) scale(1);opacity:0}}
 #buyMenu{position:absolute;inset:0;background:rgba(6,8,10,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;pointer-events:auto;z-index:20}
 .buyRow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:900px}
 .buyItem{background:#161a1f;border:1px solid #333941;border-radius:10px;padding:12px;cursor:pointer;transition:.15s;min-width:150px;text-align:center}
@@ -216,6 +219,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 <div id="bloodOverlay"></div>
 <div id="coinToast"></div>
 <div id="caseFlying">📦</div>
+<div id="killMsg"></div>
 
 <div id="screen-menu" class="screen">
   <div class="coins">🪙 <span id="coinCount">0</span></div>
@@ -267,6 +271,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
   <div id="hpBarWrap"><div id="hpBarFill"></div></div>
   <div id="killfeed"></div>
   <div id="centerMsg"></div>
+  <div id="killMsg"></div>
   <div id="hudBottom">
     <div class="stat"><b id="hudHp">100</b><span>HP</span></div>
     <div class="stat"><b id="hudAr">0</b><span>БРОНЯ</span></div>
@@ -384,7 +389,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;margin-bottom:4px;text-align:
 
 <script>
 /* ============================================================
-   CS:KOZEL — FPS Edition v11
+   CS:KOZEL — FPS Edition v12 (Weapon Drops)
    ============================================================ */
 const $ = id => document.getElementById(id);
 const cv3d = $('cv3d'), cv2d = $('cv2d');
@@ -406,7 +411,7 @@ const DEFAULT_KEYBINDS = {
   jump:' ', crouch:'control',
   reload:'r', buy:'b',
   slot1:'1', slot2:'2', slot3:'3',
-  knifeSpin:'f',
+  knifeSpin:'f', drop:'g', pickup:'e',
 };
 const keybinds = Object.assign({}, DEFAULT_KEYBINDS, JSON.parse(localStorage.getItem('kozel_keybinds') || '{}'));
 const saveKeybinds = () => localStorage.setItem('kozel_keybinds', JSON.stringify(keybinds));
@@ -414,8 +419,8 @@ const KEYBIND_LABELS = {
   forward:'Вперёд', back:'Назад', left:'Влево', right:'Вправо',
   jump:'Прыжок', crouch:'Присесть',
   reload:'Перезарядка', buy:'Магазин',
-  slot1:'Слот 1 (основное)', slot2:'Слот 2 (пистолет)', slot3:'Слот 3 (нож)',
-  knifeSpin:'Покрутить нож',
+  slot1:'Слот 1', slot2:'Слот 2', slot3:'Слот 3',
+  knifeSpin:'Покрутить нож', drop:'Выкинуть оружие', pickup:'Подобрать оружие',
 };
 function keyLabel(k){
   if (k === ' ') return 'ПРОБЕЛ';
@@ -438,10 +443,7 @@ function renderKeybindList(){
     row.className = 'keybindRow' + (rebindTarget === action ? ' rebinding' : '');
     row.dataset.action = action;
     row.innerHTML = `<span>${KEYBIND_LABELS[action]}</span><span class="keybindKey">${keyLabel(keybinds[action])}</span>`;
-    row.onclick = () => {
-      rebindTarget = action;
-      renderKeybindList();
-    };
+    row.onclick = () => { rebindTarget = action; renderKeybindList(); };
     el.appendChild(row);
   }
 }
@@ -498,6 +500,8 @@ const sfxReload = () => { tone(300, 0.08, 0.4, 0, 'square', 200); setTimeout(() 
 const sfxSwap = () => { noiseBurst(0.06, 1500, 0.35, 0, 'bandpass', 2); };
 const sfxCaseOpen = () => { tone(400, 0.1, 0.4, 0, 'square', 800); tone(800, 0.15, 0.35, 0, 'square', 1600); };
 const sfxSpin = () => { noiseBurst(0.5, 3000, 0.25, 0, 'bandpass', 3); };
+const sfxPickup = () => { tone(500, 0.07, 0.5, 0, 'square', 900); tone(900, 0.08, 0.4, 0, 'square', 1300); };
+const sfxDrop = () => { noiseBurst(0.1, 500, 0.4, 0, 'lowpass'); tone(200, 0.08, 0.3, 0, 'square', 120); };
 function sfxRoundEnd(win){
   if (win){ tone(660,0.15,0.5,0,'sine'); tone(990,0.18,0.5,0,'sine'); tone(1320,0.25,0.5,0,'sine'); }
   else { tone(440,0.2,0.5,0,'sine'); tone(330,0.25,0.5,0,'sine'); tone(220,0.3,0.5,0,'sine'); }
@@ -782,9 +786,12 @@ void main(){
     float plank = step(0.5, fract(uv.x * 3.0 + 0.25));
     baseColor *= 0.85 + plank * 0.2;
   } else if (uType == 4){
-    baseColor = vec3(1.0, 0.85, 0.15);
+    baseColor = vColor;
     float shine = noise(vWorldPos.xy * 20.0) * 0.3 + 0.7;
     baseColor *= shine;
+    // Пульсирующее свечение
+    float pulse = sin(length(vWorldPos - uCamPos) * 0.1 + vWorldPos.x * 0.01) * 0.15 + 0.85;
+    baseColor += vec3(pulse * 0.3);
   } else if (uType == 5){
     vec3 dir = normalize(vWorldPos - uCamPos);
     float y = dir.z;
@@ -853,6 +860,7 @@ let coinBuffer = null;
 let skyBuffer = null, skyVerts = 0;
 let shadowStaticBuffer = null, shadowStaticVerts = 0;
 let shadowDynBuffer = null;
+let dropsBuffer = null;
 const WALL_H = 90;
 const FLOOR_Z = -0.3;
 const SHADOW_Z = 0.02;
@@ -897,7 +905,6 @@ function pushCubeShadow(arr, cx, cy, size, height){
   pushShadowQuad(arr, bx1,by1, bx0,by1, tx3,ty3, tx2,ty2);
   pushShadowQuad(arr, bx0,by1, bx0,by0, tx0,ty0, tx3,ty3);
 }
-
 function buildSkyBuffer(){
   const arr = [];
   const S = 2000;
@@ -979,16 +986,17 @@ function buildCrateBuffer(MAP, MW, MH, TILE){
   crateBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, crateBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arr), gl.STATIC_DRAW);
-  // Добавляем тени ящиков к статичному буферу
   if (shArr.length){
-    // Пересоздаём статичный буфер объединяя (простой способ — считать заново)
-    // Но проще — заведём отдельный буфер для ящиков и будем рендерить оба.
-    // Упростим: объединим shArr в shadowStaticBuffer при вызове.
-    // Здесь мы вызываем после buildWallBuffer, так что нужно пересобрать.
+    const all = [];
+    // повторно сгенерим статичные тени стен + ящиков
+    for (let ty=0; ty<MH; ty++)
+      for (let tx=0; tx<MW; tx++)
+        if (MAP[ty][tx] === 1) pushCubeShadow(all, tx*TILE + TILE/2, ty*TILE + TILE/2, TILE, WALL_H);
+    for (let i = 0; i < shArr.length; i++) all.push(shArr[i]);
     shadowStaticBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, shadowStaticBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(shArr), gl.STATIC_DRAW);
-    shadowStaticVerts = shArr.length/9;
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(all), gl.STATIC_DRAW);
+    shadowStaticVerts = all.length/9;
   }
   return placed;
 }
@@ -999,6 +1007,9 @@ function initPlayerBuffer(){
   shadowDynBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, shadowDynBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, 600*9*4, gl.DYNAMIC_DRAW);
+  dropsBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, dropsBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, 100*36*9*4, gl.DYNAMIC_DRAW);
 }
 function initCoinBuffer(){
   const arr = [];
@@ -1031,6 +1042,8 @@ let gameState = null, MAP = null, MW = 40, MH = 30, TILE = 48;
 const pMap = new Map();
 const effects = [];
 const impacts = [];
+const bloodDecals = [];   // <-- капли крови на полу
+let drops = [];           // <-- брошенное оружие
 const keys = {};
 let mouseDown = false, rightDown = false;
 let lastSend = 0, lastAutoOpenRound = -1, buyMenuOpen = false;
@@ -1048,6 +1061,7 @@ const EYE_HEIGHT = 32, PLAYER_H = 46;
 let bloodTimer = 0;
 let goldenCoin = null;
 let crates = [];
+let killCounter = 0;   // <-- счётчик киллов за игру
 
 const weaponAnim = {
   recoilX: 0, recoilY: 0,
@@ -1127,6 +1141,8 @@ function onState(s){
   if (s.phase === 'buy' && s.round !== lastAutoOpenRound && !goldenCoin){
     setTimeout(spawnGoldenCoin, 5000);
   }
+  drops = s.drops || [];
+
   for (const ev of (s.ev || [])){
     if (ev.type === 'shot'){
       effects.push({k:'shot', x:ev.x, y:ev.y, ang:ev.ang, len:ev.len, c:ev.color, t:performance.now()});
@@ -1150,6 +1166,9 @@ function onState(s){
     }
     else if (ev.type === 'hit'){
       effects.push({k:'hit', x:ev.x, y:ev.y, t:performance.now()});
+      // Кровавая капля на полу
+      if (Math.random() < 0.7) bloodDecals.push({x: ev.x, y: ev.y, r: 4 + Math.random()*6, t: performance.now()});
+      if (bloodDecals.length > 120) bloodDecals.shift();
       const dx = ev.x - myX, dy = ev.y - myY;
       const dist = Math.hypot(dx, dy);
       if (dist < 1500){
@@ -1166,11 +1185,24 @@ function onState(s){
     }
     else if (ev.type === 'kill'){
       addKillFeed(ev);
-      if (ev.killerId === myId){ coins += 1; saveLS(); updateCoinUI(); sfxKill(0, 0.85); }
+      if (ev.killerId === myId){
+        coins += 1; saveLS(); updateCoinUI(); sfxKill(0, 0.85);
+        killCounter++;
+        showKillMsg('+1 KILL');
+        // Кровь на полу от смерти
+        const victim = pMap.get(s.players.find(p => p.name === ev.victim)?.id);
+        if (victim){
+          for (let i = 0; i < 6; i++)
+            bloodDecals.push({x: victim.x + (Math.random()-0.5)*40, y: victim.y + (Math.random()-0.5)*40, r: 6 + Math.random()*8, t: performance.now()});
+        }
+      }
     }
     else if (ev.type === 'roundend'){
       if (ev.winner === myTeam){ coins += 5; saveLS(); updateCoinUI(); sfxRoundEnd(true); }
       else sfxRoundEnd(false);
+    }
+    else if (ev.type === 'drop'){
+      sfxDrop();
     }
   }
   for (const p of s.players){
@@ -1243,6 +1275,15 @@ function onState(s){
   else if ($('screen-game').classList.contains('hidden')){ show('screen-game'); }
   if (s.phase === 'buy' && me && me.al && s.round !== lastAutoOpenRound){ openBuyMenu(); lastAutoOpenRound = s.round; }
   if (s.phase !== 'buy' && buyMenuOpen) closeBuyMenu();
+}
+
+function showKillMsg(text){
+  const el = $('killMsg');
+  el.textContent = text;
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 1400);
 }
 
 function addKillFeed(ev){
@@ -1644,17 +1685,35 @@ function closeBuyMenu(){
   if (!pointerLocked) $('lockHint').classList.remove('hidden');
 }
 
+function normalizeKey(e){
+  const code = e.code;
+  if (code.startsWith('Key')) return code.slice(3).toLowerCase();
+  if (code.startsWith('Digit')) return code.slice(5);
+  if (code === 'Space') return ' ';
+  if (code === 'ControlLeft' || code === 'ControlRight') return 'control';
+  if (code === 'ShiftLeft' || code === 'ShiftRight') return 'shift';
+  if (code === 'AltLeft' || code === 'AltRight') return 'alt';
+  if (code.startsWith('Arrow')) return code.slice(5).toLowerCase();
+  if (code === 'Escape') return 'escape';
+  if (code === 'Enter') return 'enter';
+  if (code === 'Tab') return 'tab';
+  return e.key.toLowerCase();
+}
+function findNearestDrop(){
+  let best = null, bestDist = 60;
+  for (const d of drops){
+    const dist = Math.hypot(d.x - myX, d.y - myY);
+    if (dist < bestDist){ bestDist = dist; best = d; }
+  }
+  return best;
+}
+
 window.addEventListener('keydown', e => {
-  const k = e.key.toLowerCase();
+  const k = normalizeKey(e);
   if (rebindTarget){
     e.preventDefault();
-    if (k === 'escape'){
-      rebindTarget = null;
-    } else {
-      keybinds[rebindTarget] = k;
-      saveKeybinds();
-      rebindTarget = null;
-    }
+    if (k === 'escape'){ rebindTarget = null; }
+    else { keybinds[rebindTarget] = k; saveKeybinds(); rebindTarget = null; }
     renderKeybindList();
     return;
   }
@@ -1681,13 +1740,28 @@ window.addEventListener('keydown', e => {
       sfxSpin();
     }
   }
+  if (k === keybinds.drop){
+    if (gameState && gameState.phase !== 'waiting'){
+      const me = pMap.get(myId);
+      if (me && me.d && me.d.al && me.d.w !== 'knife'){
+        send({t:'drop'});
+        sfxDrop();
+      }
+    }
+  }
+  if (k === keybinds.pickup){
+    if (gameState && gameState.phase !== 'waiting'){
+      const near = findNearestDrop();
+      if (near){ send({t:'pickup', id: near.id}); sfxPickup(); }
+    }
+  }
   if (gameState && gameState.phase !== 'waiting'){
     if (k === keybinds.slot1) send({t:'input', mx:0, my:0, a:myYaw, sh:0, sw:1});
     if (k === keybinds.slot2) send({t:'input', mx:0, my:0, a:myYaw, sh:0, sw:2});
     if (k === keybinds.slot3) send({t:'input', mx:0, my:0, a:myYaw, sh:0, sw:3});
   }
 });
-window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
+window.addEventListener('keyup', e => { keys[normalizeKey(e)] = false; });
 
 cv3d.addEventListener('click', () => {
   if (!gameState || $('screen-game').classList.contains('hidden')) return;
@@ -1925,6 +1999,23 @@ function viewMatrix(px, py, pz, yaw, pitch){
   return new Float32Array([rx, ux, -fx, 0, ry, uy, -fy, 0, rz, uz, -fz, 0, tx, ty, tz, 1]);
 }
 
+function buildDropsBuffer(){
+  if (!dropsBuffer) return 0;
+  const arr = [];
+  const time = performance.now() / 1000;
+  for (const d of drops){
+    const bob = Math.sin(time * 2 + d.x * 0.05 + d.y * 0.03) * 4 + 8;
+    const rgb = hex2rgb(d.color || '#666666');
+    // Маленький кубик
+    pushCube(arr, d.x - 6, d.y - 6, bob - 3, 12, 12, 6, rgb[0], rgb[1], rgb[2]);
+    // Полоска-рукоять
+    pushCube(arr, d.x - 2, d.y - 8, bob + 3, 4, 4, 8, rgb[0]*0.6, rgb[1]*0.6, rgb[2]*0.6);
+  }
+  gl.bindBuffer(gl.ARRAY_BUFFER, dropsBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arr), gl.DYNAMIC_DRAW);
+  return arr.length / 9;
+}
+
 function render3D(){
   if (!wallBuffer){
     gl.clearColor(0.55, 0.68, 0.85, 1);
@@ -1961,15 +2052,12 @@ function render3D(){
 
   drawMesh(floorBuffer, floorVerts, model, 1);
 
-  // ТЕНИ — рисуем плоские на полу с блендингом
   if (settings.shadows){
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    // Статичные (стены + ящики)
     if (shadowStaticBuffer && shadowStaticVerts > 0){
       drawMesh(shadowStaticBuffer, shadowStaticVerts, model, 6);
     }
-    // Динамические (игроки, монета)
     const shArr = [];
     for (const [id, e] of pMap){
       if (id === myId) continue;
@@ -1983,6 +2071,9 @@ function render3D(){
     if (goldenCoin){
       const bobZ = Math.sin((performance.now() - goldenCoin.t)/1000*3) * 6 + 15 + 4;
       pushCubeShadow(shArr, goldenCoin.x, goldenCoin.y, 12, bobZ);
+    }
+    for (const d of drops){
+      pushCubeShadow(shArr, d.x, d.y, 12, 10);
     }
     if (shArr.length > 0){
       gl.bindBuffer(gl.ARRAY_BUFFER, shadowDynBuffer);
@@ -2001,6 +2092,10 @@ function render3D(){
     const coinModel = new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, goldenCoin.x, goldenCoin.y, bob, 1]);
     drawMesh(coinBuffer, 36, coinModel, 4);
   }
+
+  // Дропнутые пушки
+  const dropVerts = buildDropsBuffer();
+  if (dropVerts > 0) drawMesh(dropsBuffer, dropVerts, model, 4);
 
   const pArr = [];
   for (const [id, e] of pMap){
@@ -2025,11 +2120,9 @@ function render3D(){
       const len = 24, th = 3;
       pushCube(pArr, wpx - Math.abs(wdx)*len/2 + wdx*2, wpy - Math.abs(wdy)*len/2 + wdy*2, wZBase, Math.abs(wdx)*len + th, Math.abs(wdy)*len + th, 4, wcol[0], wcol[1], wcol[2]);
       pushCube(pArr, wpx + wdx*6, wpy + wdy*6, wZBase + 4, 6, 6, 3, wcol[0]*0.6, wcol[1]*0.6, wcol[2]*0.6);
-      pushCube(pArr, wpx - 2, wpy - 2, wZBase - 4, 4, 4, 5, 0.1, 0.1, 0.1);
     } else if (wType === 'ak' || wType === 'm4a4' || wType === 'galil'){
       const len = 18, th = 3;
       pushCube(pArr, wpx - Math.abs(wdx)*len/2 + wdx*2, wpy - Math.abs(wdy)*len/2 + wdy*2, wZBase, Math.abs(wdx)*len + th, Math.abs(wdy)*len + th, 4, wcol[0], wcol[1], wcol[2]);
-      pushCube(pArr, wpx - 2, wpy - 2, wZBase - 5, 4, 4, 6, 0.1, 0.1, 0.1);
       pushCube(pArr, wpx - wdx*8, wpy - wdy*8, wZBase - 1, Math.abs(wdx)*5+2, Math.abs(wdy)*5+2, 5, wcol[0]*0.7, wcol[1]*0.7, wcol[2]*0.7);
     } else if (wType === 'shotgun'){
       const len = 20, th = 3;
@@ -2077,6 +2170,83 @@ function drawImpacts(){
     ctx.beginPath(); ctx.arc(p.x, p.y, size, 0, Math.PI*2); ctx.fill();
     ctx.fillStyle = 'rgba(0, 0, 0, 0.95)';
     ctx.beginPath(); ctx.arc(p.x, p.y, size * 0.55, 0, Math.PI*2); ctx.fill();
+  }
+}
+
+function drawBloodDecals(){
+  const now = performance.now();
+  while (bloodDecals.length && now - bloodDecals[0].t > 60000) bloodDecals.shift();
+  for (const b of bloodDecals){
+    const p = projectToScreen(b.x, b.y, 0.05);
+    if (!p) continue;
+    if (!hasLOS(myX, myY, b.x, b.y)) continue;
+    if (p.dist > 1200) continue;
+    const size = Math.max(3, Math.min(20, b.r * p.scale * 0.5));
+    const alpha = Math.max(0, Math.min(0.75, 0.75 - p.dist / 1600));
+    ctx.fillStyle = `rgba(140, 15, 15, ${alpha})`;
+    ctx.beginPath();
+    ctx.ellipse(p.x, p.y, size * 1.2, size * 0.7, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = `rgba(80, 5, 5, ${alpha})`;
+    ctx.beginPath();
+    ctx.ellipse(p.x, p.y, size * 0.6, size * 0.4, 0, 0, Math.PI*2);
+    ctx.fill();
+  }
+}
+
+function drawDropsLabels(){
+  // Названия дропнутых пушек
+  for (const d of drops){
+    const dist = Math.hypot(d.x - myX, d.y - myY);
+    if (dist > 500) continue;
+    if (!hasLOS(myX, myY, d.x, d.y)) continue;
+    const p = projectToScreen(d.x, d.y, 25);
+    if (!p) continue;
+    const alpha = Math.max(0.2, Math.min(0.95, 1 - dist / 500));
+    const wname = (WEAPONS[d.w] || {}).name || d.w;
+    ctx.font = 'bold 12px Trebuchet MS';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = `rgba(0,0,0,${alpha*0.6})`;
+    const tw = ctx.measureText(wname).width;
+    ctx.fillRect(p.x - tw/2 - 6, p.y - 24, tw + 12, 16);
+    ctx.fillStyle = `rgba(255,220,120,${alpha})`;
+    ctx.fillText(wname, p.x, p.y - 12);
+    // Патроны
+    if (d.mag > 0){
+      ctx.font = 'bold 10px Trebuchet MS';
+      ctx.fillStyle = `rgba(200,200,200,${alpha})`;
+      ctx.fillText(d.mag + ' патр.', p.x, p.y - 2);
+    }
+  }
+}
+
+function drawPickupHints(){
+  if (!gameState || gameState.phase === 'waiting') return;
+  const me = pMap.get(myId);
+  if (!me || !me.d || !me.d.al) return;
+  const near = findNearestDrop();
+  if (near){
+    const wname = (WEAPONS[near.w] || {}).name || near.w;
+    const text = keyLabel(keybinds.pickup) + ' — ПОДОБРАТЬ ' + wname + (near.mag ? ' (' + near.mag + ')' : '');
+    ctx.font = 'bold 16px Trebuchet MS';
+    ctx.textAlign = 'center';
+    const tw = ctx.measureText(text).width;
+    const baseY = cv2d.height/2 + 60;
+    ctx.fillStyle = 'rgba(0,0,0,.65)';
+    ctx.fillRect(cv2d.width/2 - tw/2 - 14, baseY, tw + 28, 32);
+    ctx.strokeStyle = 'rgba(62,224,208,.7)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(cv2d.width/2 - tw/2 - 14, baseY, tw + 28, 32);
+    ctx.fillStyle = '#3ee0d0';
+    ctx.fillText(text, cv2d.width/2, baseY + 22);
+  }
+  // Подсказка выкинуть
+  if (me.d.w !== 'knife'){
+    const dtext = keyLabel(keybinds.drop) + ' — ВЫКИНУТЬ';
+    ctx.font = 'bold 12px Trebuchet MS';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(255,255,255,.35)';
+    ctx.fillText(dtext, cv2d.width/2, cv2d.height/2 + 115);
   }
 }
 
@@ -2189,7 +2359,6 @@ function drawViewModel(){
   ctx.shadowBlur = 10;
 
   if (myW === 'knife'){
-    // F-анимация прокрута
     const spinT = weaponAnim.knifeSpinT;
     const pivotX = cx + 60*K;
     const pivotY = cy - 40*K;
@@ -2200,7 +2369,6 @@ function drawViewModel(){
       ctx.rotate(angle);
       ctx.translate(-pivotX, -pivotY);
     }
-
     let shape = 'default';
     const k = mySkinId || '';
     if (k.includes('karambit') || k === 'kn_doppler' || k === 'kn_tiger' || k === 'kn_karambit_emis' || k === 'kn_claw') shape = 'karambit';
@@ -2373,6 +2541,11 @@ function drawMiniMap(){
   for (const c of crates){
     ctx.fillRect(mmX + (c.x - c.size/2)*sx, mmY + (c.y - c.size/2)*sy, Math.max(2, c.size*sx), Math.max(2, c.size*sy));
   }
+  // Дропы на миникарте
+  ctx.fillStyle = '#ffcc44';
+  for (const d of drops){
+    ctx.fillRect(mmX + d.x*sx - 2, mmY + d.y*sy - 2, 4, 4);
+  }
   ctx.fillStyle = 'rgba(62,224,208,.25)';
   ctx.beginPath();
   ctx.moveTo(mmX + myX*sx, mmY + myY*sy);
@@ -2442,12 +2615,15 @@ function draw2DOverlay(){
   ctx.setTransform(1,0,0,1,0,0);
   ctx.clearRect(0, 0, cv2d.width, cv2d.height);
   if (!gameState || $('screen-game').classList.contains('hidden')) return;
+  drawBloodDecals();
   drawImpacts();
+  drawDropsLabels();
   drawViewModel();
   drawCrosshair();
   drawScope();
   drawMiniMap();
   drawDamageOverlay();
+  drawPickupHints();
   drawFps();
 }
 
