@@ -647,50 +647,6 @@ const RARITY_CLS = {junk:'rjunk',common:'rc',rare:'rr',epic:'re',legendary:'rl',
 let coins = +(localStorage.getItem('kozel_coins') || 500);
 let inv = JSON.parse(localStorage.getItem('kozel_inv') || '[]');
 let equip = JSON.parse(localStorage.getItem('kozel_equip') || '{}');
-
-/* === КАТЕГОРИИ СКИНОВ — жёсткий фикс === */
-function categoryOf(weapon){
-  if (weapon === 'knife') return 'knife';
-  if (['pistol','usp','p250','deagle'].includes(weapon)) return 'secondary';
-  if (['ak','m4a4','galil','awp','shotgun'].includes(weapon)) return 'primary';
-  return 'primary';
-}
-function categoryOfSkin(skin){
-  if (!skin) return null;
-  if (skin.type === 'char') return 'char';
-  return categoryOf(skin.weapon);
-}
-function migrateEquip(){
-  const newEquip = {};
-  let changed = false;
-  for (const [k, id] of Object.entries(equip)){
-    if (k === 'char'){ newEquip.char = id; continue; }
-    const s = skinById(id);
-    if (!s) continue;
-    const cat = categoryOfSkin(s);
-    if (!cat) continue;
-    if (k !== cat) changed = true;
-    newEquip[cat] = id;
-  }
-  if (changed || Object.keys(newEquip).length !== Object.keys(equip).length){
-    equip = newEquip;
-    saveLS();
-  } else {
-    equip = newEquip;
-  }
-}
-function getSkinFor(weapon){
-  const cat = categoryOf(weapon);
-  const id = equip[cat];
-  if (!id) return null;
-  return skinById(id);
-}
-function getSkinColorFor(weapon, fallback){
-  const s = getSkinFor(weapon);
-  if (!s) return fallback;
-  return s.color;
-}
-
 const saveLS = () => {
   localStorage.setItem('kozel_coins', coins);
   localStorage.setItem('kozel_inv', JSON.stringify(inv));
@@ -1108,7 +1064,7 @@ const muzzleSmoke = [];
 let drops = [];
 const keys = {};
 let mouseDown = false, rightDown = false;
-let lastSend = 0, lastCosmeticSend = 0, lastAutoOpenRound = -1, buyMenuOpen = false;
+let lastSend = 0, lastAutoOpenRound = -1, buyMenuOpen = false;
 let pointerLocked = false;
 
 let myX = 0, myY = 0, myYaw = 0, myPitch = 0, myZ = 0, myVz = 0, myCrouch = false;
@@ -1165,7 +1121,6 @@ function handleMsg(m){
       buildSkyBuffer();
       initPlayerBuffer();
       initCoinBuffer();
-      setTimeout(() => { if (ws && ws.readyState === 1) pushCosmetics(); }, 400);
       break;
     case 'joined':
       myId = m.id; lobbyCode = m.code;
@@ -1536,7 +1491,7 @@ function renderInv(){
   for (const entry of inv){
     const s = skinById(entry.id);
     if (!s) continue;
-    const slot = categoryOfSkin(s);
+    const slot = s.type === 'char' ? 'char' : s.weapon;
     const isEq = equip[slot] === s.id;
     const sellPrice = SELL_PRICE[s.rarity] || 10;
     const iconType = s.type === 'char' ? 'char' : s.weapon;
@@ -1606,19 +1561,13 @@ document.querySelectorAll('.filterBtn').forEach(b => {
 
 function pushCosmetics(){
   const weaponColors = {};
-  const categoryColors = {};
   for (const [slot, id] of Object.entries(equip)){
+    if (slot === 'char') continue;
     const s = skinById(id);
-    if (!s) continue;
-    if (s.type === 'char') continue;
-    // старый формат — конкретный ключ оружия
-    weaponColors[s.weapon] = s.color;
-    // новый — категория
-    const cat = categoryOfSkin(s);
-    if (cat) categoryColors[cat] = s.color;
+    if (s) weaponColors[slot] = s.color;
   }
   const ch = equip.char ? skinById(equip.char) : null;
-  send({t:'cosmetic', charColor: ch ? ch.color : null, weaponColors, categoryColors});
+  send({t:'cosmetic', charColor: ch ? ch.color : null, weaponColors});
 }
 $('btnCaseOk').onclick = () => { $('screen-case').classList.add('hidden'); show('screen-shop'); };
 
@@ -2269,7 +2218,6 @@ function render3D(){
     drawMesh(dropsBuffer, lampArr.length/9, model, 4);
   }
 
-  /* === ИГРОКИ (3-е лицо) === */
   const pArr = [];
   for (const [id, e] of pMap){
     if (id === myId) continue;
@@ -2277,14 +2225,8 @@ function render3D(){
     const d = Math.hypot(e.x - myX, e.y - myY);
     if (d > settings.viewDist + 500) continue;
     if (!hasLOS(myX, myY, e.x, e.y)) continue;
-
-    // === ЦВЕТ МОДЕЛИ (скин/команда) ===
-    let bodyColor = p.c || (p.tm === 'A' ? '#5aa9ff' : '#ffb347');
-    if (!p.c && p.bot){
-      // бот — свой fallback по char-скину из equip
-      const chSkin = equip.char ? skinById(equip.char) : null;
-      if (chSkin) bodyColor = chSkin.color;
-    }
+    const teamColor = p.tm === 'A' ? '#5aa9ff' : '#ffb347';
+    const bodyColor = p.c || teamColor;
     const rgb = hex2rgb(bodyColor);
     const z = e.z || 0;
     const h = p.cr ? 32 : PLAYER_H;
@@ -2323,45 +2265,23 @@ function render3D(){
       shoulderZ - 5, 8, 8, torsoH*0.85,
       armCol[0], armCol[1], armCol[2]);
 
-    // === ЦВЕТ ОРУЖИЯ ===
-    let weaponColor = p.wc;
-    if (!weaponColor){
-      // fallback — берём мой equip, чтобы видеть скины
-      const s = getSkinFor(p.w);
-      if (s) weaponColor = s.color;
-    }
-    const wcol = hex2rgb(weaponColor || '#3a3a3a');
-    const wType = p.w;
+    // === ОРУЖИЕ ===
     const wpx = e.x + wdx * 16, wpy = e.y + wdy * 16;
-
+    const wcol = hex2rgb(p.wc || '#3a3a3a');
+    const wType = p.w;
+    const wZBase = z + h * 0.42;
     if (wType === 'awp'){
-      const wz = z + h * 0.5;
-      pushCube(pArr, wpx - Math.abs(wdx)*20 + wdx*2, wpy - Math.abs(wdy)*20 + wdy*2, wz, Math.abs(wdx)*40 + 3, Math.abs(wdy)*40 + 3, 4, wcol[0], wcol[1], wcol[2]);
-      pushCube(pArr, wpx - Math.abs(wdx)*4, wpy - Math.abs(wdy)*4, wz+4, Math.abs(wdx)*12+2, Math.abs(wdy)*12+2, 4, wcol[0]*0.7, wcol[1]*0.7, wcol[2]*0.7);
+      pushCube(pArr, wpx - Math.abs(wdx)*20 + wdx*2, wpy - Math.abs(wdy)*20 + wdy*2, wZBase, Math.abs(wdx)*40 + 3, Math.abs(wdy)*40 + 3, 4, wcol[0], wcol[1], wcol[2]);
+      pushCube(pArr, wpx - Math.abs(wdx)*4, wpy - Math.abs(wdy)*4, wZBase+4, Math.abs(wdx)*12+2, Math.abs(wdy)*12+2, 4, wcol[0]*0.7, wcol[1]*0.7, wcol[2]*0.7);
     } else if (wType === 'ak' || wType === 'm4a4' || wType === 'galil'){
-      const wz = z + h * 0.45;
-      pushCube(pArr, wpx - Math.abs(wdx)*16 + wdx*2, wpy - Math.abs(wdy)*16 + wdy*2, wz, Math.abs(wdx)*32 + 3, Math.abs(wdy)*32 + 3, 4, wcol[0], wcol[1], wcol[2]);
-      pushCube(pArr, wpx - Math.abs(wdx)*4, wpy - Math.abs(wdy)*4, wz-5, 5, 5, 5, 0.15, 0.1, 0.05);
+      pushCube(pArr, wpx - Math.abs(wdx)*16 + wdx*2, wpy - Math.abs(wdy)*16 + wdy*2, wZBase, Math.abs(wdx)*32 + 3, Math.abs(wdy)*32 + 3, 4, wcol[0], wcol[1], wcol[2]);
+      pushCube(pArr, wpx - Math.abs(wdx)*4, wpy - Math.abs(wdy)*4, wZBase-5, 5, 5, 5, 0.15, 0.1, 0.05);
     } else if (wType === 'shotgun'){
-      const wz = z + h * 0.45;
-      pushCube(pArr, wpx - Math.abs(wdx)*14 + wdx*2, wpy - Math.abs(wdy)*14 + wdy*2, wz, Math.abs(wdx)*28 + 3, Math.abs(wdy)*28 + 3, 4, wcol[0], wcol[1], wcol[2]);
+      pushCube(pArr, wpx - Math.abs(wdx)*14 + wdx*2, wpy - Math.abs(wdy)*14 + wdy*2, wZBase, Math.abs(wdx)*28 + 3, Math.abs(wdy)*28 + 3, 4, wcol[0], wcol[1], wcol[2]);
     } else if (wType === 'knife'){
-      const wz = z + h * 0.42;
-      pushCube(pArr, wpx + wdx*4, wpy + wdy*4, wz, 3, 3, 3, wcol[0], wcol[1], wcol[2]);
+      pushCube(pArr, wpx + wdx*4, wpy + wdy*4, wZBase, 3, 3, 3, wcol[0], wcol[1], wcol[2]);
     } else {
-      // === ПИСТОЛЕТ — приподнят + ствол вперёд ===
-      const wz = z + h * 0.55;
-      pushCube(pArr,
-        wpx - Math.abs(wdx)*8 + wdx*4,
-        wpy - Math.abs(wdy)*8 + wdy*4,
-        wz, Math.abs(wdx)*16 + 3, Math.abs(wdy)*16 + 3, 4,
-        wcol[0], wcol[1], wcol[2]);
-      // рукоять
-      pushCube(pArr,
-        wpx - Math.abs(wdx)*2,
-        wpy - Math.abs(wdy)*2,
-        wz - 8, 5, 5, 9,
-        wcol[0]*0.6, wcol[1]*0.6, wcol[2]*0.6);
+      pushCube(pArr, wpx + wdx*3, wpy + wdy*3, wZBase, 4, 4, 3, wcol[0], wcol[1], wcol[2]);
     }
 
     // === КИСТИ РУК ===
@@ -2617,11 +2537,9 @@ function drawFPHand(x, y, w, h, angle, tone){
 function drawViewModel(){
   const me = pMap.get(myId);
   const myW = me && me.d ? me.d.w : 'pistol';
-  // === ЛОКАЛЬНЫЙ СКИН (жёсткий фикс) ===
-  const mySkin = getSkinFor(myW);
-  const mySkinId = mySkin ? mySkin.id : null;
-  // серверный цвет (если есть) имеет приоритет, но локальный — всегда работает
+  const mySkinId = equip[myW] || null;
   const serverWc = (me && me.d && me.d.wc) ? me.d.wc : null;
+  const mySkin = mySkinId ? skinById(mySkinId) : null;
   const wc = serverWc || (mySkin ? mySkin.color : null);
   const baseCol = wc || '#3a3a3a';
   const darkCol = wc ? shadeColor(wc, -0.4) : '#1e1e1e';
@@ -2888,15 +2806,13 @@ function drawViewModel(){
     ctx.fillRect(cx + 130*K, cy - 86*K, 100*K, 20*K);
     ctx.fillRect(cx + 30*K, cy - 105*K, 60*K, 22*K);
   } else {
-    // === ПИСТОЛЕТ — опущен обратно (было высоко) ===
-    const pShift = 15*K;
     ctx.fillStyle = wc ? baseCol : '#333';
-    ctx.fillRect(cx + 30*K, cy - 105*K - pShift, 90*K, 28*K);
-    ctx.fillStyle = '#111'; ctx.fillRect(cx + 100*K, cy - 100*K - pShift, 25*K, 14*K);
+    ctx.fillRect(cx + 30*K, cy - 105*K, 90*K, 28*K);
+    ctx.fillStyle = '#111'; ctx.fillRect(cx + 100*K, cy - 100*K, 25*K, 14*K);
     ctx.fillStyle = wc ? darkCol : '#1e1e1e';
-    ctx.fillRect(cx + 42*K, cy - 77*K - pShift, 50*K, 45*K);
-    ctx.fillStyle = '#3a2a1a'; ctx.fillRect(cx + 40*K, cy - 55*K - pShift, 55*K, 45*K);
-    if (wc){ ctx.fillStyle = lightCol; ctx.fillRect(cx + 30*K, cy - 105*K - pShift, 90*K, 3*K); }
+    ctx.fillRect(cx + 42*K, cy - 77*K, 50*K, 45*K);
+    ctx.fillStyle = '#3a2a1a'; ctx.fillRect(cx + 40*K, cy - 55*K, 55*K, 45*K);
+    if (wc){ ctx.fillStyle = lightCol; ctx.fillRect(cx + 30*K, cy - 105*K, 90*K, 3*K); }
   }
 
   // ==== КИСТИ РУК ОТ ПЕРВОГО ЛИЦА ====
@@ -2910,8 +2826,7 @@ function drawViewModel(){
     drawFPHand(cx + 250*K, cy - 110*K, 42*K, 58*K, -0.15);
     drawFPHand(cx + 110*K, cy - 95*K,  46*K, 62*K,  0.3);
   } else if (myW !== 'knife'){
-    // рука на пистолете — опущена вместе с пистолетом
-    drawFPHand(cx + 70*K, cy - 75*K, 50*K, 68*K, 0.35);
+    drawFPHand(cx + 70*K, cy - 60*K, 50*K, 68*K, 0.35);
   }
   if (myW === 'knife' && mySkinId !== 'kn_lollipop'){
     drawFPHand(cx + 85*K, cy - 15*K, 40*K, 56*K, 0.1);
@@ -3107,10 +3022,6 @@ function loop(){
   localMove(dt);
   updateWeaponAnim(dt);
   if (now - lastSend > 33){ lastSend = now; sendInput(); }
-  if (now - lastCosmeticSend > 2000 && ws && ws.readyState === 1 && myInit){
-    lastCosmeticSend = now;
-    pushCosmetics();
-  }
   updateFootsteps();
   const me = pMap.get(myId);
   const w = me && me.d ? me.d.w : '';
@@ -3121,8 +3032,6 @@ function loop(){
   draw2DOverlay();
 }
 
-/* === ИНИЦИАЛИЗАЦИЯ + МИГРАЦИЯ СТАРЫХ СОХРАНЕНИЙ === */
-migrateEquip();
 updateCoinUI();
 renderShop();
 renderInv();
