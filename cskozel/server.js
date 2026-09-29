@@ -35,7 +35,11 @@ const WEAPONS = {
   ak:      { name:'AK-47',        price:2700, dmg:34, rate:105,  spread:0.035, range:1500, pellets:1, slot:1, mag:30, reload:2500 },
   m4a4:    { name:'M4A4',         price:3100, dmg:33, rate:90,   spread:0.030, range:1500, pellets:1, slot:1, mag:30, reload:2400 },
   awp:     { name:'AWP',          price:4750, dmg:120,rate:1500, spread:0.006, range:2200, pellets:1, slot:1, mag:5,  reload:3500 },
-  armor:   { name:'Броня',        price:950,  type:'armor' },
+  zeus:  { name:'Zeus x27', price:200, slot:1, dmg:200, rate:2500, mag:1, magMax:1 },
+  mag7:  { name:'MAG-7',    price:1300, slot:1, dmg:20, rate:900, mag:5, magMax:5 },
+  mp7:   { name:'MP7',      price:1500, slot:1, dmg:22, rate:80, mag:30, magMax:30 },
+  scout: { name:'SSG 08',   price:1700, slot:1, dmg:80, rate:1100, mag:10, magMax:10, scope:true },
+  armor: { name:'Броня',  price:950,  type:'armor' },
 };
 function defaultWeaponColor(w){
   if (w === 'awp') return '#2d5a3d';
