@@ -110,7 +110,74 @@ function buildMapChristmas(){
   return g;
 }
 
+// === STATION 141 (бывш. NEON) — 1:1 как на клиенте ===
+function buildMapNeon(){
+  const g = Array.from({length: MAP_H}, () => Array(MAP_W).fill(1));
+  const clear = (x1,y1,x2,y2) => { for(let y=y1;y<=y2;y++) for(let x=x1;x<=x2;x++) if(x>0&&x<MAP_W-1&&y>0&&y<MAP_H-1) g[y][x]=0; };
+  const block = (x,y) => { if(x>0&&x<MAP_W-1&&y>0&&y<MAP_H-1) g[y][x]=1; };
+  clear(2,12,37,18);
+  clear(2,2,37,7);
+  clear(2,22,37,27);
+  clear(6,7,10,12);
+  clear(15,7,19,12);
+  clear(24,7,28,12);
+  clear(33,7,36,12);
+  clear(6,18,10,22);
+  clear(15,18,19,22);
+  clear(24,18,28,22);
+  clear(33,18,36,22);
+  clear(12,10,16,14);
+  clear(20,15,25,20);
+  clear(28,8,32,11);
+  clear(4,25,8,28);
+  clear(20,24,25,28);
+  clear(34,24,37,28);
+  block(13,11); block(14,11);
+  block(22,17); block(23,17);
+  block(30,9);
+  block(6,26);
+  block(22,26); block(23,26);
+  block(9,14); block(9,15);
+  block(20,4); block(20,5);
+  block(30,20); block(30,21);
+  block(14,25); block(15,25);
+  for(let x=0;x<MAP_W;x++){ g[0][x]=1; g[MAP_H-1][x]=1; }
+  for(let y=0;y<MAP_H;y++){ g[y][0]=1; g[y][MAP_W-1]=1; }
+  return g;
+}
+
+// === MIRAGE — 1:1 как на клиенте ===
+function buildMapMirage(){
+  const g = Array.from({length: MAP_H}, () => Array(MAP_W).fill(1));
+  const clear = (x1,y1,x2,y2) => { for(let y=y1;y<=y2;y++) for(let x=x1;x<=x2;x++) if(x>0&&x<MAP_W-1&&y>0&&y<MAP_H-1) g[y][x]=0; };
+  const block = (x,y) => { if(x>0&&x<MAP_W-1&&y>0&&y<MAP_H-1) g[y][x]=1; };
+  clear(3,24,16,28); clear(18,20,28,28);
+  block(23,24); block(23,25); block(24,24); block(24,25);
+  clear(16,5,22,19); block(19,11); block(20,11);
+  clear(16,1,22,4); clear(5,3,13,8);
+  block(8,6); block(8,7);
+  clear(3,0,12,2); clear(3,10,8,13);
+  clear(2,14,8,20); clear(9,14,15,19);
+  clear(25,3,34,9); clear(31,10,37,15);
+  clear(24,14,30,19); clear(31,16,37,20);
+  clear(13,21,17,24); clear(3,21,8,24);
+  clear(15,23,19,26); clear(20,19,22,21);
+  clear(26,19,30,21); clear(28,20,34,22);
+  clear(16,4,22,6); clear(12,1,16,3);
+  clear(22,2,26,4); clear(5,2,10,4);
+  clear(6,8,10,10); clear(3,13,6,15);
+  clear(13,5,16,8); clear(15,14,17,18);
+  clear(8,15,10,18); clear(33,9,35,11);
+  clear(30,12,33,15); clear(32,14,35,17);
+  clear(22,14,25,17); clear(30,16,32,18);
+  for(let x=0;x<MAP_W;x++){ g[0][x]=1; g[MAP_H-1][x]=1; }
+  for(let y=0;y<MAP_H;y++){ g[y][0]=1; g[y][MAP_W-1]=1; }
+  return g;
+}
+
 const GRIDS = {
+  neon:     buildMapNeon(),
+  mirage:   buildMapMirage(),
   sandboom: buildMapSandboom(),
   christmas: buildMapChristmas(),
 };
@@ -578,7 +645,7 @@ wss.on('connection', (ws) => {
     if (msg.t === 'list'){ ws.send(JSON.stringify({t:'lobbies', list:[...lobbies.values()].map(l => l.info())})); return; }
     if (msg.t === 'create'){
       const code = makeCode();
-      lobby = new Lobby(code, msg.name||'Игрок', msg.pass||'', msg.mapId || 'sandboom');
+      lobby = new Lobby(code, msg.name||'Игрок', msg.pass||'', msg.mapId || 'neon');
       lobbies.set(code, lobby);
       player = lobby.addPlayer(ws, msg.name||'Игрок', playerId);
       lobby.ensureBot();
