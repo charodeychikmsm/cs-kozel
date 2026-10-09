@@ -64,14 +64,17 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;text-align:center}
 .reloadBar .fill{height:100%;background:#3ee0d0;width:0%}
 #ammoBox .weaponName{font-size:11px;color:#c5c5c5;letter-spacing:2px;margin-bottom:2px}
 #ammoBox .statTrak{font-size:10px;color:#ff8c00;letter-spacing:2px;font-weight:800}
-#weaponPanel{position:absolute;bottom:80px;right:24px;display:flex;flex-direction:column;gap:3px;font-family:'Consolas',monospace;pointer-events:none;z-index:11;opacity:0;transition:opacity .2s}
+/* === CS-STYLE WEAPON PANEL === */
+#weaponPanel{position:absolute;bottom:86px;right:24px;display:flex;flex-direction:column;gap:3px;font-family:'Consolas',monospace;pointer-events:none;z-index:11;opacity:0;transition:opacity .25s}
 #weaponPanel.show{opacity:1}
-.wpSlot{display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,rgba(0,0,0,.2),rgba(0,0,0,.55));border:1px solid rgba(255,255,255,.08);border-radius:3px;padding:4px 10px;min-width:200px;justify-content:space-between;color:#9aa1aa;font-size:12px}
-.wpSlot.active{border-color:#ffd76a;background:linear-gradient(90deg,rgba(255,215,106,.1),rgba(255,215,106,.25));color:#fff;font-weight:800;box-shadow:0 0 12px rgba(255,215,106,.35)}
-.wpSlot.empty{opacity:.35}
-.wpKey{background:rgba(255,255,255,.18);color:#e0e4ea;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:800;min-width:14px;text-align:center}
+.wpSlot{display:flex;align-items:center;gap:9px;background:linear-gradient(90deg,rgba(0,0,0,.15),rgba(0,0,0,.62));border:1px solid rgba(255,255,255,.07);border-left:3px solid rgba(255,255,255,.12);border-radius:2px;padding:4px 10px 4px 6px;min-width:210px;justify-content:space-between;color:#9aa1aa;font-size:12px;transition:all .15s}
+.wpSlot.active{border-left-color:#ffd76a;background:linear-gradient(90deg,rgba(255,215,106,.18),rgba(255,215,106,.05));color:#fff;font-weight:800;box-shadow:0 0 14px rgba(255,215,106,.35), inset 0 0 12px rgba(255,215,106,.08)}
+.wpSlot.empty{opacity:.32}
+.wpIcon{font-size:15px;line-height:1;filter:drop-shadow(0 0 3px rgba(0,0,0,.6));width:18px;text-align:center}
+.wpKey{background:rgba(255,255,255,.15);color:#e0e4ea;padding:1px 6px;border-radius:2px;font-size:10px;font-weight:800;min-width:14px;text-align:center}
 .wpSlot.active .wpKey{background:#ffd76a;color:#000}
-.wpName{color:#b8c0c8;font-size:11px;letter-spacing:1px;text-transform:uppercase;flex:1;text-align:right}
+.wpName{color:#b8c0c8;font-size:11px;letter-spacing:.5px;text-transform:uppercase;flex:1;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wpSlot.active .wpName{color:#fff}
 #grenadeBox{position:absolute;bottom:16px;right:210px;text-align:right;font-family:'Consolas',monospace;min-width:100px;opacity:0;transition:opacity .2s}
 #grenadeBox.show{opacity:1}
 #grenadeBox .gName{font-size:13px;color:#c5c5c5;letter-spacing:2px}
@@ -323,7 +326,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;text-align:center}
 
 <div id="scoreboard" class="hidden"><div class="sbPanel"><div class="sbTop">СЧЁТ<b id="sbScore">0 : 0</b></div><div class="sbTeams"><div class="sbTeam"><div class="sbTeamTitle A">TERRORISTS (T)</div><div id="sbListA"></div></div><div class="sbTeam"><div class="sbTeamTitle B">COUNTER-TERRORISTS (CT)</div><div id="sbListB"></div></div></div></div></div>
 
-<div id="screen-menu" class="screen"><div class="coins">🪙 <span id="coinCount">0</span></div><div class="logo">CS<span>:</span>KOZEL</div><div class="sub">by charodeychikmsm &lt;3</div><div class="panel"><input id="nickInput" placeholder="Никнейм" maxlength="16"><div class="row"><input id="passInput" placeholder="Пароль" maxlength="16"><input id="codeInput" placeholder="КОД" maxlength="4" style="width:100px;text-transform:uppercase"></div><select id="mapSelect"><option value="neon">🌐 NEON (deathmatch)</option><option value="mirage">🏜️ MIRAGE</option><option value="sandboom">🏜️ SANDBOOM</option><option value="christmas">🎄 КРИСМАС</option></select><button id="btnCreate">СОЗДАТЬ ЛОББИ</button><button id="btnJoin">ВОЙТИ В ЛОББИ</button><button id="btnRefresh" class="ghost">ОБНОВИТЬ СПИСОК</button><div id="lobbyList" class="lobby-list"></div></div><div class="row2"><button id="btnInventory" class="ghost">ИНВЕНТАРЬ</button><button id="btnShop" class="ghost">МАГАЗИН</button><button id="btnCasino" class="ghost">КАЗИНО</button><button id="btnSkins" class="ghost">СКИНЫ</button><button id="btnSettings" class="ghost">НАСТРОЙКИ</button></div><div class="hint">B магазин • TAB счёт • 5 бомба • G граффити • Z радиокоманды</div></div>
+<div id="screen-menu" class="screen"><div class="coins">🪙 <span id="coinCount">0</span></div><div class="logo">CS<span>:</span>KOZEL</div><div class="sub">by charodeychikmsm &lt;3</div><div class="panel"><input id="nickInput" placeholder="Никнейм" maxlength="16"><div class="row"><input id="passInput" placeholder="Пароль" maxlength="16"><input id="codeInput" placeholder="КОД" maxlength="4" style="width:100px;text-transform:uppercase"></div><select id="mapSelect"><option value="neon">NEON (deathmatch)</option><option value="mirage">MIRAGE</option><option value="sandboom">SANDBOOM</option><option value="christmas">КРИСМАС</option></select><button id="btnCreate">СОЗДАТЬ ЛОББИ</button><button id="btnJoin">ВОЙТИ В ЛОББИ</button><button id="btnRefresh" class="ghost">ОБНОВИТЬ СПИСОК</button><div id="lobbyList" class="lobby-list"></div></div><div class="row2"><button id="btnInventory" class="ghost">ИНВЕНТАРЬ</button><button id="btnShop" class="ghost">МАГАЗИН</button><button id="btnCasino" class="ghost">КАЗИНО</button><button id="btnSkins" class="ghost">СКИНЫ</button><button id="btnSettings" class="ghost">НАСТРОЙКИ</button></div><div class="hint">B магазин • TAB счёт • 5 бомба • G граффити • Z радиокоманды</div></div>
 
 <div id="screen-lobby" class="screen hidden"><h2>ЛОББИ</h2><div class="code" id="lobbyCode">----</div><div class="hint" id="lobbyHint">Ожидание...</div><div class="teams"><div class="teamBox a" id="teamBoxA"><h3>TERRORISTS (T)</h3><div id="listA"></div></div><div class="teamBox b" id="teamBoxB"><h3>COUNTER-TERRORISTS (CT)</h3><div id="listB"></div></div></div><div class="row2"><button id="btnTeamA" class="ghost">ЗА T</button><button id="btnTeamB" class="ghost">ЗА CT</button><button id="btnLeave" class="ghost">ВЫЙТИ</button></div></div>
 
@@ -333,7 +336,13 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;text-align:center}
 <div id="hudBottom"><div class="hpRow"><span class="hpBig" id="hudHp">100</span><span class="armorBig" id="hudAr">0</span></div><div class="moneyRow">$<span id="hudMoney">2700</span></div></div>
 <div id="grenadeBox"><div class="gName" id="gName">HE</div><div class="gCount" id="gCount">×1</div></div>
 <div id="ammoBox"><div class="weaponName" id="hudWeapon">ПИСТОЛЕТ</div><div class="statTrak" id="statTrak"></div><div class="big" id="ammoMag">12<small id="ammoMax">/12</small></div><div class="lbl" id="ammoLabel">ПАТРОНЫ</div><div class="reloadBar"><div class="fill" id="reloadFill"></div></div></div>
-<div id="weaponPanel"><div class="wpSlot" data-slot="1"><span class="wpKey">1</span><span class="wpName" id="wpName1">—</span></div><div class="wpSlot" data-slot="2"><span class="wpKey">2</span><span class="wpName" id="wpName2">—</span></div><div class="wpSlot" data-slot="3"><span class="wpKey">3</span><span class="wpName" id="wpName3">Нож</span></div><div class="wpSlot" data-slot="4"><span class="wpKey">4</span><span class="wpName" id="wpName4">—</span></div><div class="wpSlot" data-slot="5"><span class="wpKey">5</span><span class="wpName" id="wpName5">—</span></div></div>
+<div id="weaponPanel">
+  <div class="wpSlot" data-slot="1"><span class="wpKey">1</span><span class="wpIcon" id="wpIcon1">🔫</span><span class="wpName" id="wpName1">—</span></div>
+  <div class="wpSlot" data-slot="2"><span class="wpKey">2</span><span class="wpIcon" id="wpIcon2">🔫</span><span class="wpName" id="wpName2">—</span></div>
+  <div class="wpSlot" data-slot="3"><span class="wpKey">3</span><span class="wpIcon" id="wpIcon3">🔪</span><span class="wpName" id="wpName3">Нож</span></div>
+  <div class="wpSlot" data-slot="4"><span class="wpKey">4</span><span class="wpIcon" id="wpIcon4">💣</span><span class="wpName" id="wpName4">—</span></div>
+  <div class="wpSlot" data-slot="5"><span class="wpKey">5</span><span class="wpIcon" id="wpIcon5">🧨</span><span class="wpName" id="wpName5">—</span></div>
+</div>
 <div id="buyMenu" class="hidden"></div>
 <div id="lockHint" class="hidden"><div>КЛИКНИ, ЧТОБЫ ИГРАТЬ</div><div class="k">B магазин • TAB счёт • 5 бомба • 4 граната • G граффити • ESC пауза</div></div>
 </div>
@@ -345,7 +354,7 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;text-align:center}
 <div id="screen-shop" class="screen hidden"><h2>МАГАЗИН</h2><div class="coins" style="position:static;margin-bottom:6px">🪙 <span id="coinCountShop">0</span></div><div class="casesWrap" id="casesWrap"></div><button class="ghost" id="btnShopBack">НАЗАД</button></div>
 <div id="screen-inv" class="screen hidden"><h2>ИНВЕНТАРЬ</h2><div class="hint">Клик — надеть/снять • 💰 — продать</div><div class="invGrid" id="invGrid"></div><button class="ghost" id="btnInvBack">НАЗАД</button></div>
 <div id="screen-skins" class="screen hidden"><h2>ВСЕ СКИНЫ</h2><div class="hint" id="skinsStat">Собрано: 0 / 0</div><div class="skinsFilter" id="skinsFilter"><div class="filterBtn sel" data-f="all">ВСЕ</div><div class="filterBtn" data-f="owned">ЕСТЬ</div><div class="filterBtn" data-f="common">ОБЫЧНЫЕ</div><div class="filterBtn" data-f="rare">РЕДКИЕ</div><div class="filterBtn" data-f="epic">ЭПИЧЕСКИЕ</div><div class="filterBtn" data-f="legendary">ЛЕГЕНДАРНЫЕ</div><div class="filterBtn" data-f="chroma">ХРОМА</div><div class="filterBtn" data-f="god">БОЖ.</div><div class="filterBtn" data-f="knife">НОЖИ</div><div class="filterBtn" data-f="ultra">УЛЬТРА</div><div class="filterBtn" data-f="gloves">ПЕРЧАТКИ</div></div><div class="invGrid skinsGrid" id="skinsGrid"></div><button class="ghost" id="btnSkinsBack">НАЗАД</button></div>
-<div id="screen-settings" class="screen hidden"><h2>НАСТРОЙКИ</h2><div class="settingsTabs"><div class="settingsTab sel" data-tab="ctrl">УПРАВЛЕНИЕ</div><div class="settingsTab" data-tab="graph">ГРАФИКА</div></div><div class="settingsPanel"><div class="tabPanel active" data-panel="ctrl"><div class="settingRow"><label>Чувствительность <b id="sensVal">1.00</b></label><input id="sensInput" type="range" min="0.2" max="3" step="0.05" value="1"></div><div class="settingRow"><label>FOV <b id="fovVal">75°</b></label><input id="fovInput" type="range" min="60" max="110" step="1" value="75"></div><div class="toggleRow"><span>Инверсия Y</span><div class="toggleBtn" id="invYToggle"></div></div><div class="settingRow"><label>Цвет прицела <b id="crossVal">БИРЮЗА</b></label><input id="crossInput" type="range" min="0" max="3" step="1" value="0"></div><div style="font-size:13px;color:#3ee0d0">КЛАВИШИ</div><div class="keybindList" id="keybindList"></div><button class="ghost" id="btnResetKeys">СБРОС</button></div><div class="tabPanel" data-panel="graph"><div class="toggleRow"><span>Тени</span><div class="toggleBtn" id="shadowsToggle"></div></div><div class="toggleRow"><span>Плавное освещение</span><div class="toggleBtn" id="smoothLightToggle"></div></div><div class="toggleRow"><span>Туман</span><div class="toggleBtn" id="fogToggle"></div></div><div class="toggleRow"><span>Небо с облаками</span><div class="toggleBtn" id="skyToggle"></div></div><div class="toggleRow"><span>Виньетка</span><div class="toggleBtn" id="vignetteToggle"></div></div><div class="toggleRow"><span>Зерно</span><div class="toggleBtn" id="grainToggle"></div></div><div class="settingRow"><label>Яркость <b id="brightVal">100%</b></label><input id="brightInput" type="range" min="0.5" max="1.8" step="0.05" value="1"></div><div class="settingRow"><label>Дальность <b id="viewDistVal">2000</b></label><input id="viewDistInput" type="range" min="800" max="3000" step="100" value="2000"></div><div class="toggleRow"><span>FPS</span><div class="toggleBtn" id="showFpsToggle"></div></div></div></div><button class="ghost" id="btnSettingsBack">НАЗАД</button></div>
+<div id="screen-settings" class="screen hidden"><h2>НАСТРОЙКИ</h2><div style="font-size:11px;color:#7d848d;letter-spacing:3px;font-weight:800">by charodeychikmsm&amp;Topochka78</div><div class="settingsTabs"><div class="settingsTab sel" data-tab="ctrl">УПРАВЛЕНИЕ</div><div class="settingsTab" data-tab="graph">ГРАФИКА</div></div><div class="settingsPanel"><div class="tabPanel active" data-panel="ctrl"><div class="settingRow"><label>Чувствительность <b id="sensVal">1.00</b></label><input id="sensInput" type="range" min="0.2" max="3" step="0.05" value="1"></div><div class="settingRow"><label>FOV <b id="fovVal">75°</b></label><input id="fovInput" type="range" min="60" max="110" step="1" value="75"></div><div class="toggleRow"><span>Инверсия Y</span><div class="toggleBtn" id="invYToggle"></div></div><div class="settingRow"><label>Цвет прицела <b id="crossVal">БИРЮЗА</b></label><input id="crossInput" type="range" min="0" max="3" step="1" value="0"></div><div style="font-size:13px;color:#3ee0d0">КЛАВИШИ</div><div class="keybindList" id="keybindList"></div><button class="ghost" id="btnResetKeys">СБРОС</button></div><div class="tabPanel" data-panel="graph"><div class="toggleRow"><span>Тени</span><div class="toggleBtn" id="shadowsToggle"></div></div><div class="toggleRow"><span>Плавное освещение</span><div class="toggleBtn" id="smoothLightToggle"></div></div><div class="toggleRow"><span>Туман</span><div class="toggleBtn" id="fogToggle"></div></div><div class="toggleRow"><span>Небо с облаками</span><div class="toggleBtn" id="skyToggle"></div></div><div class="toggleRow"><span>Виньетка</span><div class="toggleBtn" id="vignetteToggle"></div></div><div class="toggleRow"><span>Зерно</span><div class="toggleBtn" id="grainToggle"></div></div><div class="settingRow"><label>Яркость <b id="brightVal">100%</b></label><input id="brightInput" type="range" min="0.5" max="1.8" step="0.05" value="1"></div><div class="settingRow"><label>Дальность <b id="viewDistVal">2000</b></label><input id="viewDistInput" type="range" min="800" max="3000" step="100" value="2000"></div><div class="toggleRow"><span>FPS</span><div class="toggleBtn" id="showFpsToggle"></div></div></div></div><button class="ghost" id="btnSettingsBack">НАЗАД</button></div>
 <div id="screen-casino" class="screen hidden"><h2>КАЗИНО</h2><div class="coins" style="position:static;margin-bottom:6px">🪙 <span id="coinCountCasino">0</span></div><div class="casinoPanel"><div class="betRow"><input id="betInput" type="number" placeholder="Ставка" min="1" value="10"><button id="btnBetHalf" class="ghost">½</button><button id="btnBetDouble" class="ghost">×2</button><button id="btnBetAll" class="ghost">ВСЁ</button></div><div class="colorBtns"><div class="colorBtn red sel" data-color="red">КРАСНЫЙ<span class="mult">×4</span></div><div class="colorBtn green" data-color="green">ЗЕЛЁНЫЙ<span class="mult">×2</span></div><div class="colorBtn white" data-color="white">БЕЛЫЙ<span class="mult">×10</span></div></div><div class="rouletteWrap"><div class="rouletteReel" id="rouletteReel"></div><div class="rPointer"></div></div><div class="casinoResult" id="casinoResult">Выбери цвет</div><button id="btnSpin">КРУТИТЬ</button></div><button class="ghost" id="btnCasinoBack">НАЗАД</button></div>
 <div id="screen-case" class="screen hidden"><div class="reelWrap"><div class="pointer"></div><div id="reel"></div></div><div class="resultBox" id="caseResult"></div><button id="btnCaseOk" class="hidden">ЗАБРАТЬ</button></div>
 
@@ -417,19 +426,14 @@ const FIRE_RATES={ak:100,m4a4:90,galil:100,awp:1500,scout:1100,deagle:270,shotgu
 
 function makeMirageGrid(){const W=40,H=30;const g=Array.from({length:H},()=>Array(W).fill(1));const clear=(x1,y1,x2,y2)=>{for(let y=y1;y<=y2;y++)for(let x=x1;x<=x2;x++)if(x>0&&x<W-1&&y>0&&y<H-1)g[y][x]=0;};const block=(x,y)=>{if(x>0&&x<W-1&&y>0&&y<H-1)g[y][x]=1;};clear(3,24,16,28);clear(18,20,28,28);block(23,24);block(23,25);block(24,24);block(24,25);clear(16,5,22,19);block(19,11);block(20,11);clear(16,1,22,4);clear(5,3,13,8);block(8,6);block(8,7);clear(3,0,12,2);clear(3,10,8,13);clear(2,14,8,20);clear(9,14,15,19);clear(25,3,34,9);clear(31,10,37,15);clear(24,14,30,19);clear(31,16,37,20);clear(13,21,17,24);clear(3,21,8,24);clear(15,23,19,26);clear(20,19,22,21);clear(26,19,30,21);clear(28,20,34,22);clear(16,4,22,6);clear(12,1,16,3);clear(22,2,26,4);clear(5,2,10,4);clear(6,8,10,10);clear(3,13,6,15);clear(13,5,16,8);clear(15,14,17,18);clear(8,15,10,18);clear(33,9,35,11);clear(30,12,33,15);clear(32,14,35,17);clear(22,14,25,17);clear(30,16,32,18);for(let x=0;x<W;x++){g[0][x]=1;g[H-1][x]=1;}for(let y=0;y<H;y++){g[y][0]=1;g[y][W-1]=1;}return g;}
 
-// === NEON MAP (по скрину) ===
 function makeNeonGrid(){
   const W=40,H=30;
   const g=Array.from({length:H},()=>Array(W).fill(1));
   const clear=(x1,y1,x2,y2)=>{for(let y=y1;y<=y2;y++)for(let x=x1;x<=x2;x++)if(x>0&&x<W-1&&y>0&&y<H-1)g[y][x]=0;};
   const block=(x,y)=>{if(x>0&&x<W-1&&y>0&&y<H-1)g[y][x]=1;};
-  // === Главный центральный коридор ===
   clear(2,12,37,18);
-  // === Верхний коридор ===
   clear(2,2,37,7);
-  // === Нижний коридор ===
   clear(2,22,37,27);
-  // === Соединения между коридорами ===
   clear(6,7,10,12);
   clear(15,7,19,12);
   clear(24,7,28,12);
@@ -438,20 +442,17 @@ function makeNeonGrid(){
   clear(15,18,19,22);
   clear(24,18,28,22);
   clear(33,18,36,22);
-  // === Комнаты ===
-  clear(12,10,16,14); // центр
-  clear(20,15,25,20); // центральная комната
+  clear(12,10,16,14);
+  clear(20,15,25,20);
   clear(28,8,32,11);
   clear(4,25,8,28);
   clear(20,24,25,28);
   clear(34,24,37,28);
-  // === Блоки-препятствия в комнатах ===
   block(13,11); block(14,11);
   block(22,17); block(23,17);
   block(30,9);
   block(6,26);
   block(22,26); block(23,26);
-  // === Укрытия в коридорах ===
   block(9,14); block(9,15);
   block(20,4); block(20,5);
   block(30,20); block(30,21);
@@ -479,7 +480,6 @@ const GLOVES=[
   {id:'gl_sofi',name:'Перчатки | SOFI MICHELLE',type:'glove',color:'#ff1493',rarity:'ultra'}
 ];
 GLOVES.forEach(g=>SKINS.push(g));
-// GRAFFITI
 const GRAFFITI=[
   {id:'gf_skull',name:'Граффити 💀',type:'graffiti',emoji:'💀',color:'#ff3a3a',rarity:'common'},
   {id:'gf_fire',name:'Граффити 🔥',type:'graffiti',emoji:'🔥',color:'#ff8820',rarity:'common'},
@@ -536,7 +536,6 @@ return `<svg viewBox="0 0 100 60"><rect x="30" y="18" width="60" height="10" fil
 function mat4Perspective(fov,aspect,near,far){const f=1/Math.tan(fov/2);return new Float32Array([f/aspect,0,0,0,0,f,0,0,0,0,(far+near)/(near-far),-1,0,0,(2*far*near)/(near-far),0]);}
 const mat4Identity=()=>new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]);
 const VERT_SRC=`attribute vec3 aPos;attribute vec3 aNormal;attribute vec3 aColor;uniform mat4 uProj;uniform vec4 uView;uniform mat4 uModel;varying vec3 vNormal;varying vec3 vWorldPos;varying vec3 vColor;void main(){vec4 w=uModel*vec4(aPos,1.0);vWorldPos=w.xyz;vNormal=mat3(uModel)*aNormal;vColor=aColor;gl_Position=uProj*uView*w;}`;
-// Шейдер с NEON-режимом (uTheme=3)
 const FRAG_SRC=`precision highp float;
 varying vec3 vNormal;varying vec3 vWorldPos;varying vec3 vColor;
 uniform vec3 uCamPos;uniform int uType;uniform float uFogEnabled;uniform float uSmoothLight;uniform vec3 uSunDir;uniform int uTheme;
@@ -573,17 +572,14 @@ void main(){
       vec3 m1=vec3(0.88,0.75,0.55),m2=vec3(0.75,0.60,0.42),m3=vec3(0.93,0.83,0.65);
       baseColor=mix(mix(m1,m2,n),m3,step(0.7,n));
     } else if(uTheme==3){
-      // NEON: тёмные панели с бирюзовыми градиентами
       vec2 grid=floor(uv*8.0);
       float panel=hash(grid);
       vec3 base=mix(vec3(0.10,0.18,0.22),vec3(0.15,0.32,0.38),panel);
-      // Тонкие линии по краям панелей
       float fx=fract(uv.x*8.0),fy=fract(uv.y*8.0);
       float edge=step(0.95,fx)+step(0.95,fy)+step(fx,0.05)+step(fy,0.05);
       edge=clamp(edge,0.0,1.0);
       vec3 edgeCol=vec3(0.15,0.85,1.0);
       baseColor=mix(base,edgeCol,edge*0.9);
-      // Горизонтальные неоновые полосы
       float hLine=step(0.48,fract(vWorldPos.z*0.1))*step(fract(vWorldPos.z*0.1),0.52);
       baseColor=mix(baseColor,vec3(0.2,0.7,1.0),hLine*0.6);
     } else {
@@ -634,7 +630,6 @@ void main(){
   }
   vec3 lit=baseColor*(diff*0.85+0.15);lit+=baseColor*hemiAmb*0.55;lit+=rimCol*rim;
   if(uTheme==3){
-    // Эмиссия для неоновых панелей
     float emis=0.0;
     if(uType==0){
       vec2 uv;
@@ -698,10 +693,10 @@ let scopeStage=0,lastMoney=-1,lastShownRound=-1,scoreboardVisible=false;
 let plantHeld=false,defuseHeld=false;
 let lastBeepTime=0;
 let selectedGrenade='he';let grenadeThrowing=false;let grenadeThrowT=0;
-let awpBoltT=0; // время до следующего выстрела AWP/Scout
-let currentGraffiti=null; // активный граффити для нанесения
+let awpBoltT=0;
+let currentGraffiti=null;
 const myGrenades={he:0,smoke:0,flash:0,molotov:0};
-const myDamage=new Map(); // track damage for assists
+const myDamage=new Map();
 let lastDamageDealt=0, lastDamageTaken=0;
 const stepTracker=new Map();
 const lastMyPos={x:0,y:0};
@@ -911,10 +906,8 @@ document.addEventListener('mousemove',e=>{if(!pointerLocked)return;const s=setti
 cv3d.addEventListener('mousedown',e=>{
   if(e.button===0){
     mouseDown=true;
-    // Если выбран граффити — наносим на стену
     if(currentGraffiti){
       const tx=Math.floor(myX/TILE),ty=Math.floor(myY/TILE);
-      // Проверяем есть ли стена впереди
       const fx=Math.floor((myX+Math.cos(myYaw)*30)/TILE),fy=Math.floor((myY+Math.sin(myYaw)*30)/TILE);
       if(MAP[fy]&&MAP[fy][fx]===1){graffitiList.push({x:myX+Math.cos(myYaw)*20,y:myY+Math.sin(myYaw)*20,z:20,emoji:currentGraffiti,rot:myYaw});}
       currentGraffiti=null;
@@ -964,10 +957,9 @@ function buildPlayerModel(arr,e,p,z,h,rgb){
   const armCol=[rgb[0]*0.85,rgb[1]*0.85,rgb[2]*0.85];
   pushCube(arr,e.x+perpX*10+wdx*5-3,e.y+perpY*10+wdy*5-3,shoulderZ-8,6,7,torsoH*0.55,armCol[0],armCol[1],armCol[2]);
   pushCube(arr,e.x-perpX*10+wdx*5-3,e.y-perpY*10+wdy*5-3,shoulderZ-8,6,7,torsoH*0.55,armCol[0],armCol[1],armCol[2]);
-  // === БОМБА НА СПИНЕ у T, у которого C4 ===
   if(p.tm==='A'&&p.hasBomb&&!bombState.planted){
     pushCube(arr,e.x-wdx*13,e.y-wdy*13,torsoZ+2,14,12,10,0.15,0.15,0.18);
-    pushCube(arr,e.x-wdx*13,e.y-wdy*13,torsoZ+12,3,3,3,0.9,0.2,0.2); // красный огонёк
+    pushCube(arr,e.x-wdx*13,e.y-wdy*13,torsoZ+12,3,3,3,0.9,0.2,0.2);
   }
   let weaponColor=p.wc;if(!weaponColor){const s=resolveEquipSkin(p.w);if(s)weaponColor=s.color;}
   const wcol=hex2rgb(weaponColor||'#3a3a3a');const wType=p.w;const wpx=e.x+wdx*20,wpy=e.y+wdy*20;
@@ -1011,7 +1003,6 @@ function render3D(){
   const pArr=[];
   for(const[id,e]of pMap){if(id===myId)continue;const p=e.d;if(!p||!p.al)continue;const d=Math.hypot(e.x-myX,e.y-myY);if(d>settings.viewDist+500)continue;if(!hasLOS(myX,myY,e.x,e.y))continue;const teamColor=p.tm==='A'?'#ffb347':'#4ea8ff';const bodyColor=p.c||teamColor;const rgb=hex2rgb(bodyColor);const z=e.z||0;const h=p.cr?32:PLAYER_H;buildPlayerModel(pArr,e,p,z,h,rgb);}
   if(pArr.length>0){gl.bindBuffer(gl.ARRAY_BUFFER,playerBuffer);gl.bufferSubData(gl.ARRAY_BUFFER,0,new Float32Array(pArr));drawMesh(playerBuffer,pArr.length/9,model,2);}
-  // === GRAFFITI в 3D ===
   if(graffitiList.length&&graffitiBuffer){const gArr=[];for(const gf of graffitiList){pushCube(gArr,gf.x-8,gf.y-8,gf.z-4,16,16,1.5,1.0,1.0,1.0);}gl.bindBuffer(gl.ARRAY_BUFFER,graffitiBuffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(gArr),gl.DYNAMIC_DRAW);drawMesh(graffitiBuffer,gArr.length/9,model,4);}
 }
 function projectToScreen(wx,wy,wz){const cy=Math.cos(myYaw),sy=Math.sin(myYaw);const cp=Math.cos(myPitch),sp=Math.sin(myPitch);const rx=sy,ry=-cy,rz=0;const ux=-cy*sp,uy=-sy*sp,uz=cp;const fx=cy*cp,fy=sy*cp,fz=sp;const eyeZ=(myCrouch?22:EYE_HEIGHT)+myZ;const dx=wx-myX,dy=wy-myY,dz=wz-eyeZ;const eX=dx*rx+dy*ry+dz*rz;const eY=dx*ux+dy*uy+dz*uz;const eZ=dx*fx+dy*fy+dz*fz;if(eZ<=0.5)return null;const me0=pMap.get(myId);const curW=me0&&me0.d?me0.d.w:'';const isScoped=(curW==='awp'||curW==='scout')&&scopeStage>0;const curFov=isScoped?(curW==='scout'?SCOUT_SCOPE_STAGES[scopeStage]:SCOPE_STAGES[scopeStage]):settings.fov;const fovRad=curFov*Math.PI/180;const focal=cv2d.height/(2*Math.tan(fovRad/2));return{x:cv2d.width/2+eX/eZ*focal,y:cv2d.height/2-eY/eZ*focal,dist:eZ,scale:focal/eZ};}
@@ -1058,121 +1049,126 @@ function drawScope(){const me=pMap.get(myId);const curW=me&&me.d?me.d.w:'';const
 function updateRecoil(dt){const now=performance.now();if(now-recoilAnim.lastShotTime>350){recoilAnim.shotIdx=0;recoilAnim.targetX=0;recoilAnim.targetY=0;}recoilAnim.offsetX+=(recoilAnim.targetX-recoilAnim.offsetX)*Math.min(1,dt*14);recoilAnim.offsetY+=(recoilAnim.targetY-recoilAnim.offsetY)*Math.min(1,dt*14);}
 function updateWeaponAnim(dt){camShake.x*=Math.pow(0.0005,dt);camShake.y*=Math.pow(0.0005,dt);weaponAnim.recoilX*=Math.pow(0.0001,dt);weaponAnim.recoilY*=Math.pow(0.0001,dt);weaponAnim.swayX*=Math.pow(0.001,dt);weaponAnim.swayY*=Math.pow(0.001,dt);const moving=keys[keybinds.forward]||keys[keybinds.back]||keys[keybinds.left]||keys[keybinds.right];const me=pMap.get(myId);const alive=me&&me.d&&me.d.al;const t=performance.now()/1000;if(moving&&alive&&!myCrouch){weaponAnim.bobX=Math.sin(t*9)*6;weaponAnim.bobY=Math.abs(Math.cos(t*9))*5;}else if(moving&&myCrouch&&alive){weaponAnim.bobX=Math.sin(t*5)*2;weaponAnim.bobY=Math.abs(Math.cos(t*5))*1.5;}else{weaponAnim.bobX*=0.85;weaponAnim.bobY*=0.85;}if(!moving&&alive){weaponAnim.breathingPhase+=dt*1.6;weaponAnim.bobY=Math.sin(weaponAnim.breathingPhase)*1.2;weaponAnim.bobX=Math.cos(weaponAnim.breathingPhase*0.5)*0.6;}if(weaponAnim.swapT<1)weaponAnim.swapT=Math.min(1,weaponAnim.swapT+dt*3.5);if(weaponAnim.knifeSpinT<1)weaponAnim.knifeSpinT=Math.min(1,weaponAnim.knifeSpinT+dt*1.15);if(weaponAnim.knifeAttackT<1)weaponAnim.knifeAttackT=Math.min(1,weaponAnim.knifeAttackT+dt*3.0);if(grenadeThrowing){grenadeThrowT+=dt;if(grenadeThrowT>0.4)grenadeThrowing=false;}if(awpBoltT>0)awpBoltT-=dt*1000;const n=performance.now();for(let i=muzzleSmoke.length-1;i>=0;i--){const p=muzzleSmoke[i];const age=(n-p.t)/1000;if(age>p.maxLife){muzzleSmoke.splice(i,1);continue;}p.x+=p.vx*dt;p.y+=p.vy*dt;p.z+=p.vz*dt;p.vx*=0.94;p.vy*=0.94;p.vz*=0.90;p.r+=dt*9;}}
 
-// === НОВЫЕ РУКИ ПЕРСОНАЖА (как на скрине) — с перчатками и обшлагами ===
+// === НОВЫЕ 3D-РУКИ (радиальные градиенты, блики, тени — псевдо-объём) ===
 function drawFPArmsV2(myW,wc,handTone,cx,cy,K){
-  // Левая рука (снизу-слева) + правая рука на оружии
-  const glove = handTone ? shadeColor(handTone,0.05) : '#1a1a1a';
-  const gloveDark = shadeColor(glove,-0.25);
-  const gloveLight = shadeColor(glove,0.15);
-  const cuffAccent = handTone ? shadeColor(handTone,0.35) : '#ff6a00'; // оранжевый акцент как на скрине
-  const cuffAccent2 = handTone ? shadeColor(handTone,-0.5) : '#2a5fff'; // синий акцент
+  const glove = handTone || '#1a1a1a';
+  const gloveDark = shadeColor(glove,-0.40);
+  const gloveMid = shadeColor(glove,-0.18);
+  const gloveLight = shadeColor(glove,0.28);
+  const gloveHi = shadeColor(glove,0.55);
+  const cuffAccent = handTone ? shadeColor(handTone,0.42) : '#ff6a00';
+  const cuffAccent2 = handTone ? shadeColor(handTone,-0.55) : '#2a5fff';
 
-  // === ЛЕВАЯ РУКА (передняя, на цевье) ===
+  // Хелпер: объёмная "сфера" (кисть, костяшки)
+  const gloveSphere=(x,y,r)=>{
+    const grd=ctx.createRadialGradient(x-r*0.35,y-r*0.42,r*0.08,x,y,r*1.05);
+    grd.addColorStop(0,gloveHi);
+    grd.addColorStop(0.30,gloveLight);
+    grd.addColorStop(0.65,glove);
+    grd.addColorStop(0.88,gloveMid);
+    grd.addColorStop(1,gloveDark);
+    ctx.fillStyle=grd;
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.13)';
+    ctx.lineWidth=Math.max(1,r*0.06);
+    ctx.stroke();
+  };
+  // Хелпер: объёмный палец
+  const drawFinger=(x,y,rx,ry,rot)=>{
+    const grd=ctx.createRadialGradient(x-rx*0.3,y-ry*0.45,rx*0.05,x,y,Math.max(rx,ry)*1.15);
+    grd.addColorStop(0,gloveHi);
+    grd.addColorStop(0.35,gloveLight);
+    grd.addColorStop(0.7,glove);
+    grd.addColorStop(0.9,gloveMid);
+    grd.addColorStop(1,gloveDark);
+    ctx.fillStyle=grd;
+    ctx.beginPath();ctx.ellipse(x,y,rx,ry,rot,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,0.25)';
+    ctx.lineWidth=Math.max(0.6,rx*0.09);
+    ctx.stroke();
+  };
+  // Хелпер: объёмное предплечье
+  const drawArm=(x0,y0,x1,y1,x2,y2,x3,y3,dark)=>{
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.lineTo(x2,y2);ctx.lineTo(x3,y3);ctx.closePath();
+    const g=ctx.createLinearGradient(x0,y0,x2,y2);
+    g.addColorStop(0,'#050505');
+    g.addColorStop(0.35,'#111');
+    g.addColorStop(0.65,dark?'#1e1e1e':'#2a2a2a');
+    g.addColorStop(1,'#0a0a0a');
+    ctx.fillStyle=g;ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,0.7)';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.restore();
+  };
+  // Хелпер: обшлаг с объёмом
+  const drawCuff=(x,y,w,h,col)=>{
+    const g=ctx.createLinearGradient(x,y,x,y+h);
+    g.addColorStop(0,shadeColor(col,0.25));
+    g.addColorStop(0.5,col);
+    g.addColorStop(1,shadeColor(col,-0.35));
+    ctx.fillStyle=g;
+    ctx.fillRect(x,y,w,h);
+    ctx.strokeStyle='rgba(0,0,0,0.45)';ctx.lineWidth=1;ctx.strokeRect(x,y,w,h);
+  };
+
+  // === ЛЕВАЯ РУКА (на цевье) ===
   if(myW!=='knife' && myW!=='zeus'){
     const lx=cx+ (myW==='awp'||myW==='scout' ? 230*K : 200*K);
     const ly=cy - (myW==='awp'||myW==='scout' ? 120*K : 85*K);
-    // Предплечье (тёмная часть)
-    ctx.fillStyle='#141414';
-    ctx.beginPath();
-    ctx.moveTo(lx-70*K, ly+100*K);
-    ctx.lineTo(lx+30*K, ly+30*K);
-    ctx.lineTo(lx+50*K, ly+60*K);
-    ctx.lineTo(lx-30*K, ly+130*K);
-    ctx.closePath();
-    ctx.fill();
-    // Обшлаг с акцентом (синий)
-    ctx.fillStyle=cuffAccent2;
-    ctx.fillRect(lx-10*K, ly+15*K, 60*K, 12*K);
-    // Обшлаг с акцентом (оранжевый)
-    ctx.fillStyle=cuffAccent;
-    ctx.fillRect(lx+2*K, ly+25*K, 50*K, 10*K);
-    // Кисть (перчатка)
-    ctx.fillStyle=glove;
-    ctx.beginPath();
-    ctx.arc(lx+30*K, ly+5*K, 32*K, 0, Math.PI*2);
-    ctx.fill();
-    // Тени на перчатке
-    ctx.fillStyle=gloveDark;
-    ctx.beginPath();
-    ctx.arc(lx+22*K, ly+18*K, 22*K, 0, Math.PI*2);
-    ctx.fill();
-    // Пальцы
-    ctx.fillStyle=glove;
-    for(let i=0;i<3;i++){
-      ctx.beginPath();
-      ctx.ellipse(lx+20*K+i*15*K, ly-22*K, 7*K, 12*K, 0, 0, Math.PI*2);
-      ctx.fill();
+    drawArm(lx-80*K,ly+110*K, lx+25*K,ly+25*K, lx+55*K,ly+65*K, lx-35*K,ly+145*K, false);
+    drawCuff(lx-12*K,ly+15*K,66*K,13*K,cuffAccent2);
+    drawCuff(lx+2*K,ly+27*K,54*K,11*K,cuffAccent);
+    gloveSphere(lx+30*K,ly+5*K,33*K);
+    for(let i=0;i<4;i++){
+      const fx=lx+12*K+i*14*K;
+      const fy=ly-25*K-Math.abs(i-1.5)*2*K;
+      drawFinger(fx,fy,7*K,14*K,0);
     }
-    // Большой палец
-    ctx.fillStyle=gloveLight;
-    ctx.beginPath();
-    ctx.ellipse(lx+50*K, ly+5*K, 12*K, 9*K, 0.3, 0, Math.PI*2);
-    ctx.fill();
+    drawFinger(lx+52*K,ly+8*K,13*K,10*K,0.35);
   }
 
   // === ПРАВАЯ РУКА (на рукоятке) ===
   if(myW!=='knife' && myW!=='zeus'){
     const rx=cx+ (myW==='awp'||myW==='scout' ? 110*K : 100*K);
     const ry=cy - (myW==='awp'||myW==='scout' ? 95*K : 60*K);
-    // Предплечье
-    ctx.fillStyle='#141414';
-    ctx.beginPath();
-    ctx.moveTo(rx-50*K, ry+120*K);
-    ctx.lineTo(rx+20*K, ry+40*K);
-    ctx.lineTo(rx+40*K, ry+70*K);
-    ctx.lineTo(rx-20*K, ry+150*K);
-    ctx.closePath();
-    ctx.fill();
-    // Обшлаг
-    ctx.fillStyle=cuffAccent2;
-    ctx.fillRect(rx-5*K, ry+22*K, 55*K, 12*K);
-    ctx.fillStyle=cuffAccent;
-    ctx.fillRect(rx+3*K, ry+32*K, 45*K, 10*K);
-    // Кисть
-    ctx.fillStyle=glove;
-    ctx.beginPath();
-    ctx.arc(rx+22*K, ry+15*K, 30*K, 0, Math.PI*2);
-    ctx.fill();
-    ctx.fillStyle=gloveDark;
-    ctx.beginPath();
-    ctx.arc(rx+15*K, ry+28*K, 20*K, 0, Math.PI*2);
-    ctx.fill();
-    // Пальцы
-    ctx.fillStyle=glove;
-    for(let i=0;i<3;i++){
-      ctx.beginPath();
-      ctx.ellipse(rx+15*K+i*13*K, ry-8*K, 6*K, 11*K, 0, 0, Math.PI*2);
-      ctx.fill();
+    drawArm(rx-55*K,ry+130*K, rx+18*K,ry+38*K, rx+45*K,ry+72*K, rx-28*K,ry+160*K, true);
+    drawCuff(rx-8*K,ry+22*K,60*K,13*K,cuffAccent2);
+    drawCuff(rx+2*K,ry+34*K,48*K,11*K,cuffAccent);
+    gloveSphere(rx+22*K,ry+15*K,31*K);
+    for(let i=0;i<4;i++){
+      const fx=rx+10*K+i*12*K;
+      const fy=ry-10*K-Math.abs(i-1.5)*2*K;
+      drawFinger(fx,fy,6*K,12*K,0);
     }
   }
 
-  // === Для ножа ===
+  // === Нож ===
   if(myW==='knife'){
     const rx=cx+90*K, ry=cy-10*K;
-    ctx.fillStyle='#141414';
-    ctx.beginPath();
-    ctx.moveTo(rx-40*K, ry+130*K);
-    ctx.lineTo(rx+10*K, ry+40*K);
-    ctx.lineTo(rx+40*K, ry+60*K);
-    ctx.lineTo(rx-10*K, ry+150*K);
-    ctx.closePath();
-    ctx.fill();
-    ctx.fillStyle=cuffAccent2;ctx.fillRect(rx-5*K, ry+25*K, 50*K, 12*K);
-    ctx.fillStyle=cuffAccent;ctx.fillRect(rx+3*K, ry+35*K, 40*K, 10*K);
-    ctx.fillStyle=glove;
-    ctx.beginPath();ctx.arc(rx+22*K, ry+15*K, 30*K, 0, Math.PI*2);ctx.fill();
-    ctx.fillStyle=gloveDark;
-    ctx.beginPath();ctx.arc(rx+15*K, ry+28*K, 20*K, 0, Math.PI*2);ctx.fill();
+    drawArm(rx-40*K,ry+130*K, rx+10*K,ry+40*K, rx+40*K,ry+60*K, rx-10*K,ry+150*K, true);
+    drawCuff(rx-8*K,ry+22*K,58*K,13*K,cuffAccent2);
+    drawCuff(rx+2*K,ry+34*K,46*K,11*K,cuffAccent);
+    gloveSphere(rx+22*K,ry+15*K,31*K);
+    for(let i=0;i<4;i++){
+      const fx=rx+8*K+i*13*K;
+      const fy=ry-12*K-Math.abs(i-1.5)*2*K;
+      drawFinger(fx,fy,6*K,12*K,0);
+    }
   }
 
-  // === Для Zeus ===
+  // === Zeus ===
   if(myW==='zeus'){
     const rx=cx+220*K, ry=cy-100*K;
-    ctx.fillStyle='#141414';
-    ctx.beginPath();ctx.moveTo(rx-40*K, ry+120*K);ctx.lineTo(rx+30*K, ry+40*K);ctx.lineTo(rx+50*K, ry+70*K);ctx.lineTo(rx-20*K, ry+150*K);ctx.closePath();ctx.fill();
-    ctx.fillStyle=cuffAccent2;ctx.fillRect(rx-5*K, ry+25*K, 55*K, 12*K);
-    ctx.fillStyle=cuffAccent;ctx.fillRect(rx+3*K, ry+35*K, 45*K, 10*K);
-    ctx.fillStyle=glove;ctx.beginPath();ctx.arc(rx+25*K, ry+15*K, 30*K, 0, Math.PI*2);ctx.fill();
+    drawArm(rx-45*K,ry+125*K, rx+25*K,ry+38*K, rx+52*K,ry+72*K, rx-22*K,ry+155*K, true);
+    drawCuff(rx-8*K,ry+22*K,62*K,13*K,cuffAccent2);
+    drawCuff(rx+2*K,ry+34*K,50*K,11*K,cuffAccent);
+    gloveSphere(rx+25*K,ry+15*K,31*K);
+    for(let i=0;i<4;i++){
+      const fx=rx+12*K+i*13*K;
+      const fy=ry-10*K-Math.abs(i-1.5)*2*K;
+      drawFinger(fx,fy,6*K,12*K,0);
+    }
   }
 }
 
@@ -1192,11 +1188,9 @@ function drawViewModel(){
   const swapT=weaponAnim.swapT;const swapEase=1-Math.pow(1-swapT,3);const swapY=(1-swapEase)*cv2d.height*0.6;const swapAlpha=Math.max(0.1,Math.min(1,swapT*1.5));
   ctx.save();ctx.globalAlpha=swapAlpha;
   const totalRecoilY=weaponAnim.recoilY+recoilAnim.offsetY*K*1.5;const totalRecoilX=weaponAnim.recoilX+recoilAnim.offsetX*K*1.5;
-  // Bolt kick для AWP/Scout
   const boltKick=awpBoltT>0?Math.min(1,awpBoltT/((FIRE_RATES[myW]||1500)))*30*K:0;
   ctx.translate(weaponAnim.bobX+weaponAnim.swayX+totalRecoilX*0.6,weaponAnim.bobY+weaponAnim.swayY+totalRecoilY*0.8+swapY+boltKick);
   ctx.translate(cv2d.width*0.08,0);
-  // === КНОЖИ / ОРУЖИЕ ===
   if(myW==='knife'){
     const spinT=weaponAnim.knifeSpinT;const atkT=weaponAnim.knifeAttackT;
     if(spinT<1){const ease=(1-Math.cos(spinT*Math.PI))/2;const px=cx+60*K,py=cy-40*K;ctx.translate(px,py);ctx.rotate(ease*4*Math.PI);ctx.translate(-px,-py);}
@@ -1210,7 +1204,6 @@ function drawViewModel(){
   else if(myW==='mp7'){ctx.fillStyle=wc?baseCol:'#3a3a3a';ctx.fillRect(cx+30*K,cy-90*K,220*K,26*K);ctx.fillStyle=wc?darkCol:'#1a1a1a';ctx.fillRect(cx+250*K,cy-85*K,40*K,60*K);}
   else if(myW==='shotgun'||myW==='mag7'){const short=myW==='mag7';ctx.fillStyle=wc?baseCol:'#3a3a3a';ctx.fillRect(cx+10*K,cy-90*K,(short?280:320)*K,26*K);ctx.fillStyle='#111';ctx.fillRect(cx+180*K,cy-82*K,130*K,12*K);ctx.fillStyle=wc?darkCol:'#3a2a1a';ctx.fillRect(cx+130*K,cy-86*K,100*K,20*K);}
   else{ctx.fillStyle=wc?baseCol:'#333';ctx.fillRect(cx+30*K,cy-105*K,90*K,28*K);ctx.fillStyle='#111';ctx.fillRect(cx+100*K,cy-100*K,25*K,14*K);ctx.fillStyle=wc?darkCol:'#1e1e1e';ctx.fillRect(cx+42*K,cy-77*K,50*K,45*K);ctx.fillStyle='#3a2a1a';ctx.fillRect(cx+40*K,cy-55*K,55*K,45*K);}
-  // === НОВЫЕ РУКИ (в стиле скрина) ===
   drawFPArmsV2(myW,wc,handTone,cx,cy,K);
   ctx.restore();
 }
@@ -1218,19 +1211,39 @@ function drawMiniMap(){const mmW=150,mmH=112;const mmX=12,mmY=12;ctx.fillStyle='
 function drawDamageOverlay(){const me=pMap.get(myId);if(!me||!me.d)return;if(gameState.matchOver){const win=gameState.score[myTeam]>=13;ctx.fillStyle=win?'rgba(0,80,0,.35)':'rgba(120,0,0,.35)';ctx.fillRect(0,0,cv2d.width,cv2d.height);ctx.font='bold 56px Trebuchet MS';ctx.textAlign='center';ctx.fillStyle=win?'#7cff8a':'#ff6b6b';ctx.fillText(win?'🏆 ПОБЕДА':'ПОРАЖЕНИЕ',cv2d.width/2,cv2d.height/2);return;}if(!me.d.al&&gameState&&gameState.phase!=='waiting'){ctx.fillStyle='rgba(120,0,0,.25)';ctx.fillRect(0,0,cv2d.width,cv2d.height);ctx.font='bold 42px Trebuchet MS';ctx.textAlign='center';ctx.fillStyle='#ff6b6b';ctx.fillText('ВЫ МЕРТВЫ',cv2d.width/2,cv2d.height/2-60);}}
 function drawFps(){if(!settings.showFps)return;ctx.save();ctx.font='bold 14px monospace';ctx.textAlign='right';ctx.fillStyle='#0f0';ctx.fillText(fps+' FPS',cv2d.width-20,cv2d.height-130);ctx.restore();}
 function drawWalkIndicator(){const walking=keys[keybinds.walk]&&gameState&&gameState.phase!=='waiting';$('walkIndicator').classList.toggle('show',!!walking);}
+function weaponEmoji(w){
+  if(!w)return '🔫';
+  if(w==='knife')return '🔪';
+  if(w==='zeus')return '⚡';
+  if(w==='awp'||w==='scout')return '🎯';
+  if(w==='shotgun'||w==='mag7')return '💥';
+  if(w==='he'||w==='grenade')return '💣';
+  if(w==='smoke')return '💨';
+  if(w==='flash')return '✨';
+  if(w==='molotov')return '🔥';
+  if(w==='bomb')return '🧨';
+  return '🔫';
+}
 function updateWeaponPanel(){
   const el=$('weaponPanel');if(!gameState||$('screen-game').classList.contains('hidden')){el.classList.remove('show');return;}
   const me=pMap.get(myId);if(!me||!me.d){el.classList.remove('show');return;}
   el.classList.add('show');
   const w=me.d.w;const quickKey=w+'|'+(me.d.s1||'')+'|'+(me.d.s2||'')+'|'+selectedGrenade+'|'+myGrenades[selectedGrenade]+'|'+(bombState.planted?'1':'0')+'|'+myTeam;
   if(quickKey===window.__lastWPKey)return;window.__lastWPKey=quickKey;
-  const slot1=me.d.s1?(WEAPONS[me.d.s1]||{}).name:'—';$('wpName1').textContent=slot1||'—';$('wpName1').parentElement.classList.toggle('empty',!me.d.s1);
-  const slot2=me.d.s2?(WEAPONS[me.d.s2]||{}).name:'—';$('wpName2').textContent=slot2||'Пистолет';$('wpName2').parentElement.classList.toggle('empty',!slot2);
-  $('wpName3').textContent='Нож';
+  const slot1=me.d.s1?(WEAPONS[me.d.s1]||{}).name:'—';
+  $('wpName1').textContent=slot1||'—';$('wpName1').parentElement.classList.toggle('empty',!me.d.s1);
+  $('wpIcon1').textContent=weaponEmoji(me.d.s1||'ak');
+  const slot2=me.d.s2?(WEAPONS[me.d.s2]||{}).name:'Пистолет';
+  $('wpName2').textContent=slot2||'Пистолет';$('wpName2').parentElement.classList.toggle('empty',!slot2);
+  $('wpIcon2').textContent=weaponEmoji(me.d.s2||'pistol');
+  $('wpName3').textContent='Нож';$('wpIcon3').textContent='🔪';
   const gNames={he:'HE Граната',smoke:'Смок',flash:'Флешка',molotov:'Молотов'};
-  const gActive=myGrenades[selectedGrenade]>0;$('wpName4').textContent=gActive?(gNames[selectedGrenade]+' ×'+myGrenades[selectedGrenade]):'—';$('wpName4').parentElement.classList.toggle('empty',!gActive);
+  const gActive=myGrenades[selectedGrenade]>0;
+  $('wpName4').textContent=gActive?(gNames[selectedGrenade]+' ×'+myGrenades[selectedGrenade]):'—';
+  $('wpName4').parentElement.classList.toggle('empty',!gActive);
+  $('wpIcon4').textContent=weaponEmoji(selectedGrenade);
   const isT=myTeam==='A';
-  if(isT){$('wpName5').textContent=bombState.planted?'ЗАЛОЖЕНА':'C4 БОМБА';$('wpName5').parentElement.classList.remove('empty');}
+  if(isT){$('wpName5').textContent=bombState.planted?'ЗАЛОЖЕНА':'C4 БОМБА';$('wpName5').parentElement.classList.remove('empty');$('wpIcon5').textContent='🧨';}
   else{$('wpName5').textContent='—';$('wpName5').parentElement.classList.add('empty');}
   document.querySelectorAll('#weaponPanel .wpSlot').forEach(s=>s.classList.remove('active'));
   let activeSlot=3;
