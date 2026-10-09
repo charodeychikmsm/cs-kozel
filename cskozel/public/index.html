@@ -1242,18 +1242,37 @@ function drawFPArmsV2(myW,wc,handTone,cx,cy,K){
     drawWrapFinger(rx+22*K, ry+4*K, 9*K, 16*K, 0.3, -0.4, gloveLight);
   }
 
-  // === Нож ===
+    // === Нож ===
   if(myW==='knife'){
-    const rx=cx+95*K, ry=cy-20*K;
-    drawForearm(rx-40*K, cy+220*K, rx+15*K, ry+70*K, 62*K, 34*K, armDark, true);
-    drawCuff(rx-45*K, cy+130*K, 105*K, 14*K, cuff2);
-    drawCuff(rx-42*K, cy+146*K, 95*K, 12*K, cuff1);
-    drawFist(rx, ry, 42*K, 34*K, 0.15);
+    // Рукоять ножа в клиенте нарисована на bx=cx+60*K, by=cy-40*K
+    // Рука должна быть ТАМ ЖЕ, ниже рукояти, обхватывая её
+    const hx=cx+60*K + 8*K;       // центр кулака чуть правее рукояти
+    const hy=cy-40*K + 55*K;       // ниже основания лезвия (на рукояти)
+
+    // Предплечье идёт снизу-справа к кулаку
+    drawForearm(hx-30*K, cy+220*K, hx-5*K, hy+45*K, 66*K, 36*K, armDark, true);
+    drawCuff(hx-55*K, cy+135*K, 110*K, 14*K, cuff2);
+    drawCuff(hx-52*K, cy+151*K, 100*K, 12*K, cuff1);
+
+    // Кулак на рукояти (повёрнут чтобы большой палец был слева)
+    drawFist(hx, hy, 44*K, 36*K, -0.05);
+
+    // 4 пальца обхватывают рукоять — идут ГОРИЗОНТАЛЬНО, сгибаясь вниз
     for(let i=0;i<4;i++){
-      const fx=rx-10*K+i*16*K;
-      const fy=ry-20*K-i*2*K;
-      drawWrapFinger(fx, fy, 7*K, 18*K, -0.8, -0.4, glove);
+      const fx = hx - 34*K + i*20*K;    // слева направо
+      const fy = hy - 30*K;              // поверх кулака (пальцы сверху рукояти)
+      // Дуга от 180° до 340° — палец уходит вправо и вниз, обхватывая ствол
+      drawWrapFinger(fx, fy, 9*K, 20*K, 2.0, 3.4, glove);
     }
+
+    // Большой палец справа, прижат снизу к рукояти
+    drawWrapFinger(hx+30*K, hy-8*K, 10*K, 14*K, -0.6, 0.2, gloveLight);
+
+    // Лёгкая тень от кулака на рукоять
+    ctx.fillStyle='rgba(0,0,0,0.35)';
+    ctx.beginPath();
+    ctx.ellipse(hx-2*K, hy+22*K, 40*K, 8*K, 0, 0, Math.PI*2);
+    ctx.fill();
   }
 
   // === Zeus ===
