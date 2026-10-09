@@ -1099,20 +1099,176 @@ function updateWeaponAnim(dt){camShake.x*=Math.pow(0.0005,dt);camShake.y*=Math.p
 
 function drawFPArmsV2(myW,wc,handTone,cx,cy,K){
   const glove = handTone || '#1a1a1a';
-  const gloveDark = shadeColor(glove,-0.40);
-  const gloveMid = shadeColor(glove,-0.18);
-  const gloveLight = shadeColor(glove,0.28);
+  const gloveDark = shadeColor(glove,-0.55);
+  const gloveMid = shadeColor(glove,-0.20);
+  const gloveLight = shadeColor(glove,0.20);
   const gloveHi = shadeColor(glove,0.55);
-  const cuffAccent = handTone ? shadeColor(handTone,0.42) : '#ff6a00';
-  const cuffAccent2 = handTone ? shadeColor(handTone,-0.55) : '#2a5fff';
-  const gloveSphere=(x,y,r)=>{const grd=ctx.createRadialGradient(x-r*0.35,y-r*0.42,r*0.08,x,y,r*1.05);grd.addColorStop(0,gloveHi);grd.addColorStop(0.30,gloveLight);grd.addColorStop(0.65,glove);grd.addColorStop(0.88,gloveMid);grd.addColorStop(1,gloveDark);ctx.fillStyle=grd;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(255,255,255,0.13)';ctx.lineWidth=Math.max(1,r*0.06);ctx.stroke();};
-  const drawFinger=(x,y,rx,ry,rot)=>{const grd=ctx.createRadialGradient(x-rx*0.3,y-ry*0.45,rx*0.05,x,y,Math.max(rx,ry)*1.15);grd.addColorStop(0,gloveHi);grd.addColorStop(0.35,gloveLight);grd.addColorStop(0.7,glove);grd.addColorStop(0.9,gloveMid);grd.addColorStop(1,gloveDark);ctx.fillStyle=grd;ctx.beginPath();ctx.ellipse(x,y,rx,ry,rot,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(0,0,0,0.25)';ctx.lineWidth=Math.max(0.6,rx*0.09);ctx.stroke();};
-  const drawArm=(x0,y0,x1,y1,x2,y2,x3,y3,dark)=>{ctx.save();ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.lineTo(x2,y2);ctx.lineTo(x3,y3);ctx.closePath();const g=ctx.createLinearGradient(x0,y0,x2,y2);g.addColorStop(0,'#050505');g.addColorStop(0.35,'#111');g.addColorStop(0.65,dark?'#1e1e1e':'#2a2a2a');g.addColorStop(1,'#0a0a0a');ctx.fillStyle=g;ctx.fill();ctx.strokeStyle='rgba(0,0,0,0.7)';ctx.lineWidth=1.5;ctx.stroke();ctx.restore();};
-  const drawCuff=(x,y,w,h,col)=>{const g=ctx.createLinearGradient(x,y,x,y+h);g.addColorStop(0,shadeColor(col,0.25));g.addColorStop(0.5,col);g.addColorStop(1,shadeColor(col,-0.35));ctx.fillStyle=g;ctx.fillRect(x,y,w,h);ctx.strokeStyle='rgba(0,0,0,0.45)';ctx.lineWidth=1;ctx.strokeRect(x,y,w,h);};
-  if(myW!=='knife' && myW!=='zeus'){const lx=cx+ (myW==='awp'||myW==='scout' ? 230*K : 200*K);const ly=cy - (myW==='awp'||myW==='scout' ? 120*K : 85*K);drawArm(lx-80*K,ly+110*K, lx+25*K,ly+25*K, lx+55*K,ly+65*K, lx-35*K,ly+145*K, false);drawCuff(lx-12*K,ly+15*K,66*K,13*K,cuffAccent2);drawCuff(lx+2*K,ly+27*K,54*K,11*K,cuffAccent);gloveSphere(lx+30*K,ly+5*K,33*K);for(let i=0;i<4;i++){const fx=lx+12*K+i*14*K;const fy=ly-25*K-Math.abs(i-1.5)*2*K;drawFinger(fx,fy,7*K,14*K,0);}drawFinger(lx+52*K,ly+8*K,13*K,10*K,0.35);}
-  if(myW!=='knife' && myW!=='zeus'){const rx=cx+ (myW==='awp'||myW==='scout' ? 110*K : 100*K);const ry=cy - (myW==='awp'||myW==='scout' ? 95*K : 60*K);drawArm(rx-55*K,ry+130*K, rx+18*K,ry+38*K, rx+45*K,ry+72*K, rx-28*K,ry+160*K, true);drawCuff(rx-8*K,ry+22*K,60*K,13*K,cuffAccent2);drawCuff(rx+2*K,ry+34*K,48*K,11*K,cuffAccent);gloveSphere(rx+22*K,ry+15*K,31*K);for(let i=0;i<4;i++){const fx=rx+10*K+i*12*K;const fy=ry-10*K-Math.abs(i-1.5)*2*K;drawFinger(fx,fy,6*K,12*K,0);}}
-  if(myW==='knife'){const rx=cx+90*K, ry=cy-10*K;drawArm(rx-40*K,ry+130*K, rx+10*K,ry+40*K, rx+40*K,ry+60*K, rx-10*K,ry+150*K, true);drawCuff(rx-8*K,ry+22*K,58*K,13*K,cuffAccent2);drawCuff(rx+2*K,ry+34*K,46*K,11*K,cuffAccent);gloveSphere(rx+22*K,ry+15*K,31*K);for(let i=0;i<4;i++){const fx=rx+8*K+i*13*K;const fy=ry-12*K-Math.abs(i-1.5)*2*K;drawFinger(fx,fy,6*K,12*K,0);}}
-  if(myW==='zeus'){const rx=cx+220*K, ry=cy-100*K;drawArm(rx-45*K,ry+125*K, rx+25*K,ry+38*K, rx+52*K,ry+72*K, rx-22*K,ry+155*K, true);drawCuff(rx-8*K,ry+22*K,62*K,13*K,cuffAccent2);drawCuff(rx+2*K,ry+34*K,50*K,11*K,cuffAccent);gloveSphere(rx+25*K,ry+15*K,31*K);for(let i=0;i<4;i++){const fx=rx+12*K+i*13*K;const fy=ry-10*K-Math.abs(i-1.5)*2*K;drawFinger(fx,fy,6*K,12*K,0);}}
+  const cuff1 = handTone ? shadeColor(handTone,0.35) : '#ff6a00';
+  const cuff2 = handTone ? shadeColor(handTone,-0.5) : '#2a5fff';
+  const armDark = '#0e0e0e';
+  const armLight = '#222222';
+
+  // Кисть — овальная, сжатая в кулак
+  const drawFist=(x,y,w,h,rot)=>{
+    ctx.save();ctx.translate(x,y);ctx.rotate(rot||0);
+    // Тень снизу
+    ctx.fillStyle='rgba(0,0,0,0.6)';
+    ctx.beginPath();ctx.ellipse(0,h*0.15,w,h,0,0,Math.PI*2);ctx.fill();
+    // Основа кулака с градиентом (свет сверху-слева)
+    const g=ctx.createRadialGradient(-w*0.35,-h*0.45,w*0.05,0,0,w*1.05);
+    g.addColorStop(0,gloveHi);
+    g.addColorStop(0.3,gloveLight);
+    g.addColorStop(0.6,glove);
+    g.addColorStop(0.85,gloveMid);
+    g.addColorStop(1,gloveDark);
+    ctx.fillStyle=g;
+    ctx.beginPath();ctx.ellipse(0,0,w,h,0,0,Math.PI*2);ctx.fill();
+    // Верхний блик
+    ctx.fillStyle='rgba(255,255,255,0.22)';
+    ctx.beginPath();ctx.ellipse(-w*0.35,-h*0.42,w*0.32,h*0.20,-0.4,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+  };
+
+  // Палец — изогнутый, поверх оружия
+  const drawWrapFinger=(cx0,cy0,r,len,angleStart,angleEnd,tone)=>{
+    ctx.save();
+    ctx.beginPath();
+    const segs=6;
+    const pts=[];
+    for(let i=0;i<=segs;i++){
+      const t=i/segs;
+      const a=angleStart+(angleEnd-angleStart)*t;
+      const px=cx0+Math.cos(a)*r - Math.sin(a)*len*t;
+      const py=cy0+Math.sin(a)*r + Math.cos(a)*len*t;
+      pts.push([px,py]);
+    }
+    // Внешняя линия
+    ctx.lineWidth=len*0.55;
+    ctx.lineCap='round';
+    ctx.strokeStyle=tone||glove;
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0],pts[0][1]);
+    for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]);
+    ctx.stroke();
+    // Внутренний блик
+    ctx.lineWidth=len*0.18;
+    ctx.strokeStyle='rgba(255,255,255,0.18)';
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0]-1,pts[0][1]-2);
+    for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0]-1,pts[i][1]-2);
+    ctx.stroke();
+    // Обводка снизу
+    ctx.lineWidth=1.2;
+    ctx.strokeStyle='rgba(0,0,0,0.55)';
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0],pts[0][1]+len*0.30);
+    for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]+len*0.30);
+    ctx.stroke();
+    ctx.restore();
+  };
+
+  // Предплечье — сужающаяся трапеция
+  const drawForearm=(x0,y0,x1,y1,w0,w1,tone,dark)=>{
+    ctx.save();
+    const dx=x1-x0,dy=y1-y0;
+    const len=Math.hypot(dx,dy);
+    const nx=-dy/len,ny=dx/len;
+    ctx.beginPath();
+    ctx.moveTo(x0+nx*w0,y0+ny*w0);
+    ctx.lineTo(x1+nx*w1,y1+ny*w1);
+    ctx.lineTo(x1-nx*w1,y1-ny*w1);
+    ctx.lineTo(x0-nx*w0,y0-ny*w0);
+    ctx.closePath();
+    const g=ctx.createLinearGradient(x0,y0,x1,y1);
+    g.addColorStop(0,'#050505');
+    g.addColorStop(0.4,tone||armDark);
+    g.addColorStop(0.7,dark?armDark:armLight);
+    g.addColorStop(1,'#000000');
+    ctx.fillStyle=g;ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,0.8)';ctx.lineWidth=1.5;ctx.stroke();
+    // Манжеты перчатки поверх
+    ctx.restore();
+  };
+
+  const drawCuff=(x,y,w,h,col)=>{
+    const g=ctx.createLinearGradient(x,y,x,y+h);
+    g.addColorStop(0,shadeColor(col,0.30));
+    g.addColorStop(0.5,col);
+    g.addColorStop(1,shadeColor(col,-0.45));
+    ctx.fillStyle=g;ctx.fillRect(x,y,w,h);
+    ctx.strokeStyle='rgba(0,0,0,0.55)';ctx.lineWidth=1;ctx.strokeRect(x,y,w,h);
+  };
+
+  // === ЛЕВАЯ РУКА (на цевье) ===
+  if(myW!=='knife' && myW!=='zeus'){
+    const awpLike = myW==='awp'||myW==='scout';
+    const lx=cx + (awpLike?225*K:195*K);
+    const ly=cy - (awpLike?118*K:82*K);
+
+    // Предплечье от нижнего края к кисти
+    drawForearm(lx-90*K, cy+180*K, lx+20*K, ly+55*K, 60*K, 34*K, armDark, false);
+    // Манжеты
+    drawCuff(lx-58*K, cy+110*K, 110*K, 14*K, cuff2);
+    drawCuff(lx-55*K, cy+126*K, 100*K, 12*K, cuff1);
+    // Кисть на цевье
+    drawFist(lx, ly, 42*K, 34*K, -0.15);
+    // Пальцы, обхватывающие цевьё сверху
+    for(let i=0;i<3;i++){
+      const fx=lx+8*K+i*20*K;
+      const fy=ly-25*K;
+      drawWrapFinger(fx, fy, 8*K, 22*K, -0.9, -0.3, glove);
+    }
+    // Большой палец снизу
+    drawWrapFinger(lx-18*K, ly+8*K, 10*K, 18*K, 0.7, 0.2, gloveLight);
+  }
+
+  // === ПРАВАЯ РУКА (на рукоятке, держит спуск) ===
+  if(myW!=='knife' && myW!=='zeus'){
+    const awpLike = myW==='awp'||myW==='scout';
+    const rx=cx + (awpLike?95*K:85*K);
+    const ry=cy - (awpLike?90*K:55*K);
+
+    drawForearm(rx-40*K, cy+200*K, rx+15*K, ry+65*K, 58*K, 32*K, armDark, true);
+    drawCuff(rx-45*K, cy+120*K, 100*K, 14*K, cuff2);
+    drawCuff(rx-42*K, cy+136*K, 90*K, 12*K, cuff1);
+    drawFist(rx, ry, 40*K, 32*K, 0.10);
+    // Пальцы вокруг рукоятки
+    for(let i=0;i<3;i++){
+      const fx=rx-6*K+i*18*K;
+      const fy=ry-22*K;
+      drawWrapFinger(fx, fy, 7*K, 20*K, -0.85, -0.35, glove);
+    }
+    // Указательный на спуске
+    drawWrapFinger(rx+22*K, ry+4*K, 9*K, 16*K, 0.3, -0.4, gloveLight);
+  }
+
+  // === Нож ===
+  if(myW==='knife'){
+    const rx=cx+95*K, ry=cy-20*K;
+    drawForearm(rx-40*K, cy+220*K, rx+15*K, ry+70*K, 62*K, 34*K, armDark, true);
+    drawCuff(rx-45*K, cy+130*K, 105*K, 14*K, cuff2);
+    drawCuff(rx-42*K, cy+146*K, 95*K, 12*K, cuff1);
+    drawFist(rx, ry, 42*K, 34*K, 0.15);
+    for(let i=0;i<4;i++){
+      const fx=rx-10*K+i*16*K;
+      const fy=ry-20*K-i*2*K;
+      drawWrapFinger(fx, fy, 7*K, 18*K, -0.8, -0.4, glove);
+    }
+  }
+
+  // === Zeus ===
+  if(myW==='zeus'){
+    const rx=cx+220*K, ry=cy-100*K;
+    drawForearm(rx-50*K, cy+180*K, rx+20*K, ry+60*K, 60*K, 34*K, armDark, true);
+    drawCuff(rx-50*K, cy+110*K, 105*K, 14*K, cuff2);
+    drawCuff(rx-47*K, cy+126*K, 95*K, 12*K, cuff1);
+    drawFist(rx, ry, 42*K, 34*K, 0.15);
+    for(let i=0;i<3;i++){
+      const fx=rx-6*K+i*18*K;
+      const fy=ry-22*K;
+      drawWrapFinger(fx, fy, 7*K, 20*K, -0.85, -0.35, glove);
+    }
+  }
 }
 
 function drawGrenadeViewmodel(){const cx=cv2d.width/2,cy=cv2d.height;const S=Math.min(cv2d.width,cv2d.height)/720;const K=1.85*S;const throwAnim=grenadeThrowing?Math.min(1,grenadeThrowT/0.4):0;const offY=-throwAnim*200*K;const rot=throwAnim*-1.2;ctx.save();ctx.translate(cx+cv2d.width*0.10,cy-100*K+offY);ctx.rotate(rot);const col=selectedGrenade==='he'?'#5a5a2a':selectedGrenade==='smoke'?'#7a7a85':selectedGrenade==='flash'?'#d8d820':'#a83520';ctx.fillStyle=col;ctx.beginPath();ctx.ellipse(0,0,55*K,70*K,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#333';ctx.fillRect(-20*K,-78*K,40*K,16*K);ctx.restore();}
