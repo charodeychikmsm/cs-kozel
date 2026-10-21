@@ -42,36 +42,22 @@ const WEAPONS = {
   armor: { name:'Броня',  price:950,  type:'armor' },
 };
 function defaultWeaponColor(w){
-  if (w === 'awp') return '#2d5a3d';
-  if (w === 'ak') return '#8b5a3c';
-  if (w === 'm4a4') return '#3a4a5a';
-  if (w === 'galil') return '#a08050';
-  if (w === 'shotgun') return '#7a5a3a';
-  if (w === 'deagle') return '#5a5a5a';
+  if (w === 'awp') return '#2d5a3d'; if (w === 'ak') return '#8b5a3c'; if (w === 'm4a4') return '#3a4a5a';
+  if (w === 'galil') return '#a08050'; if (w === 'shotgun') return '#7a5a3a'; if (w === 'deagle') return '#5a5a5a';
   return '#555555';
 }
-function isPistolWeapon(w){
-  return w === 'pistol' || w === 'usp' || w === 'p250' || w === 'deagle';
-}
+function isPistolWeapon(w){ return w === 'pistol' || w === 'usp' || w === 'p250' || w === 'deagle'; }
 
 function buildMapSandboom(){
   const g = Array.from({length: MAP_H}, () => Array(MAP_W).fill(0));
   const rect = (x,y,w,h) => { for (let j=y;j<y+h;j++) for (let i=x;i<x+w;i++) if (j>=0&&j<MAP_H&&i>=0&&i<MAP_W) g[j][i]=1; };
   rect(0,0,MAP_W,1); rect(0,MAP_H-1,MAP_W,1); rect(0,0,1,MAP_H); rect(MAP_W-1,0,1,MAP_H);
   const north = [
-    [4,3,4,1],[4,3,1,5],[7,3,1,5],[4,7,4,1],
-    [16,3,8,1],[16,3,1,4],[23,3,1,4],[16,6,8,1],
-    [28,3,4,1],[28,3,1,5],[31,3,1,5],[28,7,4,1],
-    [8,11,4,1],[8,11,1,4],[8,14,4,1],
-    [27,11,4,1],[30,11,1,4],[27,14,4,1],
-    [12,10,1,3],[26,10,1,3],
-    [10,8,1,1],[14,8,1,1],[24,8,1,1],[28,8,1,1],
-    [5,6,2,1],[13,4,2,1],[24,4,2,1],[32,6,2,1],
-    [15,12,3,1],[21,12,3,1],
-    [19,13,2,1],[19,16,2,1],
-    [18,14,1,3],[21,14,1,3],
-    [10,15,1,1],[29,15,1,1],
-    [12,14,1,1],[27,14,1,1],
+    [4,3,4,1],[4,3,1,5],[7,3,1,5],[4,7,4,1],[16,3,8,1],[16,3,1,4],[23,3,1,4],[16,6,8,1],
+    [28,3,4,1],[28,3,1,5],[31,3,1,5],[28,7,4,1],[8,11,4,1],[8,11,1,4],[8,14,4,1],
+    [27,11,4,1],[30,11,1,4],[27,14,4,1],[12,10,1,3],[26,10,1,3],[10,8,1,1],[14,8,1,1],
+    [24,8,1,1],[28,8,1,1],[5,6,2,1],[13,4,2,1],[24,4,2,1],[32,6,2,1],[15,12,3,1],[21,12,3,1],
+    [19,13,2,1],[19,16,2,1],[18,14,1,3],[21,14,1,3],[10,15,1,1],[29,15,1,1],[12,14,1,1],[27,14,1,1],
   ];
   for (const [x,y,w,h] of north){ rect(x,y,w,h); rect(x, MAP_H-y-h, w, h); }
   return g;
@@ -80,107 +66,50 @@ function buildMapChristmas(){
   const g = Array.from({length: MAP_H}, () => Array(MAP_W).fill(0));
   const rect = (x,y,w,h) => { for (let j=y;j<y+h;j++) for (let i=x;i<x+w;i++) if (j>=0&&j<MAP_H&&i>=0&&i<MAP_W) g[j][i]=1; };
   rect(0,0,MAP_W,1); rect(0,MAP_H-1,MAP_W,1); rect(0,0,1,MAP_H); rect(MAP_W-1,0,1,MAP_H);
-  const tree = (cx, ty) => {
-    rect(cx-2, ty, 5, 1);
-    rect(cx-1, ty+1, 3, 1);
-    rect(cx, ty+2, 1, 1);
-    rect(cx-1, ty+3, 3, 1);
-    rect(cx-2, ty+4, 5, 1);
-  };
+  const tree = (cx, ty) => { rect(cx-2, ty, 5, 1); rect(cx-1, ty+1, 3, 1); rect(cx, ty+2, 1, 1); rect(cx-1, ty+3, 3, 1); rect(cx-2, ty+4, 5, 1); };
   tree(6, 3); tree(33, 3); tree(6, 22); tree(33, 22); tree(19, 3); tree(20, 24);
-  rect(11, 11, 3, 1); rect(11, 11, 1, 3);
-  rect(26, 11, 3, 1); rect(28, 11, 1, 3);
-  rect(11, 17, 1, 3); rect(11, 19, 3, 1);
-  rect(26, 19, 3, 1); rect(28, 17, 1, 3);
-  rect(19, 12, 2, 1); rect(19, 17, 2, 1);
-  rect(18, 13, 1, 4); rect(21, 13, 1, 4);
-  rect(19, 14, 2, 2);
-  rect(4, 12, 2, 2); rect(34, 12, 2, 2);
-  rect(4, 17, 2, 2); rect(34, 17, 2, 2);
-  rect(15, 8, 1, 1); rect(16, 9, 1, 1);
-  rect(23, 20, 1, 1); rect(24, 21, 1, 1);
-  rect(7, 8, 1, 1); rect(32, 8, 1, 1);
-  rect(7, 21, 1, 1); rect(32, 21, 1, 1);
-  rect(2, 6, 2, 1); rect(2, 8, 2, 1); rect(2, 10, 2, 1);
-  rect(2, 19, 2, 1); rect(2, 21, 2, 1); rect(2, 23, 2, 1);
-  rect(36, 6, 2, 1); rect(36, 8, 2, 1); rect(36, 10, 2, 1);
-  rect(36, 19, 2, 1); rect(36, 21, 2, 1); rect(36, 23, 2, 1);
-  rect(15, 15, 2, 1); rect(23, 15, 2, 1);
-  rect(15, 14, 1, 1); rect(24, 14, 1, 1);
+  rect(11, 11, 3, 1); rect(11, 11, 1, 3); rect(26, 11, 3, 1); rect(28, 11, 1, 3);
+  rect(11, 17, 1, 3); rect(11, 19, 3, 1); rect(26, 19, 3, 1); rect(28, 17, 1, 3);
+  rect(19, 12, 2, 1); rect(19, 17, 2, 1); rect(18, 13, 1, 4); rect(21, 13, 1, 4);
+  rect(19, 14, 2, 2); rect(4, 12, 2, 2); rect(34, 12, 2, 2); rect(4, 17, 2, 2); rect(34, 17, 2, 2);
+  rect(15, 8, 1, 1); rect(16, 9, 1, 1); rect(23, 20, 1, 1); rect(24, 21, 1, 1);
+  rect(7, 8, 1, 1); rect(32, 8, 1, 1); rect(7, 21, 1, 1); rect(32, 21, 1, 1);
+  rect(2, 6, 2, 1); rect(2, 8, 2, 1); rect(2, 10, 2, 1); rect(2, 19, 2, 1); rect(2, 21, 2, 1); rect(2, 23, 2, 1);
+  rect(36, 6, 2, 1); rect(36, 8, 2, 1); rect(36, 10, 2, 1); rect(36, 19, 2, 1); rect(36, 21, 2, 1); rect(36, 23, 2, 1);
+  rect(15, 15, 2, 1); rect(23, 15, 2, 1); rect(15, 14, 1, 1); rect(24, 14, 1, 1);
   return g;
 }
-
-// === STATION 141 (бывш. NEON) — 1:1 как на клиенте ===
 function buildMapNeon(){
   const g = Array.from({length: MAP_H}, () => Array(MAP_W).fill(1));
   const clear = (x1,y1,x2,y2) => { for(let y=y1;y<=y2;y++) for(let x=x1;x<=x2;x++) if(x>0&&x<MAP_W-1&&y>0&&y<MAP_H-1) g[y][x]=0; };
   const block = (x,y) => { if(x>0&&x<MAP_W-1&&y>0&&y<MAP_H-1) g[y][x]=1; };
-  clear(2,12,37,18);
-  clear(2,2,37,7);
-  clear(2,22,37,27);
-  clear(6,7,10,12);
-  clear(15,7,19,12);
-  clear(24,7,28,12);
-  clear(33,7,36,12);
-  clear(6,18,10,22);
-  clear(15,18,19,22);
-  clear(24,18,28,22);
-  clear(33,18,36,22);
-  clear(12,10,16,14);
-  clear(20,15,25,20);
-  clear(28,8,32,11);
-  clear(4,25,8,28);
-  clear(20,24,25,28);
-  clear(34,24,37,28);
-  block(13,11); block(14,11);
-  block(22,17); block(23,17);
-  block(30,9);
-  block(6,26);
-  block(22,26); block(23,26);
-  block(9,14); block(9,15);
-  block(20,4); block(20,5);
-  block(30,20); block(30,21);
-  block(14,25); block(15,25);
+  clear(2,12,37,18); clear(2,2,37,7); clear(2,22,37,27);
+  clear(6,7,10,12); clear(15,7,19,12); clear(24,7,28,12); clear(33,7,36,12);
+  clear(6,18,10,22); clear(15,18,19,22); clear(24,18,28,22); clear(33,18,36,22);
+  clear(12,10,16,14); clear(20,15,25,20); clear(28,8,32,11); clear(4,25,8,28); clear(20,24,25,28); clear(34,24,37,28);
+  block(13,11); block(14,11); block(22,17); block(23,17); block(30,9); block(6,26); block(22,26); block(23,26);
+  block(9,14); block(9,15); block(20,4); block(20,5); block(30,20); block(30,21); block(14,25); block(15,25);
   for(let x=0;x<MAP_W;x++){ g[0][x]=1; g[MAP_H-1][x]=1; }
   for(let y=0;y<MAP_H;y++){ g[y][0]=1; g[y][MAP_W-1]=1; }
   return g;
 }
-
-// === MIRAGE — 1:1 как на клиенте ===
 function buildMapMirage(){
   const g = Array.from({length: MAP_H}, () => Array(MAP_W).fill(1));
   const clear = (x1,y1,x2,y2) => { for(let y=y1;y<=y2;y++) for(let x=x1;x<=x2;x++) if(x>0&&x<MAP_W-1&&y>0&&y<MAP_H-1) g[y][x]=0; };
   const block = (x,y) => { if(x>0&&x<MAP_W-1&&y>0&&y<MAP_H-1) g[y][x]=1; };
-  clear(3,24,16,28); clear(18,20,28,28);
-  block(23,24); block(23,25); block(24,24); block(24,25);
-  clear(16,5,22,19); block(19,11); block(20,11);
-  clear(16,1,22,4); clear(5,3,13,8);
-  block(8,6); block(8,7);
-  clear(3,0,12,2); clear(3,10,8,13);
-  clear(2,14,8,20); clear(9,14,15,19);
-  clear(25,3,34,9); clear(31,10,37,15);
-  clear(24,14,30,19); clear(31,16,37,20);
-  clear(13,21,17,24); clear(3,21,8,24);
-  clear(15,23,19,26); clear(20,19,22,21);
-  clear(26,19,30,21); clear(28,20,34,22);
-  clear(16,4,22,6); clear(12,1,16,3);
-  clear(22,2,26,4); clear(5,2,10,4);
-  clear(6,8,10,10); clear(3,13,6,15);
-  clear(13,5,16,8); clear(15,14,17,18);
-  clear(8,15,10,18); clear(33,9,35,11);
-  clear(30,12,33,15); clear(32,14,35,17);
-  clear(22,14,25,17); clear(30,16,32,18);
+  clear(3,24,16,28); clear(18,20,28,28); block(23,24); block(23,25); block(24,24); block(24,25);
+  clear(16,5,22,19); block(19,11); block(20,11); clear(16,1,22,4); clear(5,3,13,8); block(8,6); block(8,7);
+  clear(3,0,12,2); clear(3,10,8,13); clear(2,14,8,20); clear(9,14,15,19); clear(25,3,34,9); clear(31,10,37,15);
+  clear(24,14,30,19); clear(31,16,37,20); clear(13,21,17,24); clear(3,21,8,24); clear(15,23,19,26); clear(20,19,22,21);
+  clear(26,19,30,21); clear(28,20,34,22); clear(16,4,22,6); clear(12,1,16,3); clear(22,2,26,4); clear(5,2,10,4);
+  clear(6,8,10,10); clear(3,13,6,15); clear(13,5,16,8); clear(15,14,17,18); clear(8,15,10,18); clear(33,9,35,11);
+  clear(30,12,33,15); clear(32,14,35,17); clear(22,14,25,17); clear(30,16,32,18);
   for(let x=0;x<MAP_W;x++){ g[0][x]=1; g[MAP_H-1][x]=1; }
   for(let y=0;y<MAP_H;y++){ g[y][0]=1; g[y][MAP_W-1]=1; }
   return g;
 }
 
-const GRIDS = {
-  neon:     buildMapNeon(),
-  mirage:   buildMapMirage(),
-  sandboom: buildMapSandboom(),
-  christmas: buildMapChristmas(),
-};
+const GRIDS = { neon: buildMapNeon(), mirage: buildMapMirage(), sandboom: buildMapSandboom(), christmas: buildMapChristmas() };
 
 function isWall(x,y, grid){
   const tx = Math.floor(x/TILE), ty = Math.floor(y/TILE);
@@ -190,35 +119,22 @@ function isWall(x,y, grid){
 function collide(x,y,r, grid){
   const minX = Math.floor((x-r)/TILE), maxX = Math.floor((x+r)/TILE);
   const minY = Math.floor((y-r)/TILE), maxY = Math.floor((y+r)/TILE);
-  for (let ty=minY; ty<=maxY; ty++)
-    for (let tx=minX; tx<=maxX; tx++){
-      if (ty<0||ty>=MAP_H||tx<0||tx>=MAP_W) return true;
-      if (grid[ty][tx] === 1) return true;
-    }
+  for (let ty=minY; ty<=maxY; ty++) for (let tx=minX; tx<=maxX; tx++){
+    if (ty<0||ty>=MAP_H||tx<0||tx>=MAP_W) return true;
+    if (grid[ty][tx] === 1) return true;
+  }
   return false;
 }
 function hasLOS(x1, y1, x2, y2, grid){
-  const dx = x2-x1, dy = y2-y1;
-  const dist = Math.hypot(dx, dy);
-  const steps = Math.ceil(dist / 16);
-  for (let i = 1; i < steps; i++){
-    const t = i/steps;
-    if (isWall(x1+dx*t, y1+dy*t, grid)) return false;
-  }
+  const dx = x2-x1, dy = y2-y1, dist = Math.hypot(dx, dy), steps = Math.ceil(dist / 16);
+  for (let i = 1; i < steps; i++){ const t = i/steps; if (isWall(x1+dx*t, y1+dy*t, grid)) return false; }
   return true;
 }
 function rayCircle(ox,oy,dx,dy,cx,cy,r){
-  const fx = ox-cx, fy = oy-cy;
-  const a = dx*dx + dy*dy;
-  const b = 2*(fx*dx + fy*dy);
-  const c = fx*fx + fy*fy - r*r;
-  const d = b*b - 4*a*c;
+  const fx = ox-cx, fy = oy-cy, a = dx*dx + dy*dy, b = 2*(fx*dx + fy*dy), c = fx*fx + fy*fy - r*r, d = b*b - 4*a*c;
   if (d < 0) return null;
-  const sq = Math.sqrt(d);
-  const t1 = (-b-sq)/(2*a), t2 = (-b+sq)/(2*a);
-  if (t1 >= 0) return t1;
-  if (t2 >= 0) return t2;
-  return null;
+  const sq = Math.sqrt(d), t1 = (-b-sq)/(2*a), t2 = (-b+sq)/(2*a);
+  return t1 >= 0 ? t1 : (t2 >= 0 ? t2 : null);
 }
 
 const server = http.createServer((req, res) => {
@@ -237,7 +153,9 @@ const server = http.createServer((req, res) => {
 });
 
 const lobbies = new Map();
+const activeTrades = new Map();
 let nextId = 1;
+let nextTradeId = 1;
 const makeCode = () => { let c; do { c = Math.random().toString(36).slice(2,6).toUpperCase(); } while (lobbies.has(c)); return c; };
 const getCurrentWeapon = p => p.currentSlot === 1 ? (p.slot1 || 'knife') : p.currentSlot === 2 ? (p.slot2 || 'knife') : 'knife';
 const makeDropId = () => 'd_' + Math.random().toString(36).slice(2, 8);
@@ -245,11 +163,10 @@ const makeDropId = () => 'd_' + Math.random().toString(36).slice(2, 8);
 class Lobby {
   constructor(code, name, pass, mapId){
     this.code = code; this.name = name; this.pass = pass || '';
-    this.mapId = GRIDS[mapId] ? mapId : 'sandboom';
+    this.mapId = GRIDS[mapId] ? mapId : 'neon';
     this.players = []; this.phase = 'waiting'; this.phaseTimer = 0;
     this.round = 0; this.score = {A:0, B:0}; this.winner = null;
-    this.events = []; this.matchOver = false;
-    this.droppedWeapons = [];
+    this.events = []; this.matchOver = false; this.droppedWeapons = [];
   }
   realCount(){ return this.players.filter(p => !p.isBot).length; }
   info(){ return { code:this.code, name:this.name, players:this.realCount(), max:MAX_PLAYERS, locked:!!this.pass, mapId:this.mapId }; }
@@ -257,26 +174,18 @@ class Lobby {
   stateMsg(){
     const now = Date.now();
     return {
-      t:'state', phase:this.phase, timer:Math.ceil(this.phaseTimer), round:this.round,
-      score:this.score, winner:this.winner, matchOver:this.matchOver,
-      mapId: this.mapId,
+      t:'state', phase:this.phase, timer:Math.ceil(this.phaseTimer), round:this.round, score:this.score, winner:this.winner, matchOver:this.matchOver, mapId: this.mapId,
       drops: this.droppedWeapons.map(d => ({ id:d.id, w:d.w, x:Math.round(d.x), y:Math.round(d.y), mag:d.mag|0, color:d.color })),
       players: this.players.map(p => {
         const w = WEAPONS[getCurrentWeapon(p)];
         const magField = p.currentSlot === 1 ? 'mag1' : p.currentSlot === 2 ? 'mag2' : null;
         const mag = magField ? p[magField] : 0;
         return {
-          id:p.id, n:p.name, tm:p.team, bot:p.isBot?1:0,
-          x:Math.round(p.x), y:Math.round(p.y), z:Math.round(p.z), a:+p.ang.toFixed(3),
-          hp:p.hp, ar:p.armor, money:p.money,
-          w:getCurrentWeapon(p), wc:p.weaponColors[getCurrentWeapon(p)]||null,
-          s1:p.slot1, s2:p.slot2, cs:p.currentSlot,
-          c:p.charColor, al:p.alive, k:p.kills, d:p.deaths,
-          bought:p.boughtWeapon, boughtAr:p.boughtArmor, cr:p.crouch?1:0,
-          wk: p.input.walk ? 1 : 0,
-          mag, magMax:(w&&w.mag)||0, reloading:p.reloading?1:0,
-          reloadT: p.reloading ? Math.max(0, p.reloadEndAt - now) : 0,
-          reloadTotal: p.reloading ? (p.reloadTotal||2000) : 0,
+          id:p.id, n:p.name, tm:p.team, bot:p.isBot?1:0, x:Math.round(p.x), y:Math.round(p.y), z:Math.round(p.z), a:+p.ang.toFixed(3),
+          hp:p.hp, ar:p.armor, money:p.money, w:getCurrentWeapon(p), wc:p.weaponColors[getCurrentWeapon(p)]||null,
+          s1:p.slot1, s2:p.slot2, cs:p.currentSlot, c:p.charColor, al:p.alive, k:p.kills, d:p.deaths,
+          bought:p.boughtWeapon, boughtAr:p.boughtArmor, cr:p.crouch?1:0, wk: p.input.walk ? 1 : 0,
+          mag, magMax:(w&&w.mag)||0, reloading:p.reloading?1:0, reloadT: p.reloading ? Math.max(0, p.reloadEndAt - now) : 0, reloadTotal: p.reloading ? (p.reloadTotal||2000) : 0
         };
       }),
       ev:this.events,
@@ -284,41 +193,26 @@ class Lobby {
   }
   addPlayer(ws, name, id){
     const p = {
-      id, ws, name, isBot:false, team:null,
-      x:0, y:0, z:0, vz:0, ang:0,
-      hp:100, armor:0, money:2700,
-      slot1:null, slot2:'pistol', currentSlot:2,
-      mag1:0, mag2:12,
-      reloading:false, reloadEndAt:0, reloadTotal:0, reloadSlot:0, reloadWeapon:null,
-      survived:false,
-      boughtWeapon:false, boughtArmor:false, crouch:false,
-      alive:false, kills:0, deaths:0,
-      input:{mx:0,my:0,a:0,sh:0,jump:0,cr:0,reload:0,walk:0},
-      lastShot:0, charColor:null, weaponColors:{},
+      id, ws, name, isBot:false, team:null, x:0, y:0, z:0, vz:0, ang:0, hp:100, armor:0, money:2700,
+      slot1:null, slot2:'pistol', currentSlot:2, mag1:0, mag2:12, reloading:false, reloadEndAt:0, reloadTotal:0, reloadSlot:0, reloadWeapon:null,
+      survived:false, boughtWeapon:false, boughtArmor:false, crouch:false, alive:false, kills:0, deaths:0,
+      input:{mx:0,my:0,a:0,sh:0,jump:0,cr:0,reload:0,walk:0}, lastShot:0, charColor:null, weaponColors:{},
     };
     this.players.push(p); return p;
   }
   removePlayer(id){ this.players = this.players.filter(p => p.id !== id); }
   ensureBot(){
-    const real = this.realCount();
-    const hasBot = this.players.some(p => p.isBot);
+    const real = this.realCount(), hasBot = this.players.some(p => p.isBot);
     if (real === 1 && !hasBot){
       const human = this.players.find(p => !p.isBot);
       const botTeam = human.team === 'A' ? 'B' : human.team === 'B' ? 'A' : (Math.random()<0.5?'A':'B');
-      const bot = {
-        id:'bot_'+Math.random().toString(36).slice(2,8), ws:null, isBot:true,
-        name:'BOT Vasya', team:botTeam,
-        x:0, y:0, z:0, vz:0, ang:0, hp:100, armor:0, money:2700,
-        slot1:null, slot2:'pistol', currentSlot:2,
-        mag1:0, mag2:12, reloading:false, reloadEndAt:0, reloadTotal:0, reloadSlot:0, reloadWeapon:null,
-        survived:false, boughtWeapon:false, boughtArmor:false, crouch:false,
-        alive:false, kills:0, deaths:0,
-        input:{mx:0,my:0,a:0,sh:0,jump:0,cr:0,reload:0,walk:0},
-        lastShot:0, charColor:null, weaponColors:{},
-        aiNextThink:0, aiAimError:0, lastSeenAt:0, aimWobble:0, nextShotAt:0,
-      };
-      this.players.push(bot);
-      this.events.push({type:'bot_join', name: bot.name});
+      this.players.push({
+        id:'bot_'+Math.random().toString(36).slice(2,8), ws:null, isBot:true, name:'BOT Vasya', team:botTeam, x:0, y:0, z:0, vz:0, ang:0, hp:100, armor:0, money:2700,
+        slot1:null, slot2:'pistol', currentSlot:2, mag1:0, mag2:12, reloading:false, reloadEndAt:0, reloadTotal:0, reloadSlot:0, reloadWeapon:null,
+        survived:false, boughtWeapon:false, boughtArmor:false, crouch:false, alive:false, kills:0, deaths:0,
+        input:{mx:0,my:0,a:0,sh:0,jump:0,cr:0,reload:0,walk:0}, lastShot:0, charColor:null, weaponColors:{}, aiNextThink:0, aiAimError:0, lastSeenAt:0, aimWobble:0, nextShotAt:0
+      });
+      this.events.push({type:'bot_join', name: 'BOT Vasya'});
     } else if (real >= 2 && hasBot){
       this.players = this.players.filter(p => !p.isBot);
       this.events.push({type:'bot_leave'});
@@ -333,76 +227,43 @@ function dropWeapon(lobby, w, x, y, mag, color){
   lobby.events.push({type:'drop', x, y});
 }
 function dropAllOnDeath(lobby, player){
-  if (player.slot1){
-    const col = player.weaponColors[player.slot1] || defaultWeaponColor(player.slot1);
-    dropWeapon(lobby, player.slot1, player.x + (Math.random()-0.5)*16, player.y + (Math.random()-0.5)*16, player.mag1, col);
-  }
-  if (player.slot2 && player.slot2 !== 'pistol'){
-    const col = player.weaponColors[player.slot2] || defaultWeaponColor(player.slot2);
-    dropWeapon(lobby, player.slot2, player.x + (Math.random()-0.5)*16, player.y + (Math.random()-0.5)*16, player.mag2, col);
-  }
+  if (player.slot1) dropWeapon(lobby, player.slot1, player.x + (Math.random()-0.5)*16, player.y + (Math.random()-0.5)*16, player.mag1, player.weaponColors[player.slot1] || defaultWeaponColor(player.slot1));
+  if (player.slot2 && player.slot2 !== 'pistol') dropWeapon(lobby, player.slot2, player.x + (Math.random()-0.5)*16, player.y + (Math.random()-0.5)*16, player.mag2, player.weaponColors[player.slot2] || defaultWeaponColor(player.slot2));
 }
 
 function startRound(lobby){
-  lobby.round++;
-  lobby.phase = 'buy';
-  lobby.phaseTimer = BUY_TIME;
-  lobby.winner = null;
-  lobby.droppedWeapons = [];
-  const cA = lobby.players.filter(p => p.team==='A').length;
-  const cB = lobby.players.filter(p => p.team==='B').length;
+  lobby.round++; lobby.phase = 'buy'; lobby.phaseTimer = BUY_TIME; lobby.winner = null; lobby.droppedWeapons = [];
+  const cA = lobby.players.filter(p => p.team==='A').length, cB = lobby.players.filter(p => p.team==='B').length;
   let a=cA, b=cB;
   for (const p of lobby.players){ if (p.team) continue; if (a<=b){p.team='A';a++;} else {p.team='B';b++;} }
   let ai=0, bi=0;
   for (const p of lobby.players){
-    p.hp = 100; p.alive = true;
-    p.boughtWeapon = false; p.boughtArmor = false;
-    p.crouch = false; p.z = 0; p.vz = 0;
+    p.hp = 100; p.alive = true; p.boughtWeapon = false; p.boughtArmor = false; p.crouch = false; p.z = 0; p.vz = 0;
     p.lastShot = 0; p.reloading = false; p.reloadEndAt = 0; p.reloadTotal = 0;
-    p.input.sh = 0; p.input.mx = 0; p.input.my = 0;
-    p.input.jump = 0; p.input.cr = 0; p.input.reload = 0; p.input.walk = 0;
-    if (!p.survived){
-      p.slot1 = null; p.slot2 = 'pistol'; p.currentSlot = 2;
-      p.armor = 0;
-    }
-    const w1 = p.slot1 ? WEAPONS[p.slot1] : null;
-    const w2 = p.slot2 ? WEAPONS[p.slot2] : null;
-    p.mag1 = w1 ? w1.mag : 0;
-    p.mag2 = w2 ? w2.mag : 0;
-    if (p.team === 'A'){
-      p.x = (10 + (ai%10)) * TILE; p.y = (MAP_H-2.5)*TILE; p.ang = -Math.PI/2; ai++;
-    } else {
-      p.x = (10 + (bi%10)) * TILE; p.y = 2.5*TILE; p.ang = Math.PI/2; bi++;
-    }
+    p.input.sh = 0; p.input.mx = 0; p.input.my = 0; p.input.jump = 0; p.input.cr = 0; p.input.reload = 0; p.input.walk = 0;
+    if (!p.survived){ p.slot1 = null; p.slot2 = 'pistol'; p.currentSlot = 2; p.armor = 0; }
+    p.mag1 = p.slot1 ? WEAPONS[p.slot1].mag : 0; p.mag2 = p.slot2 ? WEAPONS[p.slot2].mag : 0;
+    if (p.team === 'A'){ p.x = (10 + (ai%10)) * TILE; p.y = (MAP_H-2.5)*TILE; p.ang = -Math.PI/2; ai++; }
+    else { p.x = (10 + (bi%10)) * TILE; p.y = 2.5*TILE; p.ang = Math.PI/2; bi++; }
   }
   lobby.events = [];
 }
 
 function endRound(lobby, winner){
   if (lobby.phase === 'end') return;
-  lobby.phase = 'end';
-  lobby.phaseTimer = 5;
-  lobby.winner = winner;
+  lobby.phase = 'end'; lobby.phaseTimer = 5; lobby.winner = winner;
   for (const p of lobby.players){
     p.survived = p.alive;
-    if (winner === 'A' || winner === 'B'){
-      if (p.team === winner) p.money = Math.min(p.money + WIN_MONEY + ROUND_BONUS, 16000);
-      else                   p.money = Math.min(p.money + LOSE_MONEY + ROUND_BONUS, 16000);
-    } else {
-      p.money = Math.min(p.money + ROUND_BONUS, 16000);
-    }
+    if (winner === 'A' || winner === 'B') p.money = Math.min(p.money + (p.team === winner ? WIN_MONEY : LOSE_MONEY) + ROUND_BONUS, 16000);
+    else p.money = Math.min(p.money + ROUND_BONUS, 16000);
   }
-  if (winner === 'A' || winner === 'B'){
-    lobby.score[winner]++;
-    if (lobby.score[winner] >= ROUNDS_TO_WIN) lobby.matchOver = true;
-  }
+  if (winner === 'A' || winner === 'B'){ lobby.score[winner]++; if (lobby.score[winner] >= ROUNDS_TO_WIN) lobby.matchOver = true; }
   lobby.events.push({type:'roundend', winner});
 }
 
 function checkRoundEnd(lobby){
   if (lobby.phase !== 'live') return;
-  const aliveA = lobby.players.filter(p => p.team==='A' && p.alive).length;
-  const aliveB = lobby.players.filter(p => p.team==='B' && p.alive).length;
+  const aliveA = lobby.players.filter(p => p.team==='A' && p.alive).length, aliveB = lobby.players.filter(p => p.team==='B' && p.alive).length;
   if (aliveA === 0 && aliveB === 0) endRound(lobby, 'draw');
   else if (aliveA === 0) endRound(lobby, 'B');
   else if (aliveB === 0) endRound(lobby, 'A');
@@ -410,39 +271,20 @@ function checkRoundEnd(lobby){
 
 function getPlayerRadius(p){ return p.crouch ? PLAYER_RADIUS_CROUCH : PLAYER_RADIUS; }
 function getPlayerSpeed(p){
-  const wid = getCurrentWeapon(p);
-  let base;
-  if (wid === 'knife') base = SPEED_KNIFE;
-  else if (isPistolWeapon(wid)) base = SPEED_PISTOL;
-  else base = SPEED_PRIMARY;
-  if (p.crouch) base *= SPEED_CROUCH_MULT;
-  if (p.input.walk && !p.crouch) base *= SPEED_WALK_MULT;
-  return base;
+  const wid = getCurrentWeapon(p); let base = (wid === 'knife') ? SPEED_KNIFE : (isPistolWeapon(wid) ? SPEED_PISTOL : SPEED_PRIMARY);
+  if (p.crouch) base *= SPEED_CROUCH_MULT; if (p.input.walk && !p.crouch) base *= SPEED_WALK_MULT; return base;
 }
 
 function shoot(lobby, shooter, weaponId){
-  const weapon = WEAPONS[weaponId] || WEAPONS.pistol;
-  const grid = lobby.getGrid();
-  const dx = Math.cos(shooter.ang);
-  const dy = Math.sin(shooter.ang);
+  const weapon = WEAPONS[weaponId] || WEAPONS.pistol, grid = lobby.getGrid(), dx = Math.cos(shooter.ang), dy = Math.sin(shooter.ang);
   let tracerDist = weapon.range;
-  for (let t=0; t<weapon.range; t+=6){
-    if (isWall(shooter.x + dx*t, shooter.y + dy*t, grid)){ tracerDist = t; break; }
-  }
-  lobby.events.push({
-    type:'shot', x:shooter.x, y:shooter.y, ang:shooter.ang, len:tracerDist,
-    color: shooter.team==='A' ? '#88ccff' : '#ffcc88',
-    weapon:weaponId, byId:shooter.id,
-  });
+  for (let t=0; t<weapon.range; t+=6){ if (isWall(shooter.x + dx*t, shooter.y + dy*t, grid)){ tracerDist = t; break; } }
+  lobby.events.push({ type:'shot', x:shooter.x, y:shooter.y, ang:shooter.ang, len:tracerDist, color: shooter.team==='A' ? '#88ccff' : '#ffcc88', weapon:weaponId, byId:shooter.id });
   for (let i=0; i<weapon.pellets; i++){
-    const sa = (Math.random()-0.5)*weapon.spread*2;
-    const ca = Math.cos(sa), si = Math.sin(sa);
-    const px = dx*ca - dy*si;
-    const py = dx*si + dy*ca;
+    const sa = (Math.random()-0.5)*weapon.spread*2, ca = Math.cos(sa), si = Math.sin(sa);
+    const px = dx*ca - dy*si, py = dx*si + dy*ca;
     let wallDist = weapon.range, hitWall = false;
-    for (let t=0; t<weapon.range; t+=6){
-      if (isWall(shooter.x + px*t, shooter.y + py*t, grid)){ wallDist = t; hitWall = true; break; }
-    }
+    for (let t=0; t<weapon.range; t+=6){ if (isWall(shooter.x + px*t, shooter.y + py*t, grid)){ wallDist = t; hitWall = true; break; } }
     let hitPlayer = null, hitDist = wallDist;
     for (const other of lobby.players){
       if (other === shooter || !other.alive || other.team === shooter.team) continue;
@@ -451,43 +293,25 @@ function shoot(lobby, shooter, weaponId){
     }
     if (hitPlayer){
       let dmg = weapon.dmg;
-      if (hitPlayer.armor > 0){
-        const absorbed = Math.min(hitPlayer.armor, dmg*0.5);
-        hitPlayer.armor -= absorbed; dmg -= absorbed;
-      }
+      if (hitPlayer.armor > 0){ const absorbed = Math.min(hitPlayer.armor, dmg*0.5); hitPlayer.armor -= absorbed; dmg -= absorbed; }
       hitPlayer.hp -= dmg;
       if (hitPlayer.hp <= 0){
-        hitPlayer.hp = 0; hitPlayer.alive = false; hitPlayer.deaths++; shooter.kills++;
-        dropAllOnDeath(lobby, hitPlayer);
+        hitPlayer.hp = 0; hitPlayer.alive = false; hitPlayer.deaths++; shooter.kills++; dropAllOnDeath(lobby, hitPlayer);
         lobby.events.push({type:'kill', killer:shooter.name, victim:hitPlayer.name, killerId:shooter.id, killerTeam:shooter.team, weapon:weaponId});
-      } else {
-        lobby.events.push({type:'hit', x:shooter.x + px*hitDist, y:shooter.y + py*hitDist});
-      }
-    } else if (hitWall){
-      const hx = shooter.x + px * wallDist;
-      const hy = shooter.y + py * wallDist;
-      const hz = 25 + Math.random() * 50;
-      lobby.events.push({type:'impact', x:hx, y:hy, z:hz});
-    }
+      } else lobby.events.push({type:'hit', x:shooter.x + px*hitDist, y:shooter.y + py*hitDist});
+    } else if (hitWall) lobby.events.push({type:'impact', x:shooter.x + px * wallDist, y:shooter.y + py * wallDist, z:25 + Math.random() * 50});
   }
   checkRoundEnd(lobby);
 }
 
 function botBuy(bot, lobby){
   if (bot.boughtWeapon && bot.boughtArmor) return;
-  if (!bot.boughtArmor && bot.money >= 950 && bot.money < 2000){
-    bot.money -= 950; bot.armor = 100; bot.boughtArmor = true; return;
-  }
+  if (!bot.boughtArmor && bot.money >= 950 && bot.money < 2000){ bot.money -= 950; bot.armor = 100; bot.boughtArmor = true; return; }
   if (!bot.boughtWeapon){
     let c = null;
-    if (bot.money >= 4750) c = 'awp';
-    else if (bot.money >= 3100) c = 'm4a4';
-    else if (bot.money >= 2700) c = 'ak';
-    else if (bot.money >= 2000) c = 'galil';
-    else if (bot.money >= 1050) c = 'shotgun';
-    else if (bot.money >= 777) c = 'deagle';
-    else if (bot.money >= 350) c = 'p250';
-    else if (bot.money >= 200) c = 'usp';
+    if (bot.money >= 4750) c = 'awp'; else if (bot.money >= 3100) c = 'm4a4'; else if (bot.money >= 2700) c = 'ak';
+    else if (bot.money >= 2000) c = 'galil'; else if (bot.money >= 1050) c = 'shotgun'; else if (bot.money >= 777) c = 'deagle';
+    else if (bot.money >= 350) c = 'p250'; else if (bot.money >= 200) c = 'usp';
     if (c){ bot.money -= WEAPONS[c].price; bot.slot1 = c; bot.mag1 = WEAPONS[c].mag; bot.currentSlot = 1; bot.boughtWeapon = true; }
   }
   if (!bot.boughtArmor && bot.money >= 950){ bot.money -= 950; bot.armor = 100; bot.boughtArmor = true; }
@@ -495,52 +319,25 @@ function botBuy(bot, lobby){
 
 function botThink(lobby, bot, dt){
   if (!bot.alive) return;
-  const grid = lobby.getGrid();
-  if (lobby.phase === 'buy') botBuy(bot, lobby);
-  if (bot.lastSeenAt === undefined) bot.lastSeenAt = 0;
-  if (bot.aimWobble === undefined) bot.aimWobble = 0;
-  if (bot.nextShotAt === undefined) bot.nextShotAt = 0;
-  const wid = getCurrentWeapon(bot);
-  const w = WEAPONS[wid];
-  const magField = bot.currentSlot === 1 ? 'mag1' : bot.currentSlot === 2 ? 'mag2' : null;
-  if (magField && w && w.mag && bot[magField] <= 0 && !bot.reloading){
-    bot.reloading = true;
-    bot.reloadEndAt = Date.now() + w.reload;
-    bot.reloadTotal = w.reload;
-    bot.reloadSlot = bot.currentSlot;
-    bot.reloadWeapon = wid;
-  }
+  const grid = lobby.getGrid(); if (lobby.phase === 'buy') botBuy(bot, lobby);
+  if (bot.lastSeenAt === undefined) bot.lastSeenAt = 0; if (bot.aimWobble === undefined) bot.aimWobble = 0; if (bot.nextShotAt === undefined) bot.nextShotAt = 0;
+  const wid = getCurrentWeapon(bot), w = WEAPONS[wid], magField = bot.currentSlot === 1 ? 'mag1' : bot.currentSlot === 2 ? 'mag2' : null;
+  if (magField && w && w.mag && bot[magField] <= 0 && !bot.reloading){ bot.reloading = true; bot.reloadEndAt = Date.now() + w.reload; bot.reloadTotal = w.reload; bot.reloadSlot = bot.currentSlot; bot.reloadWeapon = wid; }
   let target = null, tDist = Infinity;
-  for (const p of lobby.players){
-    if (p === bot || p.isBot || !p.alive || p.team === bot.team) continue;
-    const d = Math.hypot(p.x - bot.x, p.y - bot.y);
-    if (d < tDist){ tDist = d; target = p; }
-  }
+  for (const p of lobby.players){ if (p === bot || p.isBot || !p.alive || p.team === bot.team) continue; const d = Math.hypot(p.x - bot.x, p.y - bot.y); if (d < tDist){ tDist = d; target = p; } }
   if (!target){ bot.input.mx = 0; bot.input.my = 0; bot.input.sh = 0; bot.lastSeenAt = 0; return; }
-  const dx = target.x - bot.x, dy = target.y - bot.y;
-  const canSee = hasLOS(bot.x, bot.y, target.x, target.y, grid);
-  if (canSee && tDist < 1500){ if (!bot.lastSeenAt) bot.lastSeenAt = Date.now(); }
-  else bot.lastSeenAt = 0;
+  const dx = target.x - bot.x, dy = target.y - bot.y, canSee = hasLOS(bot.x, bot.y, target.x, target.y, grid);
+  if (canSee && tDist < 1500){ if (!bot.lastSeenAt) bot.lastSeenAt = Date.now(); } else bot.lastSeenAt = 0;
   const reactOK = bot.lastSeenAt && (Date.now() - bot.lastSeenAt > 700);
-  bot.aimWobble += (Math.random()-0.5) * 0.35 * dt;
-  bot.aimWobble = Math.max(-0.25, Math.min(0.25, bot.aimWobble));
-  const aimAng = Math.atan2(dy, dx) + bot.aimWobble;
-  let diff = aimAng - bot.ang;
-  while (diff > Math.PI) diff -= Math.PI*2;
-  while (diff < -Math.PI) diff += Math.PI*2;
-  bot.ang += diff * Math.min(1, dt*3.5);
-  const aimed = Math.abs(diff) < 0.20;
+  bot.aimWobble += (Math.random()-0.5) * 0.35 * dt; bot.aimWobble = Math.max(-0.25, Math.min(0.25, bot.aimWobble));
+  const aimAng = Math.atan2(dy, dx) + bot.aimWobble; let diff = aimAng - bot.ang;
+  while (diff > Math.PI) diff -= Math.PI*2; while (diff < -Math.PI) diff += Math.PI*2;
+  bot.ang += diff * Math.min(1, dt*3.5); const aimed = Math.abs(diff) < 0.20;
   if (canSee && tDist < 1400 && reactOK && !bot.reloading){
-    if (Date.now() > bot.nextShotAt){
-      if (aimed && Math.random() > 0.22){ bot.input.sh = 1; bot.nextShotAt = Date.now() + 280; }
-      else bot.input.sh = 0;
-    } else bot.input.sh = 0;
-    if (tDist < 400){ bot.input.mx = 0; bot.input.my = 0; }
-    else { const l = tDist||1; bot.input.mx = dx/l*0.6; bot.input.my = dy/l*0.6; }
+    if (Date.now() > bot.nextShotAt){ if (aimed && Math.random() > 0.22){ bot.input.sh = 1; bot.nextShotAt = Date.now() + 280; } else bot.input.sh = 0; } else bot.input.sh = 0;
+    if (tDist < 400){ bot.input.mx = 0; bot.input.my = 0; } else { const l = tDist||1; bot.input.mx = dx/l*0.6; bot.input.my = dy/l*0.6; }
   } else {
-    bot.input.sh = 0;
-    const l = tDist || 1;
-    bot.input.mx = dx/l; bot.input.my = dy/l;
+    bot.input.sh = 0; const l = tDist || 1; bot.input.mx = dx/l; bot.input.my = dy/l;
     const nx = bot.x + bot.input.mx*20, ny = bot.y + bot.input.my*20;
     if (collide(nx, bot.y, PLAYER_RADIUS, grid)){ bot.input.mx = 0; bot.input.my = dy>0?1:-1; }
     if (collide(bot.x, ny, PLAYER_RADIUS, grid)){ bot.input.my = 0; bot.input.mx = dx>0?1:-1; }
@@ -553,30 +350,18 @@ function movePlayers(lobby, dt){
     if (!p.alive) continue;
     p.crouch = p.input.cr ? true : false;
     if (p.input.jump && p.z <= 0){ p.vz = JUMP_V; p.z = 0.01; }
-    p.vz -= GRAVITY * dt;
-    p.z += p.vz * dt;
-    if (p.z <= 0){ p.z = 0; p.vz = 0; }
-    if (p.z > 200){ p.z = 200; p.vz = 0; }
-    let mx = p.input.mx||0, my = p.input.my||0;
-    const len = Math.hypot(mx, my);
+    p.vz -= GRAVITY * dt; p.z += p.vz * dt; if (p.z <= 0){ p.z = 0; p.vz = 0; } if (p.z > 200){ p.z = 200; p.vz = 0; }
+    let mx = p.input.mx||0, my = p.input.my||0; const len = Math.hypot(mx, my);
     if (len > 0.01){
-      mx /= len; my /= len;
-      const spd = getPlayerSpeed(p);
-      const r = getPlayerRadius(p);
+      mx /= len; my /= len; const spd = getPlayerSpeed(p), r = getPlayerRadius(p);
       const nx = p.x + mx*spd*dt, ny = p.y + my*spd*dt;
-      if (!collide(nx, p.y, r, grid)) p.x = nx;
-      if (!collide(p.x, ny, r, grid)) p.y = ny;
+      if (!collide(nx, p.y, r, grid)) p.x = nx; if (!collide(p.x, ny, r, grid)) p.y = ny;
     }
     if (!p.isBot) p.ang = p.input.a || 0;
     if (p.reloading && Date.now() >= p.reloadEndAt){
       const w = WEAPONS[p.reloadWeapon];
-      if (w && w.mag){
-        if (p.reloadSlot === 1 && p.slot1 === p.reloadWeapon) p.mag1 = w.mag;
-        else if (p.reloadSlot === 2 && p.slot2 === p.reloadWeapon) p.mag2 = w.mag;
-      }
-      p.reloading = false;
-      p.reloadEndAt = 0;
-      p.reloadTotal = 0;
+      if (w && w.mag){ if (p.reloadSlot === 1 && p.slot1 === p.reloadWeapon) p.mag1 = w.mag; else if (p.reloadSlot === 2 && p.slot2 === p.reloadWeapon) p.mag2 = w.mag; }
+      p.reloading = false; p.reloadEndAt = 0; p.reloadTotal = 0;
     }
   }
 }
@@ -584,64 +369,44 @@ function movePlayers(lobby, dt){
 function handleShooting(lobby){
   const now = Date.now();
   for (const p of lobby.players){
-    if (!p.alive || !p.input.sh) continue;
-    if (p.reloading) continue;
-    const wid = getCurrentWeapon(p);
-    const w = WEAPONS[wid] || WEAPONS.pistol;
-    const magField = p.currentSlot === 1 ? 'mag1' : p.currentSlot === 2 ? 'mag2' : null;
+    if (!p.alive || !p.input.sh || p.reloading) continue;
+    const wid = getCurrentWeapon(p), w = WEAPONS[wid] || WEAPONS.pistol, magField = p.currentSlot === 1 ? 'mag1' : p.currentSlot === 2 ? 'mag2' : null;
     if (magField && w.mag && p[magField] <= 0) continue;
-    if (now - p.lastShot >= w.rate){
-      p.lastShot = now;
-      if (magField && w.mag) p[magField]--;
-      shoot(lobby, p, wid);
-    }
+    if (now - p.lastShot >= w.rate){ p.lastShot = now; if (magField && w.mag) p[magField]--; shoot(lobby, p, wid); }
   }
 }
 
 function gameTick(lobby, dt){
   if (lobby.phase === 'waiting'){
-    const a = lobby.players.filter(p => p.team==='A').length;
-    const b = lobby.players.filter(p => p.team==='B').length;
+    const a = lobby.players.filter(p => p.team==='A').length, b = lobby.players.filter(p => p.team==='B').length;
     if (lobby.players.length >= 2 && a >= 1 && b >= 1){
-      lobby.score = {A:0, B:0};
-      lobby.round = 0;
-      lobby.matchOver = false;
+      lobby.score = {A:0, B:0}; lobby.round = 0; lobby.matchOver = false;
       for (const p of lobby.players){ p.kills = 0; p.deaths = 0; p.survived = false; }
       startRound(lobby);
     }
     return;
   }
   if (lobby.phase === 'buy'){
-    lobby.phaseTimer -= dt;
-    for (const bot of lobby.players.filter(p => p.isBot)) botThink(lobby, bot, dt);
-    movePlayers(lobby, dt);
+    lobby.phaseTimer -= dt; for (const bot of lobby.players.filter(p => p.isBot)) botThink(lobby, bot, dt); movePlayers(lobby, dt);
     if (lobby.phaseTimer <= 0){ lobby.phase = 'live'; lobby.phaseTimer = 0; }
     return;
   }
   if (lobby.phase === 'live'){
-    for (const bot of lobby.players.filter(p => p.isBot)) botThink(lobby, bot, dt);
-    movePlayers(lobby, dt);
-    handleShooting(lobby);
-    return;
+    for (const bot of lobby.players.filter(p => p.isBot)) botThink(lobby, bot, dt); movePlayers(lobby, dt); handleShooting(lobby); return;
   }
   if (lobby.phase === 'end'){
-    lobby.phaseTimer -= dt;
-    movePlayers(lobby, dt);
-    if (lobby.phaseTimer <= 0){
-      if (lobby.matchOver){ /* ждём */ } else startRound(lobby);
-    }
+    lobby.phaseTimer -= dt; movePlayers(lobby, dt);
+    if (lobby.phaseTimer <= 0 && !lobby.matchOver) startRound(lobby);
   }
 }
 
 const wss = new WebSocketServer({ server });
-
 wss.on('connection', (ws) => {
   const playerId = nextId++;
   let lobby = null, player = null;
   ws.send(JSON.stringify({ t:'init', id:playerId, grids: GRIDS, mw: MAP_W, mh: MAP_H, tile: TILE }));
   ws.on('message', (raw) => {
-    let msg;
-    try { msg = JSON.parse(raw); } catch { return; }
+    let msg; try { msg = JSON.parse(raw); } catch { return; }
     if (msg.t === 'list'){ ws.send(JSON.stringify({t:'lobbies', list:[...lobbies.values()].map(l => l.info())})); return; }
     if (msg.t === 'create'){
       const code = makeCode();
@@ -653,36 +418,73 @@ wss.on('connection', (ws) => {
       return;
     }
     if (msg.t === 'join'){
-      const code = (msg.code||'').toUpperCase();
-      const l = lobbies.get(code);
+      const code = (msg.code||'').toUpperCase(), l = lobbies.get(code);
       if (!l){ ws.send(JSON.stringify({t:'error', msg:'Лобби не найдено'})); return; }
       if (l.pass && l.pass !== (msg.pass||'')){ ws.send(JSON.stringify({t:'error', msg:'Неверный пароль'})); return; }
       if (l.realCount() >= MAX_PLAYERS){ ws.send(JSON.stringify({t:'error', msg:'Лобби заполнено'})); return; }
-      lobby = l;
-      player = lobby.addPlayer(ws, msg.name||'Игрок', playerId);
-      lobby.ensureBot();
+      lobby = l; player = lobby.addPlayer(ws, msg.name||'Игрок', playerId); lobby.ensureBot();
       ws.send(JSON.stringify({t:'joined', code, id:playerId}));
       return;
     }
     if (!lobby || !player) return;
-    if (msg.t === 'team'){
-      if (lobby.phase !== 'waiting') return;
-      if (msg.team !== 'A' && msg.team !== 'B') return;
-      const cnt = lobby.players.filter(p => p.team === msg.team).length;
-      if (cnt >= Math.ceil(MAX_PLAYERS/2) && player.team !== msg.team) return;
-      player.team = msg.team;
-      const bot = lobby.players.find(p => p.isBot);
-      if (bot) bot.team = msg.team === 'A' ? 'B' : 'A';
+
+    // ТРЕЙДЫ
+    if (msg.t === 'trade_request') {
+      const target = lobby.players.find(p => p.id === msg.targetId && !p.isBot);
+      if (!target || !target.ws) return;
+      const tId = nextTradeId++;
+      activeTrades.set(tId, { p1: player, p2: target, offers: { [player.id]: [], [target.id]: [] }, ready: { [player.id]: false, [target.id]: false } });
+      target.ws.send(JSON.stringify({ t: 'trade_incoming', tradeId: tId, fromId: player.id, fromName: player.name }));
+      ws.send(JSON.stringify({ t: 'trade_waiting', tradeId: tId, targetName: target.name }));
       return;
     }
+    if (msg.t === 'trade_accept') {
+      const trade = activeTrades.get(msg.tradeId); if (!trade) return;
+      const other = trade.p1.id === player.id ? trade.p2 : trade.p1; if (!other || !other.ws) return;
+      const initData = { t: 'trade_open', tradeId: msg.tradeId, p1Id: trade.p1.id, p1Name: trade.p1.name, p2Id: trade.p2.id, p2Name: trade.p2.name };
+      trade.p1.ws.send(JSON.stringify(initData)); trade.p2.ws.send(JSON.stringify(initData)); return;
+    }
+    if (msg.t === 'trade_decline') {
+      const trade = activeTrades.get(msg.tradeId); if (!trade) return;
+      const other = trade.p1.id === player.id ? trade.p2 : trade.p1; if (other && other.ws) other.ws.send(JSON.stringify({ t: 'trade_closed', msg: 'Игрок отклонил трейд' }));
+      activeTrades.delete(msg.tradeId); return;
+    }
+    if (msg.t === 'trade_offer') {
+      const trade = activeTrades.get(msg.tradeId); if (!trade) return;
+      trade.offers[player.id] = msg.items || []; trade.ready = { [trade.p1.id]: false, [trade.p2.id]: false };
+      const other = trade.p1.id === player.id ? trade.p2 : trade.p1;
+      if (other && other.ws) other.ws.send(JSON.stringify({ t: 'trade_update', offers: trade.offers, ready: trade.ready }));
+      return;
+    }
+    if (msg.t === 'trade_ready') {
+      const trade = activeTrades.get(msg.tradeId); if (!trade) return;
+      trade.ready[player.id] = true;
+      const other = trade.p1.id === player.id ? trade.p2 : trade.p1;
+      if (other && other.ws) other.ws.send(JSON.stringify({ t: 'trade_update', offers: trade.offers, ready: trade.ready }));
+      if (trade.ready[trade.p1.id] && trade.ready[trade.p2.id]) {
+        const finalData = { t: 'trade_success', offers: trade.offers };
+        if (trade.p1.ws) trade.p1.ws.send(JSON.stringify(finalData));
+        if (trade.p2.ws) trade.p2.ws.send(JSON.stringify(finalData));
+        activeTrades.delete(msg.tradeId);
+      }
+      return;
+    }
+    if (msg.t === 'trade_cancel') {
+      const trade = activeTrades.get(msg.tradeId); if (!trade) return;
+      const other = trade.p1.id === player.id ? trade.p2 : trade.p1;
+      if (other && other.ws) other.ws.send(JSON.stringify({ t: 'trade_closed', msg: 'Игрок отменил трейд' }));
+      activeTrades.delete(msg.tradeId); return;
+    }
+
+    if (msg.t === 'team'){
+      if (lobby.phase !== 'waiting') return; if (msg.team !== 'A' && msg.team !== 'B') return;
+      const cnt = lobby.players.filter(p => p.team === msg.team).length;
+      if (cnt >= Math.ceil(MAX_PLAYERS/2) && player.team !== msg.team) return;
+      player.team = msg.team; const bot = lobby.players.find(p => p.isBot); if (bot) bot.team = msg.team === 'A' ? 'B' : 'A'; return;
+    }
     if (msg.t === 'input'){
-      player.input.mx = Math.max(-1, Math.min(1, +msg.mx||0));
-      player.input.my = Math.max(-1, Math.min(1, +msg.my||0));
-      player.input.a  = +msg.a || 0;
-      player.input.sh = msg.sh | 0;
-      player.input.jump = msg.jump | 0;
-      player.input.cr = msg.cr | 0;
-      player.input.walk = msg.wk | 0;
+      player.input.mx = Math.max(-1, Math.min(1, +msg.mx||0)); player.input.my = Math.max(-1, Math.min(1, +msg.my||0));
+      player.input.a = +msg.a || 0; player.input.sh = msg.sh | 0; player.input.jump = msg.jump | 0; player.input.cr = msg.cr | 0; player.input.walk = msg.wk | 0;
       if (msg.sw){
         const s = msg.sw | 0;
         if (s === 1 && player.slot1){ player.currentSlot = 1; player.reloading = false; }
@@ -694,99 +496,56 @@ wss.on('connection', (ws) => {
     }
     if (msg.t === 'reload'){
       if (!player.alive || player.reloading) return;
-      const wid = getCurrentWeapon(player);
-      const w = WEAPONS[wid];
+      const wid = getCurrentWeapon(player), w = WEAPONS[wid];
       if (!w || !w.mag || w.mag <= 0) return;
       const magField = player.currentSlot === 1 ? 'mag1' : player.currentSlot === 2 ? 'mag2' : null;
-      if (!magField) return;
-      if (player[magField] >= w.mag) return;
-      player.reloading = true;
-      player.reloadEndAt = Date.now() + w.reload;
-      player.reloadTotal = w.reload;
-      player.reloadSlot = player.currentSlot;
-      player.reloadWeapon = wid;
+      if (!magField || player[magField] >= w.mag) return;
+      player.reloading = true; player.reloadEndAt = Date.now() + w.reload; player.reloadTotal = w.reload; player.reloadSlot = player.currentSlot; player.reloadWeapon = wid;
       return;
     }
     if (msg.t === 'buy'){
       if (lobby.phase !== 'buy' || !player.alive) return;
-      const w = WEAPONS[msg.w];
-      if (!w || player.money < w.price) return;
-      if (w.type === 'armor'){
-        if (player.boughtArmor) return;
-        player.money -= w.price; player.armor = 100; player.boughtArmor = true;
-      } else {
+      const w = WEAPONS[msg.w]; if (!w || player.money < w.price) return;
+      if (w.type === 'armor'){ if (player.boughtArmor) return; player.money -= w.price; player.armor = 100; player.boughtArmor = true; }
+      else {
         if (player.boughtWeapon) return;
         player.money -= w.price;
         if (w.slot === 1){
-          if (player.slot1){
-            const oldCol = player.weaponColors[player.slot1] || defaultWeaponColor(player.slot1);
-            dropWeapon(lobby, player.slot1, player.x, player.y, player.mag1, oldCol);
-          }
+          if (player.slot1) dropWeapon(lobby, player.slot1, player.x, player.y, player.mag1, player.weaponColors[player.slot1] || defaultWeaponColor(player.slot1));
           player.slot1 = msg.w; player.mag1 = w.mag; player.currentSlot = 1;
         } else {
-          if (player.slot2 && player.slot2 !== 'pistol'){
-            const oldCol = player.weaponColors[player.slot2] || defaultWeaponColor(player.slot2);
-            dropWeapon(lobby, player.slot2, player.x, player.y, player.mag2, oldCol);
-          }
+          if (player.slot2 && player.slot2 !== 'pistol') dropWeapon(lobby, player.slot2, player.x, player.y, player.mag2, player.weaponColors[player.slot2] || defaultWeaponColor(player.slot2));
           player.slot2 = msg.w; player.mag2 = w.mag; player.currentSlot = 2;
         }
-        player.boughtWeapon = true;
-        player.reloading = false;
+        player.boughtWeapon = true; player.reloading = false;
       }
       return;
     }
     if (msg.t === 'drop'){
       if (!player.alive) return;
-      const cur = getCurrentWeapon(player);
-      if (cur === 'knife') return;
       if (player.currentSlot === 1 && player.slot1){
-        const col = player.weaponColors[player.slot1] || defaultWeaponColor(player.slot1);
-        dropWeapon(lobby, player.slot1, player.x, player.y, player.mag1, col);
-        player.slot1 = null; player.mag1 = 0;
-        player.currentSlot = player.slot2 ? 2 : 3;
-        player.reloading = false;
+        dropWeapon(lobby, player.slot1, player.x, player.y, player.mag1, player.weaponColors[player.slot1] || defaultWeaponColor(player.slot1));
+        player.slot1 = null; player.mag1 = 0; player.currentSlot = player.slot2 ? 2 : 3; player.reloading = false;
       } else if (player.currentSlot === 2 && player.slot2){
-        const col = player.weaponColors[player.slot2] || defaultWeaponColor(player.slot2);
-        dropWeapon(lobby, player.slot2, player.x, player.y, player.mag2, col);
-        player.slot2 = null; player.mag2 = 0;
-        player.currentSlot = player.slot1 ? 1 : 3;
-        player.reloading = false;
+        dropWeapon(lobby, player.slot2, player.x, player.y, player.mag2, player.weaponColors[player.slot2] || defaultWeaponColor(player.slot2));
+        player.slot2 = null; player.mag2 = 0; player.currentSlot = player.slot1 ? 1 : 3; player.reloading = false;
       }
       return;
     }
     if (msg.t === 'pickup'){
       if (!player.alive) return;
-      const idx = lobby.droppedWeapons.findIndex(d => d.id === msg.id);
-      if (idx < 0) return;
-      const drop = lobby.droppedWeapons[idx];
-      const dist = Math.hypot(drop.x - player.x, drop.y - player.y);
-      if (dist > 60) return;
-      const wInfo = WEAPONS[drop.w];
-      if (!wInfo || wInfo.type === 'armor') return;
-      lobby.droppedWeapons.splice(idx, 1);
-      const magVal = drop.mag || wInfo.mag || 0;
-      const col = drop.color;
+      const idx = lobby.droppedWeapons.findIndex(d => d.id === msg.id); if (idx < 0) return;
+      const drop = lobby.droppedWeapons[idx]; if (Math.hypot(drop.x - player.x, drop.y - player.y) > 60) return;
+      const wInfo = WEAPONS[drop.w]; if (!wInfo || wInfo.type === 'armor') return;
+      lobby.droppedWeapons.splice(idx, 1); const magVal = drop.mag || wInfo.mag || 0, col = drop.color;
       if (wInfo.slot === 1){
-        if (player.slot1){
-          const oldCol = player.weaponColors[player.slot1] || defaultWeaponColor(player.slot1);
-          dropWeapon(lobby, player.slot1, player.x, player.y, player.mag1, oldCol);
-        }
-        player.slot1 = drop.w;
-        player.mag1 = magVal;
-        player.currentSlot = 1;
-        if (col) player.weaponColors[drop.w] = col;
+        if (player.slot1) dropWeapon(lobby, player.slot1, player.x, player.y, player.mag1, player.weaponColors[player.slot1] || defaultWeaponColor(player.slot1));
+        player.slot1 = drop.w; player.mag1 = magVal; player.currentSlot = 1; if (col) player.weaponColors[drop.w] = col;
       } else {
-        if (player.slot2){
-          const oldCol = player.weaponColors[player.slot2] || defaultWeaponColor(player.slot2);
-          dropWeapon(lobby, player.slot2, player.x, player.y, player.mag2, oldCol);
-        }
-        player.slot2 = drop.w;
-        player.mag2 = magVal;
-        player.currentSlot = 2;
-        if (col) player.weaponColors[drop.w] = col;
+        if (player.slot2) dropWeapon(lobby, player.slot2, player.x, player.y, player.mag2, player.weaponColors[player.slot2] || defaultWeaponColor(player.slot2));
+        player.slot2 = drop.w; player.mag2 = magVal; player.currentSlot = 2; if (col) player.weaponColors[drop.w] = col;
       }
-      player.reloading = false;
-      return;
+      player.reloading = false; return;
     }
     if (msg.t === 'cosmetic'){
       if (msg.charColor === null || typeof msg.charColor === 'string') player.charColor = msg.charColor;
@@ -795,16 +554,20 @@ wss.on('connection', (ws) => {
     }
   });
   ws.on('close', () => {
+    for (const [tId, trade] of activeTrades.entries()) {
+      if (trade.p1.id === playerId || trade.p2.id === playerId) {
+        const other = trade.p1.id === playerId ? trade.p2 : trade.p1;
+        if (other && other.ws) other.ws.send(JSON.stringify({ t: 'trade_closed', msg: 'Игрок отключился' }));
+        activeTrades.delete(tId);
+      }
+    }
     if (!lobby) return;
     lobby.removePlayer(playerId);
-    if (lobby.realCount() === 0){
-      lobbies.delete(lobby.code);
-    } else {
+    if (lobby.realCount() === 0) lobbies.delete(lobby.code);
+    else {
       lobby.ensureBot();
       if (lobby.realCount() < 2 && lobby.phase !== 'waiting'){
-        lobby.phase = 'waiting'; lobby.phaseTimer = 0; lobby.round = 0;
-        lobby.score = {A:0, B:0}; lobby.winner = null; lobby.matchOver = false;
-        lobby.droppedWeapons = [];
+        lobby.phase = 'waiting'; lobby.phaseTimer = 0; lobby.round = 0; lobby.score = {A:0, B:0}; lobby.winner = null; lobby.matchOver = false; lobby.droppedWeapons = [];
       }
     }
   });
