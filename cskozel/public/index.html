@@ -293,6 +293,28 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;text-align:center}
 #graffitiPalette.show{opacity:1;pointer-events:auto}
 .gfBtn{width:50px;height:50px;border-radius:6px;cursor:pointer;border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:24px}
 .gfBtn:hover,.gfBtn.sel{border-color:#ffd76a;transform:scale(1.1)}
+
+/* Трейд UI */
+#tradeModal { position:absolute; inset:0; background:rgba(0,0,0,0.8); display:flex; align-items:center; justify-content:center; z-index:50; pointer-events:auto; }
+.tradeBox { width:800px; background:#12161c; border:1px solid #3ee0d0; border-radius:12px; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 0 50px rgba(62,224,208,0.3); }
+.tradeHeader { background:rgba(62,224,208,0.1); padding:12px 20px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #2b3037; font-weight:800; color:#3ee0d0; font-size:18px; }
+.tradeBody { display:flex; height:400px; padding:16px; gap:16px; }
+.tradeCol { flex:1; display:flex; flex-direction:column; gap:8px; background:#191d22; border:1px solid #2b3037; border-radius:8px; padding:10px; }
+.tradeCol h3 { text-align:center; color:#9aa1aa; font-size:14px; margin-bottom:6px; }
+.tradeItems { flex:1; overflow-y:auto; display:flex; flex-wrap:wrap; gap:6px; align-content:flex-start; }
+.tradeSlot { width:60px; height:60px; border:1px solid #444; border-radius:4px; background:#111; position:relative; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-direction:column; }
+.tradeSlot:hover { border-color:#3ee0d0; }
+.tradeSlot img { width:80%; height:auto; pointer-events:none; }
+.tradeSlot .tname { font-size:9px; color:#fff; text-align:center; line-height:1; margin-top:2px; pointer-events:none; }
+.tradeFooter { padding:16px; display:flex; justify-content:space-between; align-items:center; background:#0e1116; border-top:1px solid #2b3037; }
+#tradeMyOffer, #tradeTheirOffer { display:flex; gap:6px; min-height:66px; }
+#tradeStatus { font-weight:800; color:#ffd76a; font-size:14px;}
+.tradeBtn { padding:10px 20px; border-radius:6px; font-weight:800; cursor:pointer; border:none; color:#000; font-family:'Consolas',monospace; transition:0.2s; }
+.btn-ready { background:#3ee0d0; } .btn-ready:hover { background:#5aff8a; } .btn-ready:disabled { background:#2b3037; color:#666; cursor:not-allowed; }
+.btn-cancel { background:#ff4d4d; color:#fff; } .btn-cancel:hover { background:#ff6b6b; }
+#tradeToast { position:absolute; top:20%; left:50%; transform:translateX(-50%); background:rgba(10,15,20,0.95); border:2px solid #3ee0d0; padding:20px 30px; border-radius:10px; color:#fff; z-index:60; text-align:center; display:none; box-shadow:0 0 30px rgba(62,224,208,0.5); }
+.trade-btn { background:#3ee0d0; border:none; border-radius:4px; font-size:10px; font-weight:800; padding:2px 8px; margin-left:10px; cursor:pointer; color:#000; letter-spacing:1px;}
+.trade-btn:hover { background:#fff; }
 </style>
 </head>
 <body>
@@ -361,6 +383,44 @@ h2{letter-spacing:3px;font-size:22px;color:#3ee0d0;text-align:center}
 <div id="screen-casino" class="screen hidden"><h2>КАЗИНО</h2><div class="coins" style="position:static;margin-bottom:6px">🪙 <span id="coinCountCasino">0</span></div><div class="casinoPanel"><div class="betRow"><input id="betInput" type="number" placeholder="Ставка" min="1" value="10"><button id="btnBetHalf" class="ghost">½</button><button id="btnBetDouble" class="ghost">×2</button><button id="btnBetAll" class="ghost">ВСЁ</button></div><div class="colorBtns"><div class="colorBtn red sel" data-color="red">КРАСНЫЙ<span class="mult">×4</span></div><div class="colorBtn green" data-color="green">ЗЕЛЁНЫЙ<span class="mult">×2</span></div><div class="colorBtn white" data-color="white">БЕЛЫЙ<span class="mult">×10</span></div></div><div class="rouletteWrap"><div class="rouletteReel" id="rouletteReel"></div><div class="rPointer"></div></div><div class="casinoResult" id="casinoResult">Выбери цвет</div><button id="btnSpin">КРУТИТЬ</button></div><button class="ghost" id="btnCasinoBack">НАЗАД</button></div>
 <div id="screen-case" class="screen hidden"><div class="reelWrap"><div class="pointer"></div><div id="reel"></div></div><div class="resultBox" id="caseResult"></div><button id="btnCaseOk" class="hidden">ЗАБРАТЬ</button></div>
 
+<!-- Трейд Уведомление -->
+<div id="tradeToast">
+  <div style="font-size:16px;margin-bottom:10px;font-weight:800;" id="tradeToastText">Входящий запрос...</div>
+  <div style="display:flex;gap:10px;justify-content:center;">
+    <button class="tradeBtn btn-ready" id="btnTradeAccept">ПРИНЯТЬ</button>
+    <button class="tradeBtn btn-cancel" id="btnTradeDecline">ОТКЛОНИТЬ</button>
+  </div>
+</div>
+
+<!-- Окно трейда -->
+<div id="tradeModal" class="hidden">
+  <div class="tradeBox">
+    <div class="tradeHeader">
+      <span>ТРЕЙД</span>
+      <span style="font-size:12px;color:#888" id="tradeTimerText">Выберите предметы</span>
+      <span id="tradeCloseBtn" style="cursor:pointer;color:#ff5555;font-size:20px">✕</span>
+    </div>
+    <div class="tradeBody">
+      <div class="tradeCol">
+        <h3>ВАШ ИНВЕНТАРЬ</h3>
+        <div class="tradeItems" id="tradeMyInv"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;width:100px;">
+        <div id="tradeStatus">НЕ ГОТОВ</div>
+        <button class="tradeBtn btn-ready" id="btnTradeReady" style="width:100%">ГОТОВ</button>
+      </div>
+      <div class="tradeCol">
+        <h3>ПРЕДЛОЖЕНИЕ ОППОНЕНТА</h3>
+        <div class="tradeItems" id="tradeTheirInv" style="display:flex;flex-wrap:wrap;align-content:flex-start"></div>
+      </div>
+    </div>
+    <div class="tradeFooter">
+      <div>Ваше предложение: <div id="tradeMyOffer"></div></div>
+      <div>Их предложение: <div id="tradeTheirOffer"></div></div>
+    </div>
+  </div>
+</div>
+
 <script>
 const $=id=>document.getElementById(id);
 const cv3d=$('cv3d'),cv2d=$('cv2d');
@@ -428,42 +488,7 @@ const SCOUT_SCOPE_STAGES=[75,50,30];
 const FIRE_RATES={ak:100,m4a4:90,galil:100,awp:1500,scout:1100,deagle:270,shotgun:900,mag7:900,mp7:80,pistol:180,usp:180,p250:170,knife:400,zeus:2500};
 
 function makeMirageGrid(){const W=40,H=30;const g=Array.from({length:H},()=>Array(W).fill(1));const clear=(x1,y1,x2,y2)=>{for(let y=y1;y<=y2;y++)for(let x=x1;x<=x2;x++)if(x>0&&x<W-1&&y>0&&y<H-1)g[y][x]=0;};const block=(x,y)=>{if(x>0&&x<W-1&&y>0&&y<H-1)g[y][x]=1;};clear(3,24,16,28);clear(18,20,28,28);block(23,24);block(23,25);block(24,24);block(24,25);clear(16,5,22,19);block(19,11);block(20,11);clear(16,1,22,4);clear(5,3,13,8);block(8,6);block(8,7);clear(3,0,12,2);clear(3,10,8,13);clear(2,14,8,20);clear(9,14,15,19);clear(25,3,34,9);clear(31,10,37,15);clear(24,14,30,19);clear(31,16,37,20);clear(13,21,17,24);clear(3,21,8,24);clear(15,23,19,26);clear(20,19,22,21);clear(26,19,30,21);clear(28,20,34,22);clear(16,4,22,6);clear(12,1,16,3);clear(22,2,26,4);clear(5,2,10,4);clear(6,8,10,10);clear(3,13,6,15);clear(13,5,16,8);clear(15,14,17,18);clear(8,15,10,18);clear(33,9,35,11);clear(30,12,33,15);clear(32,14,35,17);clear(22,14,25,17);clear(30,16,32,18);for(let x=0;x<W;x++){g[0][x]=1;g[H-1][x]=1;}for(let y=0;y<H;y++){g[y][0]=1;g[y][W-1]=1;}return g;}
-
-function makeStation141Grid(){
-  const W=40,H=30;
-  const g=Array.from({length:H},()=>Array(W).fill(1));
-  const clear=(x1,y1,x2,y2)=>{for(let y=y1;y<=y2;y++)for(let x=x1;x<=x2;x++)if(x>0&&x<W-1&&y>0&&y<H-1)g[y][x]=0;};
-  const block=(x,y)=>{if(x>0&&x<W-1&&y>0&&y<H-1)g[y][x]=1;};
-  clear(2,12,37,18);
-  clear(2,2,37,7);
-  clear(2,22,37,27);
-  clear(6,7,10,12);
-  clear(15,7,19,12);
-  clear(24,7,28,12);
-  clear(33,7,36,12);
-  clear(6,18,10,22);
-  clear(15,18,19,22);
-  clear(24,18,28,22);
-  clear(33,18,36,22);
-  clear(12,10,16,14);
-  clear(20,15,25,20);
-  clear(28,8,32,11);
-  clear(4,25,8,28);
-  clear(20,24,25,28);
-  clear(34,24,37,28);
-  block(13,11); block(14,11);
-  block(22,17); block(23,17);
-  block(30,9);
-  block(6,26);
-  block(22,26); block(23,26);
-  block(9,14); block(9,15);
-  block(20,4); block(20,5);
-  block(30,20); block(30,21);
-  block(14,25); block(15,25);
-  for(let x=0;x<W;x++){g[0][x]=1;g[H-1][x]=1;}
-  for(let y=0;y<H;y++){g[y][0]=1;g[y][W-1]=1;}
-  return g;
-}
+function makeStation141Grid(){const W=40,H=30;const g=Array.from({length:H},()=>Array(W).fill(1));const clear=(x1,y1,x2,y2)=>{for(let y=y1;y<=y2;y++)for(let x=x1;x<=x2;x++)if(x>0&&x<W-1&&y>0&&y<H-1)g[y][x]=0;};const block=(x,y)=>{if(x>0&&x<W-1&&y>0&&y<H-1)g[y][x]=1;};clear(2,12,37,18);clear(2,2,37,7);clear(2,22,37,27);clear(6,7,10,12);clear(15,7,19,12);clear(24,7,28,12);clear(33,7,36,12);clear(6,18,10,22);clear(15,18,19,22);clear(24,18,28,22);clear(33,18,36,22);clear(12,10,16,14);clear(20,15,25,20);clear(28,8,32,11);clear(4,25,8,28);clear(20,24,25,28);clear(34,24,37,28);block(13,11);block(14,11);block(22,17);block(23,17);block(30,9);block(6,26);block(22,26);block(23,26);block(9,14);block(9,15);block(20,4);block(20,5);block(30,20);block(30,21);block(14,25);block(15,25);for(let x=0;x<W;x++){g[0][x]=1;g[H-1][x]=1;}for(let y=0;y<H;y++){g[y][0]=1;g[y][W-1]=1;}return g;}
 
 const SKINS=[
   {id:'ak_sand',name:'AK-47 | Пыль',type:'weapon',weapon:'ak',color:'#c8b48a',rarity:'common'},{id:'p250_sand',name:'P250 | Песок',type:'weapon',weapon:'p250',color:'#d9c07a',rarity:'common'},{id:'dg_clay',name:'Deagle | Глина',type:'weapon',weapon:'deagle',color:'#a0522d',rarity:'common'},{id:'ch_inf',name:'Персонаж | Пехота',type:'char',color:'#7a8b5a',rarity:'common'},
@@ -473,7 +498,6 @@ const SKINS=[
   {id:'awp_dragon',name:'AWP | Дракон',type:'weapon',weapon:'awp',color:'#ff2d2d',rarity:'legendary'},{id:'awp_asiimov',name:'AWP | Азимов',type:'weapon',weapon:'awp',color:'#ff8c00',rarity:'legendary'},{id:'awp_hyper',name:'AWP | Гипербист',type:'weapon',weapon:'awp',color:'#d920ff',rarity:'legendary'},{id:'ak_hyper',name:'AK-47 | Гипербист',type:'weapon',weapon:'ak',color:'#ff00ff',rarity:'legendary'},{id:'m4_hyper',name:'M4A4 | Гипербист',type:'weapon',weapon:'m4a4',color:'#ff00aa',rarity:'legendary'},{id:'awp_sofi',name:'AWP | SOFI MICHELLE',type:'weapon',weapon:'awp',color:'#ff1493',rarity:'god'},
   {id:'awp_dragonlore',name:'AWP | Dragon Lore',type:'weapon',weapon:'awp',color:'#c9a227',rarity:'chroma'},{id:'ak_case_hard',name:'AK-47 | Закалка',type:'weapon',weapon:'ak',color:'#4169e1',rarity:'god'},{id:'dg_vertugun',name:'Deagle | Вертугун',type:'weapon',weapon:'deagle',color:'#8e44ad',rarity:'chroma'},{id:'m4_howl',name:'M4A4 | Howl',type:'weapon',weapon:'m4a4',color:'#d35400',rarity:'chroma'}
 ];
-// === ПАТРИОТ ===
 const PATRIOT_SKINS=[
   {id:'pat_ak',name:'AK-47 | Патриот',type:'weapon',weapon:'ak',color:'#ce1720',multi:['#ce1720','#0a7a2a','#ffffff'],rarity:'rare'},
   {id:'pat_m4',name:'M4A4 | Патриот',type:'weapon',weapon:'m4a4',color:'#0a7a2a',multi:['#0a7a2a','#ce1720','#ffffff'],rarity:'rare'},
@@ -485,7 +509,6 @@ const PATRIOT_SKINS=[
   {id:'pat_kn',name:'Нож | Патриот',type:'weapon',weapon:'knife',color:'#ce1720',multi:['#ce1720','#0a7a2a','#ffffff'],rarity:'legendary'}
 ];
 PATRIOT_SKINS.forEach(s=>SKINS.push(s));
-// === FADE ===
 const FADE_SKINS=[
   {id:'fade_ak',name:'AK-47 | Fade',type:'weapon',weapon:'ak',color:'#ff2d2d',multi:['#ff2d2d','#4b69ff','#ffd700'],rarity:'epic'},
   {id:'fade_m4',name:'M4A4 | Fade',type:'weapon',weapon:'m4a4',color:'#4b69ff',multi:['#4b69ff','#ffd700','#ff2d2d'],rarity:'epic'},
@@ -518,10 +541,7 @@ GRAFFITI.forEach(g=>SKINS.push(g));
 const FROST_SKINS=[{id:'fr_coal_ak',name:'AK-47 | Уголь',type:'weapon',weapon:'ak',color:'#1a1a1a',rarity:'junk'},{id:'fr_gift_ak',name:'AK-47 | Подарок',type:'weapon',weapon:'ak',color:'#c8102e',rarity:'rare'},{id:'fr_snow_usp',name:'USP | Снежинка',type:'weapon',weapon:'usp',color:'#e8f0ff',rarity:'rare'},{id:'fr_icicle_awp',name:'AWP | Сосулька',type:'weapon',weapon:'awp',color:'#a8d8ff',rarity:'rare'},{id:'fr_frost_ak',name:'AK-47 | Мороз',type:'weapon',weapon:'ak',color:'#9dd4ff',rarity:'epic'},{id:'fr_aurora_awp',name:'AWP | Сияние',type:'weapon',weapon:'awp',color:'#30e0b0',rarity:'epic'},{id:'fr_santa_awp',name:'AWP | Дед Мороз',type:'weapon',weapon:'awp',color:'#d81e2c',rarity:'legendary'}];
 const FROST_CHARS=[{id:'fr_santa',name:'Персонаж | Дед Мороз',type:'char',color:'#d81e2c',rarity:'legendary'}];
 const FROST_KNIFE={id:'kn_lollipop',name:'Леденец',type:'weapon',weapon:'knife',color:'#ff2d5e',rarity:'knife'};
-
-// === НОЖ «ЖЕКА» — ЛЕГЕНДА, ULTRA ===
 const ZHEKA_KNIFE={id:'kn_zheka',name:'Жека ★',type:'weapon',weapon:'knife',color:'#ffd700',multi:['#ff0040','#ff8800','#ffee00','#00ff88','#00aaff','#aa00ff'],rarity:'ultra'};
-
 const KNIFE_SKINS=[
   {id:'kn_karambit',name:'Керамбит',type:'weapon',weapon:'knife',color:'#e0d0a0',rarity:'knife'},{id:'kn_bayonet',name:'Штык-нож',type:'weapon',weapon:'knife',color:'#a0c0ff',rarity:'knife'},{id:'kn_butterfly',name:'Бабочка',type:'weapon',weapon:'knife',color:'#c9a227',rarity:'knife'},{id:'kn_doppler',name:'Керамбит | Доплер',type:'weapon',weapon:'knife',color:'#9b30ff',multi:['#1a00a0','#ff00ff','#00ffff'],rarity:'knife'},{id:'kn_tiger',name:'Керамбит | Тигр',type:'weapon',weapon:'knife',color:'#ff8c00',rarity:'knife'},{id:'kn_marble',name:'Штык | Мрамор',type:'weapon',weapon:'knife',color:'#ff2d2d',multi:['#ff2d2d','#1a1a1a','#ff5500'],rarity:'knife'},{id:'kn_tanto',name:'Танто',type:'weapon',weapon:'knife',color:'#708090',rarity:'knife'},{id:'kn_bowie',name:'Боуи',type:'weapon',weapon:'knife',color:'#8b4513',rarity:'knife'},{id:'kn_claw',name:'Коготь',type:'weapon',weapon:'knife',color:'#4a4a4a',rarity:'knife'},{id:'kn_stiletto',name:'Стилет',type:'weapon',weapon:'knife',color:'#dcdcdc',rarity:'knife'},{id:'kn_falchion',name:'Фальшион',type:'weapon',weapon:'knife',color:'#556b2f',rarity:'knife'},{id:'kn_huntsman',name:'Охотничий',type:'weapon',weapon:'knife',color:'#8b7355',rarity:'knife'},
   {id:'kn_sofi',name:'Керамбит | SOFI MICHELLE',type:'weapon',weapon:'knife',color:'#ff1493',rarity:'ultra'}
@@ -608,7 +628,7 @@ void main(){
       vec3 m1=vec3(0.88,0.75,0.55),m2=vec3(0.75,0.60,0.42),m3=vec3(0.93,0.83,0.65);
       baseColor=mix(mix(m1,m2,n),m3,step(0.7,n));
     } else if(uTheme==3){
-     vec2 grid=floor(uv*8.0);
+      vec2 grid=floor(uv*8.0);
       float panel=hash(grid);
       vec3 base=mix(vec3(0.28,0.42,0.50),vec3(0.40,0.58,0.68),panel);
       float fx=fract(uv.x*8.0),fy=fract(uv.y*8.0);
@@ -783,7 +803,8 @@ function onState(s){
   const prevMe=gameState?gameState.players.find(p=>p.id===myId):null;
   const prevPhase=gameState?gameState.phase:null;
   gameState=s;
-  const wantMap=(s.mapId&&ALL_GRIDS&&ALL_GRIDS[s.mapId])?s.mapId:(localStorage.getItem('kozel_map')||'neon');
+  const storedMap=localStorage.getItem('kozel_map');
+  const wantMap=(storedMap&&ALL_GRIDS&&ALL_GRIDS[storedMap])?storedMap:(s.mapId||'neon');
   if(wantMap&&wantMap!==currentMapId&&ALL_GRIDS&&ALL_GRIDS[wantMap]){currentMapId=wantMap;currentTheme=(wantMap==='christmas')?1:(wantMap==='neon'?3:(wantMap==='mirage'?2:0));MAP=ALL_GRIDS[wantMap];buildWallBuffer(MAP,MW,MH,TILE);buildFloorBuffer(MW,MH,TILE);crates=buildCrateBuffer(MAP,MW,MH,TILE);lamps=[];myInit=false;resetBomb();grenadeProjectiles.length=0;smokeClouds.length=0;fireAreas.length=0;graffitiList.length=0;}
   const me=s.players.find(p=>p.id===myId);if(me)myTeam=me.tm;
   if(!myInit&&me){myX=me.x;myY=me.y;myYaw=me.a||0;myInit=true;}
@@ -1108,185 +1129,72 @@ function drawFPArmsV2(myW,wc,handTone,cx,cy,K){
   const armDark = '#0e0e0e';
   const armLight = '#222222';
 
-  // Кисть — овальная, сжатая в кулак
   const drawFist=(x,y,w,h,rot)=>{
     ctx.save();ctx.translate(x,y);ctx.rotate(rot||0);
-    // Тень снизу
     ctx.fillStyle='rgba(0,0,0,0.6)';
     ctx.beginPath();ctx.ellipse(0,h*0.15,w,h,0,0,Math.PI*2);ctx.fill();
-    // Основа кулака с градиентом (свет сверху-слева)
     const g=ctx.createRadialGradient(-w*0.35,-h*0.45,w*0.05,0,0,w*1.05);
-    g.addColorStop(0,gloveHi);
-    g.addColorStop(0.3,gloveLight);
-    g.addColorStop(0.6,glove);
-    g.addColorStop(0.85,gloveMid);
-    g.addColorStop(1,gloveDark);
-    ctx.fillStyle=g;
-    ctx.beginPath();ctx.ellipse(0,0,w,h,0,0,Math.PI*2);ctx.fill();
-    // Верхний блик
-    ctx.fillStyle='rgba(255,255,255,0.22)';
-    ctx.beginPath();ctx.ellipse(-w*0.35,-h*0.42,w*0.32,h*0.20,-0.4,0,Math.PI*2);ctx.fill();
+    g.addColorStop(0,gloveHi);g.addColorStop(0.3,gloveLight);g.addColorStop(0.6,glove);g.addColorStop(0.85,gloveMid);g.addColorStop(1,gloveDark);
+    ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(0,0,w,h,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.22)';ctx.beginPath();ctx.ellipse(-w*0.35,-h*0.42,w*0.32,h*0.20,-0.4,0,Math.PI*2);ctx.fill();
     ctx.restore();
   };
 
-  // Палец — изогнутый, поверх оружия
   const drawWrapFinger=(cx0,cy0,r,len,angleStart,angleEnd,tone)=>{
-    ctx.save();
-    ctx.beginPath();
-    const segs=6;
-    const pts=[];
-    for(let i=0;i<=segs;i++){
-      const t=i/segs;
-      const a=angleStart+(angleEnd-angleStart)*t;
-      const px=cx0+Math.cos(a)*r - Math.sin(a)*len*t;
-      const py=cy0+Math.sin(a)*r + Math.cos(a)*len*t;
-      pts.push([px,py]);
-    }
-    // Внешняя линия
-    ctx.lineWidth=len*0.55;
-    ctx.lineCap='round';
-    ctx.strokeStyle=tone||glove;
-    ctx.beginPath();
-    ctx.moveTo(pts[0][0],pts[0][1]);
-    for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]);
-    ctx.stroke();
-    // Внутренний блик
-    ctx.lineWidth=len*0.18;
-    ctx.strokeStyle='rgba(255,255,255,0.18)';
-    ctx.beginPath();
-    ctx.moveTo(pts[0][0]-1,pts[0][1]-2);
-    for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0]-1,pts[i][1]-2);
-    ctx.stroke();
-    // Обводка снизу
-    ctx.lineWidth=1.2;
-    ctx.strokeStyle='rgba(0,0,0,0.55)';
-    ctx.beginPath();
-    ctx.moveTo(pts[0][0],pts[0][1]+len*0.30);
-    for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]+len*0.30);
-    ctx.stroke();
-    ctx.restore();
+    ctx.save();ctx.beginPath();const segs=6;const pts=[];
+    for(let i=0;i<=segs;i++){const t=i/segs;const a=angleStart+(angleEnd-angleStart)*t;const px=cx0+Math.cos(a)*r - Math.sin(a)*len*t;const py=cy0+Math.sin(a)*r + Math.cos(a)*len*t;pts.push([px,py]);}
+    ctx.lineWidth=len*0.55;ctx.lineCap='round';ctx.strokeStyle=tone||glove;ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
+    for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]);ctx.stroke();
+    ctx.lineWidth=len*0.18;ctx.strokeStyle='rgba(255,255,255,0.18)';ctx.beginPath();ctx.moveTo(pts[0][0]-1,pts[0][1]-2);
+    for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0]-1,pts[i][1]-2);ctx.stroke();
+    ctx.lineWidth=1.2;ctx.strokeStyle='rgba(0,0,0,0.55)';ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]+len*0.30);
+    for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]+len*0.30);ctx.stroke();ctx.restore();
   };
 
-  // Предплечье — сужающаяся трапеция
   const drawForearm=(x0,y0,x1,y1,w0,w1,tone,dark)=>{
-    ctx.save();
-    const dx=x1-x0,dy=y1-y0;
-    const len=Math.hypot(dx,dy);
-    const nx=-dy/len,ny=dx/len;
-    ctx.beginPath();
-    ctx.moveTo(x0+nx*w0,y0+ny*w0);
-    ctx.lineTo(x1+nx*w1,y1+ny*w1);
-    ctx.lineTo(x1-nx*w1,y1-ny*w1);
-    ctx.lineTo(x0-nx*w0,y0-ny*w0);
-    ctx.closePath();
-    const g=ctx.createLinearGradient(x0,y0,x1,y1);
-    g.addColorStop(0,'#050505');
-    g.addColorStop(0.4,tone||armDark);
-    g.addColorStop(0.7,dark?armDark:armLight);
-    g.addColorStop(1,'#000000');
-    ctx.fillStyle=g;ctx.fill();
-    ctx.strokeStyle='rgba(0,0,0,0.8)';ctx.lineWidth=1.5;ctx.stroke();
-    // Манжеты перчатки поверх
-    ctx.restore();
+    ctx.save();const dx=x1-x0,dy=y1-y0;const len=Math.hypot(dx,dy);const nx=-dy/len,ny=dx/len;ctx.beginPath();
+    ctx.moveTo(x0+nx*w0,y0+ny*w0);ctx.lineTo(x1+nx*w1,y1+ny*w1);ctx.lineTo(x1-nx*w1,y1-ny*w1);ctx.lineTo(x0-nx*w0,y0-ny*w0);ctx.closePath();
+    const g=ctx.createLinearGradient(x0,y0,x1,y1);g.addColorStop(0,'#050505');g.addColorStop(0.4,tone||armDark);g.addColorStop(0.7,dark?armDark:armLight);g.addColorStop(1,'#000000');
+    ctx.fillStyle=g;ctx.fill();ctx.strokeStyle='rgba(0,0,0,0.8)';ctx.lineWidth=1.5;ctx.stroke();ctx.restore();
   };
 
-  const drawCuff=(x,y,w,h,col)=>{
-    const g=ctx.createLinearGradient(x,y,x,y+h);
-    g.addColorStop(0,shadeColor(col,0.30));
-    g.addColorStop(0.5,col);
-    g.addColorStop(1,shadeColor(col,-0.45));
-    ctx.fillStyle=g;ctx.fillRect(x,y,w,h);
-    ctx.strokeStyle='rgba(0,0,0,0.55)';ctx.lineWidth=1;ctx.strokeRect(x,y,w,h);
-  };
+  const drawCuff=(x,y,w,h,col)=>{const g=ctx.createLinearGradient(x,y,x,y+h);g.addColorStop(0,shadeColor(col,0.30));g.addColorStop(0.5,col);g.addColorStop(1,shadeColor(col,-0.45));ctx.fillStyle=g;ctx.fillRect(x,y,w,h);ctx.strokeStyle='rgba(0,0,0,0.55)';ctx.lineWidth=1;ctx.strokeRect(x,y,w,h);};
 
-  // === ЛЕВАЯ РУКА (на цевье) ===
   if(myW!=='knife' && myW!=='zeus'){
-    const awpLike = myW==='awp'||myW==='scout';
-    const lx=cx + (awpLike?225*K:195*K);
-    const ly=cy - (awpLike?118*K:82*K);
-
-    // Предплечье от нижнего края к кисти
+    const awpLike = myW==='awp'||myW==='scout';const lx=cx + (awpLike?225*K:195*K);const ly=cy - (awpLike?118*K:82*K);
     drawForearm(lx-90*K, cy+180*K, lx+20*K, ly+55*K, 60*K, 34*K, armDark, false);
-    // Манжеты
-    drawCuff(lx-58*K, cy+110*K, 110*K, 14*K, cuff2);
-    drawCuff(lx-55*K, cy+126*K, 100*K, 12*K, cuff1);
-    // Кисть на цевье
+    drawCuff(lx-58*K, cy+110*K, 110*K, 14*K, cuff2);drawCuff(lx-55*K, cy+126*K, 100*K, 12*K, cuff1);
     drawFist(lx, ly, 42*K, 34*K, -0.15);
-    // Пальцы, обхватывающие цевьё сверху
-    for(let i=0;i<3;i++){
-      const fx=lx+8*K+i*20*K;
-      const fy=ly-25*K;
-      drawWrapFinger(fx, fy, 8*K, 22*K, -0.9, -0.3, glove);
-    }
-    // Большой палец снизу
+    for(let i=0;i<3;i++){const fx=lx+8*K+i*20*K;const fy=ly-25*K;drawWrapFinger(fx, fy, 8*K, 22*K, -0.9, -0.3, glove);}
     drawWrapFinger(lx-18*K, ly+8*K, 10*K, 18*K, 0.7, 0.2, gloveLight);
   }
 
-  // === ПРАВАЯ РУКА (на рукоятке, держит спуск) ===
   if(myW!=='knife' && myW!=='zeus'){
-    const awpLike = myW==='awp'||myW==='scout';
-    const rx=cx + (awpLike?95*K:85*K);
-    const ry=cy - (awpLike?90*K:55*K);
-
+    const awpLike = myW==='awp'||myW==='scout';const rx=cx + (awpLike?95*K:85*K);const ry=cy - (awpLike?90*K:55*K);
     drawForearm(rx-40*K, cy+200*K, rx+15*K, ry+65*K, 58*K, 32*K, armDark, true);
-    drawCuff(rx-45*K, cy+120*K, 100*K, 14*K, cuff2);
-    drawCuff(rx-42*K, cy+136*K, 90*K, 12*K, cuff1);
+    drawCuff(rx-45*K, cy+120*K, 100*K, 14*K, cuff2);drawCuff(rx-42*K, cy+136*K, 90*K, 12*K, cuff1);
     drawFist(rx, ry, 40*K, 32*K, 0.10);
-    // Пальцы вокруг рукоятки
-    for(let i=0;i<3;i++){
-      const fx=rx-6*K+i*18*K;
-      const fy=ry-22*K;
-      drawWrapFinger(fx, fy, 7*K, 20*K, -0.85, -0.35, glove);
-    }
-    // Указательный на спуске
+    for(let i=0;i<3;i++){const fx=rx-6*K+i*18*K;const fy=ry-22*K;drawWrapFinger(fx, fy, 7*K, 20*K, -0.85, -0.35, glove);}
     drawWrapFinger(rx+22*K, ry+4*K, 9*K, 16*K, 0.3, -0.4, gloveLight);
   }
 
-    // === Нож ===
+  // === Нож ===
   if(myW==='knife'){
-    // Рукоять ножа в клиенте нарисована на bx=cx+60*K, by=cy-40*K
-    // Рука должна быть ТАМ ЖЕ, ниже рукояти, обхватывая её
-    const hx=cx+60*K + 8*K;       // центр кулака чуть правее рукояти
-    const hy=cy-40*K + 55*K;       // ниже основания лезвия (на рукояти)
-
-    // Предплечье идёт снизу-справа к кулаку
+    const hx=cx+60*K + 8*K; const hy=cy-40*K + 55*K;
     drawForearm(hx-30*K, cy+220*K, hx-5*K, hy+45*K, 66*K, 36*K, armDark, true);
-    drawCuff(hx-55*K, cy+135*K, 110*K, 14*K, cuff2);
-    drawCuff(hx-52*K, cy+151*K, 100*K, 12*K, cuff1);
-
-    // Кулак на рукояти (повёрнут чтобы большой палец был слева)
+    drawCuff(hx-55*K, cy+135*K, 110*K, 14*K, cuff2);drawCuff(hx-52*K, cy+151*K, 100*K, 12*K, cuff1);
     drawFist(hx, hy, 44*K, 36*K, -0.05);
-
-    // 4 пальца обхватывают рукоять — идут ГОРИЗОНТАЛЬНО, сгибаясь вниз
-    for(let i=0;i<4;i++){
-      const fx = hx - 34*K + i*20*K;    // слева направо
-      const fy = hy - 30*K;              // поверх кулака (пальцы сверху рукояти)
-      // Дуга от 180° до 340° — палец уходит вправо и вниз, обхватывая ствол
-      drawWrapFinger(fx, fy, 9*K, 20*K, 2.0, 3.4, glove);
-    }
-
-    // Большой палец справа, прижат снизу к рукояти
+    for(let i=0;i<4;i++){const fx = hx - 34*K + i*20*K; const fy = hy - 30*K; drawWrapFinger(fx, fy, 9*K, 20*K, 2.0, 3.4, glove);}
     drawWrapFinger(hx+30*K, hy-8*K, 10*K, 14*K, -0.6, 0.2, gloveLight);
-
-    // Лёгкая тень от кулака на рукоять
-    ctx.fillStyle='rgba(0,0,0,0.35)';
-    ctx.beginPath();
-    ctx.ellipse(hx-2*K, hy+22*K, 40*K, 8*K, 0, 0, Math.PI*2);
-    ctx.fill();
+    ctx.fillStyle='rgba(0,0,0,0.35)';ctx.beginPath();ctx.ellipse(hx-2*K, hy+22*K, 40*K, 8*K, 0, 0, Math.PI*2);ctx.fill();
   }
 
-  // === Zeus ===
   if(myW==='zeus'){
     const rx=cx+220*K, ry=cy-100*K;
     drawForearm(rx-50*K, cy+180*K, rx+20*K, ry+60*K, 60*K, 34*K, armDark, true);
-    drawCuff(rx-50*K, cy+110*K, 105*K, 14*K, cuff2);
-    drawCuff(rx-47*K, cy+126*K, 95*K, 12*K, cuff1);
+    drawCuff(rx-50*K, cy+110*K, 105*K, 14*K, cuff2);drawCuff(rx-47*K, cy+126*K, 95*K, 12*K, cuff1);
     drawFist(rx, ry, 42*K, 34*K, 0.15);
-    for(let i=0;i<3;i++){
-      const fx=rx-6*K+i*18*K;
-      const fy=ry-22*K;
-      drawWrapFinger(fx, fy, 7*K, 20*K, -0.85, -0.35, glove);
-    }
+    for(let i=0;i<3;i++){const fx=rx-6*K+i*18*K;const fy=ry-22*K;drawWrapFinger(fx, fy, 7*K, 20*K, -0.85, -0.35, glove);}
   }
 }
 
@@ -1317,10 +1225,7 @@ function drawViewModel(){
     if(mySkinId==='kn_zheka'){
       const tt=performance.now()/1000;
       const glowGrd=ctx.createRadialGradient(bx+20*K,by-120*K,0,bx+20*K,by-120*K,260*K);
-      glowGrd.addColorStop(0,'rgba(255,50,255,0.55)');
-      glowGrd.addColorStop(0.4,'rgba(50,255,255,0.28)');
-      glowGrd.addColorStop(0.7,'rgba(255,215,0,0.15)');
-      glowGrd.addColorStop(1,'rgba(0,0,0,0)');
+      glowGrd.addColorStop(0,'rgba(255,50,255,0.55)');glowGrd.addColorStop(0.4,'rgba(50,255,255,0.28)');glowGrd.addColorStop(0.7,'rgba(255,215,0,0.15)');glowGrd.addColorStop(1,'rgba(0,0,0,0)');
       ctx.fillStyle=glowGrd;ctx.fillRect(bx-260*K,by-380*K,540*K,520*K);
       const grd=ctx.createLinearGradient(bx,by-250*K,bx,by+5*K);
       grd.addColorStop(0,'#ff0040');grd.addColorStop(0.2,'#ff8800');grd.addColorStop(0.4,'#ffee00');grd.addColorStop(0.6,'#00ff88');grd.addColorStop(0.8,'#00aaff');grd.addColorStop(1,'#aa00ff');
@@ -1398,6 +1303,167 @@ $('btnBetAll').addEventListener('click',()=>{$('betInput').value=coins;});
 $('btnSpin').addEventListener('click',spinRoulette);
 function pickSlotClass(){const r=Math.random();if(r<0.5)return 'red';if(r<0.975)return 'green';return 'white';}
 function spinRoulette(){if(spinning)return;const bet=parseInt($('betInput').value)||0;const r=$('casinoResult');if(bet<=0){r.textContent='Введи ставку > 0';r.style.color='#ff6b6b';return;}if(coins<bet){r.textContent='Мало монет!';r.style.color='#ff6b6b';return;}coins-=bet;saveLS();updateCoinUI();r.textContent='Крутим...';r.style.color='#ffd76a';spinning=true;const roll=Math.floor(Math.random()*40);let result;if(roll<20)result='red';else if(roll<39)result='green';else result='white';const N=50,WIN=42,slotStep=64,wrapW=470;const reel=$('rouletteReel');reel.innerHTML='';for(let i=0;i<N;i++){const d=document.createElement('div');d.className='rSlot '+(i===WIN?result:pickSlotClass());reel.appendChild(d);}const targetX=WIN*slotStep+slotStep/2-wrapW/2+(Math.random()*30-15);reel.style.transition='none';reel.style.transform='translateX(0px)';requestAnimationFrame(()=>requestAnimationFrame(()=>{reel.style.transition='transform 4s cubic-bezier(.15,.85,.25,1)';reel.style.transform=`translateX(${-targetX}px)`;}));setTimeout(()=>{spinning=false;let msg,col;if(result===selectedColor){const mult=result==='white'?10:(result==='red'?4:2);const win=bet*mult;coins+=win;saveLS();updateCoinUI();msg=`ВЫИГРЫШ +${win} (×${mult})`;col='#5aff8a';}else{const name=result==='red'?'красный':result==='green'?'зелёный':'белый';msg=`ПРОИГРЫШ -${bet} (${name})`;col='#ff6b6b';}r.textContent=msg;r.style.color=col;},4200);}
+
+// === СИСТЕМА ТРЕЙДОВ ===
+let currentTrade = null;
+let myTradeItems = [];
+let myTradeReady = false;
+let incomingTradeId = null;
+
+function addTradeButtonsToScoreboard() {
+    document.querySelectorAll('#scoreboard .sbRow').forEach(row => {
+        if (row.classList.contains('me') || row.classList.contains('bot')) return;
+        if (row.querySelector('.trade-btn')) return;
+        const name = row.querySelector('.sbName').textContent.trim();
+        const targetP = gameState.players.find(p => p.n === name && !p.bot);
+        if (!targetP) return;
+        const btn = document.createElement('button');
+        btn.className = 'trade-btn';
+        btn.textContent = 'ТРЕЙД';
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            send({ t: 'trade_request', targetId: targetP.id });
+            showToastMsg('Запрос отправлен...');
+        };
+        row.querySelector('.sbName').appendChild(btn);
+    });
+}
+const _oldRenderScoreboard = renderScoreboard;
+renderScoreboard = function() { _oldRenderScoreboard(); addTradeButtonsToScoreboard(); };
+
+function showToastMsg(text) {
+    const toast = $('tradeToast');
+    $('tradeToastText').textContent = text;
+    $('btnTradeAccept').style.display = 'none';
+    $('btnTradeDecline').style.display = 'none';
+    toast.style.display = 'block';
+    setTimeout(() => { if(!incomingTradeId) toast.style.display = 'none'; }, 3000);
+}
+
+const _oldHandleMsg = handleMsg;
+handleMsg = function(m) {
+    _oldHandleMsg(m);
+    if (m.t === 'trade_incoming') {
+        incomingTradeId = m.tradeId;
+        $('tradeToastText').textContent = `${m.fromName} хочет торговать`;
+        $('btnTradeAccept').style.display = 'inline-block';
+        $('btnTradeDecline').style.display = 'inline-block';
+        $('tradeToast').style.display = 'block';
+    }
+    else if (m.t === 'trade_open') {
+        $('tradeToast').style.display = 'none';
+        incomingTradeId = null;
+        currentTrade = { id: m.tradeId, me: myId, them: myId === m.p1Id ? m.p2Id : m.p1Id };
+        myTradeItems = [];
+        myTradeReady = false;
+        renderTradeUI();
+        $('tradeModal').classList.remove('hidden');
+        if(document.pointerLockElement) document.exitPointerLock();
+    }
+    else if (m.t === 'trade_update') {
+        if (!currentTrade) return;
+        myTradeReady = m.ready[myId] || false;
+        renderTradeUI(m.offers[currentTrade.them] || [], m.ready);
+    }
+    else if (m.t === 'trade_success') {
+        if (!currentTrade) return;
+        const myOfferIds = m.offers[myId] || [];
+        const theirOfferIds = m.offers[currentTrade.them] || [];
+        for (const id of myOfferIds) {
+            const idx = inv.findIndex(i => i.id === id);
+            if (idx >= 0) {
+                inv[idx].count--;
+                if (inv[idx].count <= 0) inv.splice(idx, 1);
+            }
+        }
+        for (const id of theirOfferIds) {
+            const existing = inv.find(i => i.id === id);
+            if (existing) existing.count++;
+            else inv.push({ id: id, count: 1 });
+        }
+        saveLS(); renderInv();
+        alert('ТРЕЙД УСПЕШНО ЗАВЕРШЕН!');
+        closeTrade();
+    }
+    else if (m.t === 'trade_closed') {
+        alert(m.msg || 'Трейд отменен');
+        closeTrade();
+    }
+};
+
+function closeTrade() {
+    $('tradeModal').classList.add('hidden');
+    $('tradeToast').style.display = 'none';
+    if (currentTrade) send({ t: 'trade_cancel', tradeId: currentTrade.id });
+    currentTrade = null; incomingTradeId = null;
+    myTradeItems = []; myTradeReady = false;
+}
+
+function renderTradeUI(theirOffer = [], readyState = {}) {
+    if (!currentTrade) return;
+    const myInvEl = $('tradeMyInv');
+    myInvEl.innerHTML = '';
+    for (const entry of inv) {
+        const s = skinById(entry.id);
+        if (!s) continue;
+        const isSelected = myTradeItems.includes(s.id);
+        const d = document.createElement('div');
+        d.className = 'tradeSlot';
+        d.style.borderColor = isSelected ? '#3ee0d0' : '#444';
+        d.style.background = s.color || '#111';
+        d.innerHTML = `<div class="tname">${s.name.substring(0,12)}</div>`;
+        d.onclick = () => {
+            if (myTradeReady) return;
+            if (isSelected) myTradeItems = myTradeItems.filter(id => id !== s.id);
+            else myTradeItems.push(s.id);
+            send({ t: 'trade_offer', tradeId: currentTrade.id, items: myTradeItems });
+        };
+        myInvEl.appendChild(d);
+    }
+
+    const myOfferEl = $('tradeMyOffer');
+    myOfferEl.innerHTML = '';
+    myTradeItems.forEach(id => {
+        const s = skinById(id);
+        const d = document.createElement('div');
+        d.className = 'tradeSlot'; d.style.background = s ? s.color : '#333';
+        d.innerHTML = `<div class="tname">${s ? s.name.substring(0,8) : id}</div>`;
+        myOfferEl.appendChild(d);
+    });
+
+    const theirOfferEl = $('tradeTheirOffer');
+    theirOfferEl.innerHTML = '';
+    theirOffer.forEach(id => {
+        const s = skinById(id);
+        const d = document.createElement('div');
+        d.className = 'tradeSlot'; d.style.background = s ? s.color : '#333';
+        d.innerHTML = `<div class="tname">${s ? s.name.substring(0,8) : id}</div>`;
+        theirOfferEl.appendChild(d);
+    });
+
+    const btn = $('btnTradeReady');
+    btn.textContent = myTradeReady ? 'ВЫ ГОТОВЫ' : 'ГОТОВ';
+    btn.disabled = myTradeReady;
+    $('tradeStatus').textContent = myTradeReady ? 'ЖДЕМ ОППОНЕНТА...' : 'НЕ ГОТОВ';
+    $('tradeStatus').style.color = myTradeReady ? '#5aff8a' : '#ffd76a';
+}
+
+$('btnTradeAccept').onclick = () => {
+    if (incomingTradeId) send({ t: 'trade_accept', tradeId: incomingTradeId });
+    $('tradeToast').style.display = 'none';
+};
+$('btnTradeDecline').onclick = () => {
+    if (incomingTradeId) send({ t: 'trade_decline', tradeId: incomingTradeId });
+    $('tradeToast').style.display = 'none';
+    incomingTradeId = null;
+};
+$('tradeCloseBtn').onclick = closeTrade;
+$('btnTradeReady').onclick = () => {
+    if (!currentTrade) return;
+    send({ t: 'trade_ready', tradeId: currentTrade.id });
+    myTradeReady = true;
+    renderTradeUI();
+};
 
 let lastFrame=performance.now();
 function loop(){
